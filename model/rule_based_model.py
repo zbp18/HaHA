@@ -17,42 +17,34 @@ from nltk.corpus import wordnet  # noqa
 class ModelDecisionMaker:
     def __init__(self):
 
-        self.kai = pd.read_csv('/Users/lisaxy/SATbot2.0/model/kai.csv', encoding='ISO-8859-1') #change path
-        self.robert = pd.read_csv('/Users/lisaxy/SATbot2.0/model/robert.csv', encoding='ISO-8859-1')
-        self.gabrielle = pd.read_csv('/Users/lisaxy/SATbot2.0/model/gabrielle.csv', encoding='ISO-8859-1')
-        self.arman = pd.read_csv('/Users/lisaxy/SATbot2.0/model/arman.csv', encoding='ISO-8859-1')
-        self.olivia = pd.read_csv('/Users/lisaxy/SATbot2.0/model/olivia.csv', encoding='ISO-8859-1')
+        self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
+        #self.robert = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/robert.csv', encoding='ISO-8859-1')
+        #self.gabrielle = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/gabrielle.csv', encoding='ISO-8859-1')
+        #self.arman = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/arman.csv', encoding='ISO-8859-1')
+        #self.olivia = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/olivia.csv', encoding='ISO-8859-1')
 
         # Titles from workshops (Title 7 adapted to give more information)
         self.PROTOCOL_TITLES = [
             "0: None",
-            "1: Connecting with the Child [Week 1]",
-            "2: Laughing at our Two Childhood Pictures [Week 1]",
-            "3: Falling in Love with the Child [Week 2]",
-            "4: Vow to Adopt the Child as Your Own Child [Week 2]",
-            "5: Maintaining a Loving Relationship with the Child [Week 3]",
-            "6: An exercise to Process the Painful Childhood Events [Week 3]",
-            "7: Protocols for Creating Zest for Life [Week 4]",
-            "8: Loosening Facial and Body Muscles [Week 4]",
-            "9: Protocols for Attachment and Love of Nature  [Week 4]",
-            "10: Laughing at, and with One's Self [Week 5]",
-            "11: Processing Current Negative Emotions [Week 5]",
-            "12: Continuous Laughter [Week 6]",
-            "13: Changing Our Perspective for Getting Over Negative Emotions [Week 6]",  # noqa
-            "14: Protocols for Socializing the Child [Week 6]",
-            "15: Recognising and Controlling Narcissism and the Internal Persecutor [Week 7]",  # noqa
-            "16: Creating an Optimal Inner Model [Week 7]",
-            "17: Solving Personal Crises [Week 7]",
-            "18: Laughing at the Harmless Contradiction of Deep-Rooted Beliefs/Laughing at Trauma [Week 8]",  # noqa
-            "19: Changing Ideological Frameworks for Creativity [Week 8]",
-            "20: Affirmations [Week 8]",
+            "1: Playful mind",
+            "2: Playful face",
+            "3: Self-glory",
+            "4: Incongruous world",
+            "5: Incongruous self",
+            "6: Self/world incongruity",
+            "7: Contrasting views",
+            "8: Our own laughter brand",
+            "9: Feigning laughter",
+            "10: Self-laughter",
+            "11: Laughing at misfortunes and distrurbing circumstances",
+            "12: Laughing at long-term suffering",
         ]
 
         self.TITLE_TO_PROTOCOL = {
             self.PROTOCOL_TITLES[i]: i for i in range(len(self.PROTOCOL_TITLES))
         }
 
-        self.recent_protocols = deque(maxlen=20)
+        self.recent_protocols = deque(maxlen=12)
         self.reordered_protocol_questions = {}
         self.protocols_to_suggest = []
 
@@ -62,13 +54,13 @@ class ModelDecisionMaker:
 
         self.current_protocols = {}
 
-        self.positive_protocols = [i for i in range(1, 21)]
+        self.positive_protocols = [i for i in range(1, 13)]
 
         self.INTERNAL_PERSECUTOR_PROTOCOLS = [
-            self.PROTOCOL_TITLES[15],
-            self.PROTOCOL_TITLES[16],
+            self.PROTOCOL_TITLES[5],
+            self.PROTOCOL_TITLES[6],
             self.PROTOCOL_TITLES[8],
-            self.PROTOCOL_TITLES[19],
+            self.PROTOCOL_TITLES[9],
         ]
 
         # Keys: user ids, values: dictionaries describing each choice (in list)
@@ -115,20 +107,20 @@ class ModelDecisionMaker:
 
 
            "choose_persona": {
-              "model_prompt": "Who would you like to talk to?",
+              "model_prompt": "Who would you like to talk to?" + " \N{grinning face with smiling eyes}",
               "choices": {
                   "Kai": lambda user_id, db_session, curr_session, app: self.get_kai(user_id),
-                  "Robert": lambda user_id, db_session, curr_session, app: self.get_robert(user_id),
-                  "Gabrielle": lambda user_id, db_session, curr_session, app: self.get_gabrielle(user_id),
-                  "Arman": lambda user_id, db_session, curr_session, app: self.get_arman(user_id),
-                  "Olivia": lambda user_id, db_session, curr_session, app: self.get_olivia(user_id),
+                  #"Robert": lambda user_id, db_session, curr_session, app: self.get_robert(user_id),
+                  #"Gabrielle": lambda user_id, db_session, curr_session, app: self.get_gabrielle(user_id),
+                  #"Arman": lambda user_id, db_session, curr_session, app: self.get_arman(user_id),
+                  #"Olivia": lambda user_id, db_session, curr_session, app: self.get_olivia(user_id),
               },
               "protocols": {
                   "Kai": [],
-                  "Robert": [],
-                  "Gabrielle": [],
-                  "Arman": [],
-                  "Olivia": [],
+                  #"Robert": [],
+                  #"Gabrielle": [],
+                  #"Arman": [],
+                  #"Olivia": [],
               },
           },
 
@@ -229,7 +221,7 @@ class ModelDecisionMaker:
                     "no": "more_questions",
                 },
                 "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[13], self.PROTOCOL_TITLES[17]],
+                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[7]],
                     "no": [self.PROTOCOL_TITLES[6]]
                 },
             },
@@ -243,7 +235,7 @@ class ModelDecisionMaker:
                 },
                 "protocols": {
                     "Okay": [],
-                    "I'd rather not": [self.PROTOCOL_TITLES[13]],
+                    "I'd rather not": [self.PROTOCOL_TITLES[3]],
                 },
             },
 
@@ -255,8 +247,8 @@ class ModelDecisionMaker:
                     "no": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
                 },
                 "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[13], self.PROTOCOL_TITLES[14]],
-                    "no": [self.PROTOCOL_TITLES[13]],
+                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[4]],
+                    "no": [self.PROTOCOL_TITLES[3]],
                 },
             },
 
@@ -308,7 +300,7 @@ class ModelDecisionMaker:
                 },
                 "protocols": {
                 "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
-                "no": [self.PROTOCOL_TITLES[13]],
+                "no": [self.PROTOCOL_TITLES[3]],
                 },
             },
 
@@ -320,8 +312,8 @@ class ModelDecisionMaker:
                     "no": "project_emotion",
                 },
                 "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[13]],
-                    "no": [self.PROTOCOL_TITLES[13], self.PROTOCOL_TITLES[19]],
+                    "yes": [self.PROTOCOL_TITLES[3]],
+                    "no": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[9]],
                 },
             },
 
@@ -334,8 +326,8 @@ class ModelDecisionMaker:
                     "no": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
                 },
                 "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[13], self.PROTOCOL_TITLES[17]],
-                    "no": [self.PROTOCOL_TITLES[13]],
+                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[7]],
+                    "no": [self.PROTOCOL_TITLES[3]],
                 },
             },
 
@@ -498,7 +490,10 @@ class ModelDecisionMaker:
         except:  # noqa
             user_response = ""
         self.users_names[user_id] = user_response
-        return "choose_persona"
+        #return "choose_persona"
+        self.chosen_personas[user_id] = "Kai"
+        self.datasets[user_id] = self.kai
+        return "opening_prompt"
 
 
     def get_suggestions(self, user_id, app): #from all the lists of protocols collected at each step of the dialogue it puts together some and returns these as suggestions
@@ -513,7 +508,7 @@ class ModelDecisionMaker:
             suggestions = set(suggestions)
             suggestions = list(suggestions)
         while len(suggestions) < 4: #augment the suggestions if less than 4, we add random ones avoiding repetitions
-            p = random.choice([i for i in range(1,20) if i not in [6,11]]) #we dont want to suggest protocol 6 or 11 at random here
+            p = random.choice([i for i in range(1,12) if i not in [6,11]]) #we dont want to suggest protocol 6 or 11 at random here
             if (any(self.PROTOCOL_TITLES[p] not in curr_suggestions for curr_suggestions in list(self.suggestions[user_id]))
                 and self.PROTOCOL_TITLES[p] not in self.recent_protocols and self.PROTOCOL_TITLES[p] not in suggestions):
                         suggestions.append(self.PROTOCOL_TITLES[p])
