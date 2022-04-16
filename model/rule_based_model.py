@@ -18,11 +18,7 @@ class ModelDecisionMaker:
     def __init__(self):
 
         self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
-        #self.robert = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/robert.csv', encoding='ISO-8859-1')
-        #self.gabrielle = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/gabrielle.csv', encoding='ISO-8859-1')
-        #self.arman = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/arman.csv', encoding='ISO-8859-1')
-        #self.olivia = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/olivia.csv', encoding='ISO-8859-1')
-
+        
         # Titles from workshops (Title 7 adapted to give more information)
         self.PROTOCOL_TITLES = [
             "0: None",
@@ -98,32 +94,12 @@ class ModelDecisionMaker:
         self.QUESTIONS = {
 
             "ask_name": {
-               "model_prompt": "Please enter your first name:",
+               "model_prompt": "Hi! I’m Humbert, a self-employed laughter assistant. May I know your name?",
                "choices": {
                    "open_text": lambda user_id, db_session, curr_session, app: self.save_name(user_id)
                },
                "protocols": {"open_text": []},
            },
-
-
-           "choose_persona": {
-              "model_prompt": "Who would you like to talk to?" + " \N{grinning face with smiling eyes}",
-              "choices": {
-                  "Kai": lambda user_id, db_session, curr_session, app: self.get_kai(user_id),
-                  #"Robert": lambda user_id, db_session, curr_session, app: self.get_robert(user_id),
-                  #"Gabrielle": lambda user_id, db_session, curr_session, app: self.get_gabrielle(user_id),
-                  #"Arman": lambda user_id, db_session, curr_session, app: self.get_arman(user_id),
-                  #"Olivia": lambda user_id, db_session, curr_session, app: self.get_olivia(user_id),
-              },
-              "protocols": {
-                  "Kai": [],
-                  #"Robert": [],
-                  #"Gabrielle": [],
-                  #"Arman": [],
-                  #"Olivia": [],
-              },
-          },
-
 
             "opening_prompt": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_opening_prompt(user_id),
@@ -549,34 +525,18 @@ class ModelDecisionMaker:
     # Takes next item in queue, or moves on to suggestions
     # if all have been checked
 
-    def get_kai(self, user_id):
-       self.chosen_personas[user_id] = "Kai"
-       self.datasets[user_id] = self.kai
-       return "opening_prompt"
-    def get_robert(self, user_id):
-       self.chosen_personas[user_id] = "Robert"
-       self.datasets[user_id] = self.robert
-       return "opening_prompt"
-    def get_gabrielle(self, user_id):
-       self.chosen_personas[user_id] = "Gabrielle"
-       self.datasets[user_id] = self.gabrielle
-       return "opening_prompt"
-    def get_arman(self, user_id):
-       self.chosen_personas[user_id] = "Arman"
-       self.datasets[user_id] = self.arman
-       return "opening_prompt"
-    def get_olivia(self, user_id):
-       self.chosen_personas[user_id] = "Olivia"
-       self.datasets[user_id] = self.olivia
-       return "opening_prompt"
-
 
     def get_opening_prompt(self, user_id):
         time.sleep(7)
         if self.users_names[user_id] == "":
-            opening_prompt = ["Hello, this is " + self.chosen_personas[user_id] + ". ", "How are you feeling today?"]
+            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh \N{grinning face with smiling eyes}"]
         else:
-            opening_prompt = ["Hello " + self.users_names[user_id] + ", this is " + self.chosen_personas[user_id] + ". ", "How are you feeling today?"]
+            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + " . I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
+            "I assume you are already familiar with the self-initiated humorous protocols, but they are also being displayed on the right if you wish to review them at any point in our conversation.", 
+            "We will be discussing some of these today but practising these during your daily life is where you will receive the real benefit.", 
+            "The more you do, the more natural and frequent your laughter will become and the happier you will feel. Practice makes perfect!", 
+            "Anyway, enough with the intros - let’s get started!", 
+            "How are you feeling today? Try to be honest; I will not judge you!"]
         return opening_prompt
 
 
