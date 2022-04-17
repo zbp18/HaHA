@@ -17,6 +17,7 @@ from nltk.corpus import wordnet  # noqa
 class ModelDecisionMaker:
     def __init__(self):
 
+        # removed personas
         self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
         
         # Titles from workshops (Title 7 adapted to give more information)
@@ -101,14 +102,29 @@ class ModelDecisionMaker:
                "protocols": {"open_text": []},
            },
 
+            # check if user's familiar with protocols
             "opening_prompt": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_opening_prompt(user_id),
 
                 "choices": {
-                    "open_text": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_opening(user_id, app, db_session)
+                    "yes": "after_know_protocols",
+                    "no": "after_not_know_protocols"
+
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                    },
+            },
+
+            # ask user how they're feeling
+            "ask_emotion": {
+               "model_prompt": "How are you feeling today? Try to be honest; I will not judge you!", 
+               "choices": {
+                    "open_text": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_get_started(user_id, app, db_session)
                 },
                 "protocols": {"open_text": []},
-            },
+           },
 
             "guess_emotion": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_guess_emotion(
@@ -119,7 +135,7 @@ class ModelDecisionMaker:
                         "Sad": "after_classification_negative",
                         "Angry": "after_classification_negative",
                         "Anxious/Scared": "after_classification_negative",
-                        "Happy/Content": "after_classification_positive",
+                        "Happy/Content": "after_classification_plus", # changed from positive for initial rule-based implementation
                     },
                     "no": "check_emotion",
                 },
@@ -147,19 +163,83 @@ class ModelDecisionMaker:
                 },
             },
 
-            ############# NEGATIVE EMOTIONS (SADNESS, ANGER, FEAR/ANXIETY)
-
-
-            "after_classification_negative": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_specific_event(user_id, app, db_session),
-
+            # user is familiar with the protocols
+            "after_know_protocols": {
+                "model_prompt": "Great. Just to let you know, they are also being displayed on the right if you wish to review them at any point in our conversation.",
                 "choices": {
-                    "Yes, something happened": "event_is_recent",
-                    "No, it's just a general feeling": "more_questions",
+                    "continue": "after_protocols",
                 },
                 "protocols": {
-                    "Yes, something happened": [],
-                    "No, it's just a general feeling": []
+                    "continue": []
+                },
+            }, 
+
+            # user is not familiar with the protocols
+            "after_not_know_protocols": {
+                "model_prompt": ["I would recommend reviewing these briefly before our session as you can use this session to consolidate your understanding of them.", 
+                "They are being displayed on the right if you wish to review them now or at any point in our conversation."],
+                "choices": {
+                    "continue": "after_protocols",
+                },
+                "protocols": {
+                    "continue": []
+                },
+            }, 
+
+            # end of introduction
+            "after_protocols": {
+                "model_prompt": ["We will be discussing some of these today but practising these during your daily life is where you will receive the real benefit.", 
+                "The more you do, the more natural and frequent your laughter will become and the happier you will feel. Practice makes perfect!", 
+                "Anyway, enough with the intros - let’s get started!"],
+                "choices": {
+                    "continue": "ask_emotion",
+                },
+                "protocols": {
+                    "continue": []
+                },
+            }, 
+
+            ############# NEGATIVE EMOTIONS (SADNESS, ANGER, FEAR/ANXIETY)
+            
+            # changed from "after_classification_negative"
+            "after_classification_minus": {
+                "model_prompt": "Sorry to hear that. Is there an underlying reason behind this feeling? You don’t need to share the reason!",
+
+                "choices": {
+                    "Yes": "continue_reason_yes",
+                    "No (or not sure)": "continue_explore_no",
+                },
+                "protocols": {
+                    "Yes": [],
+                    "No (or not sure)": []
+                },
+            },
+
+            # user can identify an underlying reason
+            "continue_reason_yes": {
+                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
+
+                "choices": {
+                    "no": "continue_explore_no",
+                },
+                "protocols": {
+                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
+                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+                    "no": []
+                },
+            },
+
+            # user cannot identify an underlying reason
+            "continue_reason_no": {
+                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
+
+                "choices": {
+                    "no": "continue_explore_no",
+                },
+                "protocols": {
+                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
+                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+                    "no": []
                 },
             },
 
@@ -309,21 +389,65 @@ class ModelDecisionMaker:
 
             ################# POSITIVE EMOTION (HAPPINESS/CONTENT) #################
 
-            "after_classification_positive": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_happy(user_id, app, db_session),
+            # changed from "after_classification_positive"
+            "after_classification_plus": {
+                "model_prompt": ["Great! Let’s start exploring how to develop your sense of humour.", 
+                "Do you feel that your body is in a playful mode?", 
+                "As adults, we often tend to get stuck in a serious mode!"
+                ],
 
                 "choices": {
-                    "Okay": "suggestions",
-                    "No, thank you": "ending_prompt"
+                    "yes": "continue_playful_yes",
+                    "no": "continue_playful_no",
                 },
                 "protocols": {
-                    "Okay": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
+                    "yes": [], 
                     #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "No, thank you": []
+                    "no": []
                 },
             },
 
+            # user is in a playful mode
+            "continue_playful_yes": {
+                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
+
+                "choices": {
+                    #"yes": "continue_explore_no",
+                    "no": "continue_explore_no",
+                },
+                "protocols": {
+                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
+                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+                    "no": []
+                },
+            },
+
+            # user is not in a playful mode
+            "continue_playful_no": {
+                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
+
+                "choices": {
+                    #"yes": "continue_explore_no",
+                    "no": "continue_explore_no",
+                },
+                "protocols": {
+                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
+                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+                    "no": []
+                },
+            },
+
+
             ############################# ALL EMOTIONS #############################
+
+            # added as a placeholder for initial rule-based implementation 
+            "continue_explore_no": {
+                "model_prompt": lambda user_id, db_session, curr_session, app: self.end_session(user_id),
+                
+                "choices": {},
+                "protocols": {},
+            }, 
+
 
             "project_emotion": {
                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_project_emotion(user_id, app, db_session),
@@ -471,6 +595,11 @@ class ModelDecisionMaker:
         self.datasets[user_id] = self.kai
         return "opening_prompt"
 
+    # added ending dialogue for initial rule-based implementation
+    def end_session(self, user_id):
+        return ["That ends our session then!", 
+                "It would be most beneficial if you could recognise the discussed contexts for laughter (i.e. self and or world incongruity, error/fault, daily routine-accomplishment, etc.) as often as possible throughout your life. There is no endpoint to developing a sense of humour, it is a journey, and the most important thing is to enjoy it! And I am always here if you need me – I have nowhere else to go!", 
+                "Thanks " + self.users_names[user_id] + ", I hope you enjoyed our conversation and that we speak again soon."]
 
     def get_suggestions(self, user_id, app): #from all the lists of protocols collected at each step of the dialogue it puts together some and returns these as suggestions
         suggestions = []
@@ -526,17 +655,15 @@ class ModelDecisionMaker:
     # if all have been checked
 
 
+    # add check for whether user is familiar with the humorous protocols
     def get_opening_prompt(self, user_id):
         time.sleep(7)
         if self.users_names[user_id] == "":
-            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh \N{grinning face with smiling eyes}"]
+            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
+            "Are you familiar with the self-initiated humorous protocols?"]
         else:
-            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + " . I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
-            "I assume you are already familiar with the self-initiated humorous protocols, but they are also being displayed on the right if you wish to review them at any point in our conversation.", 
-            "We will be discussing some of these today but practising these during your daily life is where you will receive the real benefit.", 
-            "The more you do, the more natural and frequent your laughter will become and the happier you will feel. Practice makes perfect!", 
-            "Anyway, enough with the intros - let’s get started!", 
-            "How are you feeling today? Try to be honest; I will not judge you!"]
+            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + ". I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
+            "Are you familiar with the self-initiated humorous protocols?"]
         return opening_prompt
 
 
@@ -576,9 +703,9 @@ class ModelDecisionMaker:
             self.recent_protocols.popleft()
         self.recent_protocols.append(recent_protocol)
 
-
-    def determine_next_prompt_opening(self, user_id, app, db_session):
-        user_response = self.user_choices[user_id]["choices_made"]["opening_prompt"]
+    # previously determine_next_prompt_opening - get emotion at start of session
+    def determine_next_prompt_get_started(self, user_id, app, db_session):
+        user_response = self.user_choices[user_id]["choices_made"]["ask_emotion"]
         emotion = get_emotion(user_response)
         #emotion = np.random.choice(["Happy", "Sad", "Angry", "Anxious"]) #random choice to be replaced with emotion classifier
         if emotion == 'fear':
@@ -596,7 +723,6 @@ class ModelDecisionMaker:
         #self.guess_emotion_predictions[user_id] = emotion
         #self.user_emotions[user_id] = emotion
         return "guess_emotion"
-
 
     def get_best_sentence(self, column, prev_qs):
         #return random.choice(column.dropna().sample(n=15).to_list()) #using random choice instead of machine learning
@@ -666,7 +792,7 @@ class ModelDecisionMaker:
     def get_happy_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Happy/Content"
         self.user_emotions[user_id] = "Happy"
-        return "after_classification_positive"
+        return "after_classification_plus"
 
     def get_model_prompt_project_emotion(self, user_id, app, db_session):
         time.sleep(7)
