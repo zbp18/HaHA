@@ -1,3 +1,4 @@
+import string
 import nltk
 
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
@@ -40,6 +41,26 @@ class ModelDecisionMaker:
         self.TITLE_TO_PROTOCOL = {
             self.PROTOCOL_TITLES[i]: i for i in range(len(self.PROTOCOL_TITLES))
         }
+
+        # map each protocol to a 'difficulty level' to help determine which protocol the chatbot should recommend
+        self.PROTOCOL_TO_LEVEL = dict(zip(self.PROTOCOL_TITLES, [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3]))
+
+        # each tiny session consists of a single or group of similar themes protocols
+        self.PROTOCOL_TINY_SESSIONS = [{"1: Playful mind", "2: Playful face"}, {"3: Self-glory"}, {"4: Incongruous world",
+            "5: Incongruous self",
+            "6: Self/world incongruity"}, {"7: Contrasting views"}, {"8: Our own laughter brand",
+            "9: Feigning laughter"}, {"10: Self-laughter"}, {"11: Laughing at misfortunes and distrurbing circumstances"}, {"12: Laughing at long-term suffering"}]
+
+        self.LEVEL_TO_PROTOCOL_TINY_SESSION = dict(zip([0, 0, 1, 1, 1, 2, 3, 3], self.PROTOCOL_TINY_SESSIONS))
+        
+        # each mini session consists of a group of similar themed protocols (low difficulty level for use at the start of a conversation)
+        self.PROTOCOL_MINI_SESSIONS = [{"1: Playful mind", "2: Playful face", "3: Self-glory"}, {"4: Incongruous world",
+            "5: Incongruous self",
+            "6: Self/world incongruity",
+            "7: Contrasting views"}, {"8: Our own laughter brand",
+            "9: Feigning laughter"}]
+
+        self.LEVEL_TO_PROTOCOL_MINI_SESSION = dict(zip([0, 1, 1], self.PROTOCOL_MINI_SESSIONS))
 
         self.recent_protocols = deque(maxlen=12)
         self.reordered_protocol_questions = {}
@@ -132,9 +153,9 @@ class ModelDecisionMaker:
                 ),
                 "choices": {
                     "yes": {
-                        "Sad": "after_classification_negative",
-                        "Angry": "after_classification_negative",
-                        "Anxious/Scared": "after_classification_negative",
+                        "Sad": "after_classification_minus", # changed all from negative for initial rule-based implementation
+                        "Angry": "after_classification_minus",
+                        "Anxious/Scared": "after_classification_minus",
                         "Happy/Content": "after_classification_plus", # changed from positive for initial rule-based implementation
                     },
                     "no": "check_emotion",
@@ -144,7 +165,6 @@ class ModelDecisionMaker:
                     "no": []
                     },
             },
-
 
             "check_emotion": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_check_emotion(user_id, app, db_session),
@@ -199,15 +219,43 @@ class ModelDecisionMaker:
                 },
             }, 
 
+            ############################# REPEATED PARTS OF CONVERSATION
+
+            "ask_continue_exploring": {
+                "model_prompt": "Would you like to continue exploring other contexts for humour?",
+                "choices": {
+                    "yes": "", # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "ending_session",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            # changed
+
+            "ending_session": {
+                "model_prompt": lambda user_id, db_session, curr_session, app: self.end_session(user_id),
+                
+                "choices": {},
+                "protocols": {},
+            },
+
+            ############################# TINY SESSIONS
+
+            ############################# MINI SESSIONS
+
+
             ############# NEGATIVE EMOTIONS (SADNESS, ANGER, FEAR/ANXIETY)
             
-            # changed from "after_classification_negative"
+            # changed from "after_classification_negative" for initial rule-based implementation
             "after_classification_minus": {
-                "model_prompt": "Sorry to hear that. Is there an underlying reason behind this feeling? You don’t need to share the reason!",
+                "model_prompt": "Sorry to hear that. Is there an underlying reason behind this feeling? You don’t need to share the reason.",
 
                 "choices": {
-                    "Yes": "continue_reason_yes",
-                    "No (or not sure)": "continue_explore_no",
+                    "Yes": "ask_continue_exploring", 
+                    "No (or not sure)": "ask_continue_exploring", 
                 },
                 "protocols": {
                     "Yes": [],
@@ -217,10 +265,10 @@ class ModelDecisionMaker:
 
             # user can identify an underlying reason
             "continue_reason_yes": {
-                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
+                "model_prompt": "Placeholder.",
 
                 "choices": {
-                    "no": "continue_explore_no",
+                    "no": "ask_continue_exploring",
                 },
                 "protocols": {
                     #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
@@ -231,10 +279,10 @@ class ModelDecisionMaker:
 
             # user cannot identify an underlying reason
             "continue_reason_no": {
-                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
+                "model_prompt": "Placeholder.",
 
                 "choices": {
-                    "no": "continue_explore_no",
+                    "no": "ask_continue_exploring",
                 },
                 "protocols": {
                     #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
@@ -373,7 +421,6 @@ class ModelDecisionMaker:
                 },
             },
 
-
             "personal_crisis": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_personal_crisis(user_id, app, db_session),
 
@@ -397,8 +444,8 @@ class ModelDecisionMaker:
                 ],
 
                 "choices": {
-                    "yes": "continue_playful_yes",
-                    "no": "continue_playful_no",
+                    "yes": "ask_continue_exploring",
+                    "no": "ask_continue_exploring",
                 },
                 "protocols": {
                     "yes": [], 
@@ -556,7 +603,7 @@ class ModelDecisionMaker:
 
                 "choices": {"any": "opening_prompt"},
                 "protocols": {"any": []}
-                },
+            },
 
             "restart_prompt": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_restart_prompt(user_id),
@@ -657,7 +704,7 @@ class ModelDecisionMaker:
 
     # add check for whether user is familiar with the humorous protocols
     def get_opening_prompt(self, user_id):
-        time.sleep(7)
+        # time.sleep(7)
         if self.users_names[user_id] == "":
             opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
             "Are you familiar with the self-initiated humorous protocols?"]
@@ -706,6 +753,13 @@ class ModelDecisionMaker:
     # previously determine_next_prompt_opening - get emotion at start of session
     def determine_next_prompt_get_started(self, user_id, app, db_session):
         user_response = self.user_choices[user_id]["choices_made"]["ask_emotion"]
+        if user_response.lower() == 'sad' or user_response.lower() == 'angry' or user_response.lower() == 'anxious' or user_response.lower() == 'happy':
+            self.user_emotions[user_id] = string.capwords(user_response)
+            if user_response.lower() == 'happy':
+                return "after_classification_plus"
+            else:
+                return "after_classification_minus"
+        
         emotion = get_emotion(user_response)
         #emotion = np.random.choice(["Happy", "Sad", "Angry", "Anxious"]) #random choice to be replaced with emotion classifier
         if emotion == 'fear':
@@ -780,22 +834,22 @@ class ModelDecisionMaker:
     def get_sad_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Sad"
         self.user_emotions[user_id] = "Sad"
-        return "after_classification_negative"
+        return "after_classification_minus" # for initial rule-based implementation
     def get_angry_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Angry"
         self.user_emotions[user_id] = "Angry"
-        return "after_classification_negative"
+        return "after_classification_minus" # for initial rule-based implementation
     def get_anxious_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Anxious/Scared"
         self.user_emotions[user_id] = "Anxious"
-        return "after_classification_negative"
+        return "after_classification_minus" # for initial rule-based implementation
     def get_happy_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Happy/Content"
         self.user_emotions[user_id] = "Happy"
         return "after_classification_plus"
 
     def get_model_prompt_project_emotion(self, user_id, app, db_session):
-        time.sleep(7)
+        #time.sleep(7) # TODO: should we removed the sleeps
         if self.chosen_personas[user_id] == "Robert":
             prompt = "Ok, thank you. Now, one last important thing: since you've told me you're feeling " + self.user_emotions[user_id].lower() + ", I would like you to try to project this emotion onto your childhood self. You can press 'continue' when you are ready and I'll suggest some protocols I think may be appropriate for you."
         elif self.chosen_personas[user_id] == "Gabrielle":
@@ -1273,6 +1327,7 @@ class ModelDecisionMaker:
                 and current_choice != "event_is_recent"
                 and current_choice != "more_questions"
                 and current_choice != "after_classification_positive"
+
                 and current_choice != "user_found_useful"
                 and current_choice != "check_emotion"
                 and current_choice != "new_protocol_better"
@@ -1281,6 +1336,7 @@ class ModelDecisionMaker:
                 and current_choice != "choose_persona"
                 and current_choice != "project_emotion"
                 and current_choice != "after_classification_negative"
+                and current_choice != "after_classification_minus" # added this
             ):
                 user_choice = user_choice.lower()
 
