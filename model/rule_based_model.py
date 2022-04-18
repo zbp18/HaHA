@@ -112,6 +112,26 @@ class ModelDecisionMaker:
         self.chosen_personas = {}
         self.datasets = {}
 
+        # repeated statements
+        tried_before = "Have you tried this before?"
+        laughed_off = "Have you tried laughing this off?"
+        want_to_try = "Would you like to try this?"
+        
+        not_contempt = "If you experience any (self- or external-) contempt during your laughter, try to reflect on, neutralise, and convert this into non-hostile humour (by surprise and amusement – refer to the incongruity protocols)."
+        contempt_reminder = "Remember not to laugh with contempt though, both self and external; this might also be why you're feeling down."
+
+        feeling_post_protocol = "How did this make you feel?"
+        feeling_pre_protocol = "How do you feel about this?"
+        new_feeling = "How are you now feeling?" # If previously negative
+        empathetic_response_pos = "Good, I’m glad to hear that."
+        empathetic_response_neg = "Sorry to hear that. I hope you feel better soon."
+
+        try_this = "Try practicing this on your own, whenever you’re feeling up to it."
+        try_this_again = "Feel free to practise this again whenever you think it’s applicable."
+        make_sense = "Does that make sense?"
+        further_clarification = "Would you like some further clarification on this exercise?"
+        look_at_sheet = "This is detailed in the introductory document, feel free to review this if you need to."
+        continue_other = "Would you like to continue exploring other contexts for humour?"
 
         self.QUESTIONS = {
 
@@ -220,12 +240,12 @@ class ModelDecisionMaker:
             }, 
 
             ############################# REPEATED PARTS OF CONVERSATION
-
+            
             "ask_continue_exploring": {
-                "model_prompt": "Would you like to continue exploring other contexts for humour?",
+                "model_prompt": continue_other,
                 "choices": {
                     "yes": "", # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
+                    "no": "ask_recent_error",
                 },
                 "protocols": {
                     "yes": [],
@@ -233,16 +253,205 @@ class ModelDecisionMaker:
                 },
             },
 
-            # changed
-
+            # added for end of session placeholder
             "ending_session": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.end_session(user_id),
-                
                 "choices": {},
                 "protocols": {},
             },
 
             ############################# TINY SESSIONS
+
+            ########## self-laughter ##########
+
+            "ask_recent_error": {
+                "model_prompt": "Have you experienced a recent error or shortcoming?",
+                "choices": {
+                    "yes": "ask_if_laughed_this", 
+                    "no": "no_recent_errors",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "ask_if_laughed_this": { #TODO: may be able to reuse: 
+                "model_prompt": laughed_off,
+                "choices": {
+                    "yes": "ask_how_felt", 
+                    "no": "after_not_laughed_error",
+                    "not sure": "explain_and_propose_try"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": [], 
+                    "not sure": []
+                },
+            },
+
+            "ask_how_felt": { #TODO: may be able to reuse: 
+                "model_prompt": feeling_post_protocol,
+                "choices": {
+                    "positive": "after_positive_error", 
+                    "negative": "after_negative_error"
+                },
+                "protocols": {
+                    "positive": [],
+                    "negative": []
+                },
+            },
+
+            "after_positive_error": { #TODO: may be able to reuse: 
+                "model_prompt": [empathetic_response_pos, try_this_again, continue_other],
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "ending_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+            
+            "after_negative_error": { #TODO: may be able to reuse: 
+                "model_prompt": [empathetic_response_neg, further_clarification],
+                "choices": {
+                    "yes": "give_clarification", 
+                    "no": "remind_contempt"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "give_clarification": { #TODO: may be able to reuse: 
+                "model_prompt": ["This exercise is in line with the evolutionary theory of humour as we are learning to become playful with our everyday errors. We can laugh them off by the Incongruity and Playful Theories.",
+                "An example could be burning a piece of toast, as long as it didn’t set the house on fire!",
+                look_at_sheet, try_this_again, continue_other], 
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "ending_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "remind_contempt":{
+                "model_prompt": [contempt_reminder, try_this_again, continue_other], 
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "ending_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "after_not_laughed_error": {
+                "model_prompt": ["Feel free to practice laughing at this in your own time, along with any other minor errors you find yourself making (if any!)",
+                "And don’t be embarrassed, I’m sure mine are much worse!", feeling_pre_protocol],
+                "choices": {
+                    "positive": "positive_pre_error_protocol",
+                    "negative": "negative_pre_error_protocol"
+                },
+                "protocols": {
+                    "positive": [],
+                    "negative": []
+                },
+            },
+
+            "positive_pre_error_protocol": {
+                "model_prompt": [empathetic_response_pos, continue_other], 
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "ending_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "negative_pre_error_protocol": {
+                "model_prompt": [empathetic_response_neg, further_clarification], 
+                "choices": {
+                    "yes": "give_clarification_first_time",
+                    "no": "remind_contempt_first_time"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "give_clarification_first_time": {
+                "model_prompt": ["This exercise is in line with the evolutionary theory of humour as we are learning to become playful with our everyday errors. We can laugh them off by the Incongruity and Playful Theories.",
+                "An example could be burning a piece of toast, as long as it didn’t set the house on fire!",
+                look_at_sheet, continue_other], 
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "ending_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "remind_contempt_first_time":{
+                "model_prompt": [contempt_reminder, continue_other], 
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "ending_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "explain_and_propose_try": {
+                "model_prompt": ["An example could be wearing two different colour socks to work by mistake. A good ice breaker for everyone to laugh at when the conversation gets boring!", 
+                "Try laughing at any of your errors on your own in the same way.", feeling_pre_protocol],
+                "choices": {
+                    "positive": "positive_pre_error_protocol",
+                    "negative": "negative_pre_error_protocol"
+                },
+                "protocols": {
+                    "positive": [],
+                    "negative": []
+                },
+            },
+
+            "no_recent_errors": {
+                "model_prompt": ["Wow, I am jealous! I make mistakes all the time!", "Would you like to explore another more relevant context for laughter?"],
+                "choices": {
+                    "yes": "ending_session",
+                    "no": "continue_exploring_errors"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "continue_exploring_errors": {
+                "model_prompt": ["If you do recognise making any errors, try to become playful and laugh at them on your own.", 
+                feeling_pre_protocol],
+                "choices": {
+                    "positive": "positive_pre_error_protocol",
+                    "negative": "negative_pre_error_protocol"
+                },
+                "protocols": {
+                    "positive": [],
+                    "negative": []
+                },
+            },
 
             ############################# MINI SESSIONS
 
