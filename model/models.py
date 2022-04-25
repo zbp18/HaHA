@@ -29,7 +29,7 @@ class User(db.Model):  # noqa
 
 
 class Protocol(db.Model):  # noqa
-    __tablename__ = 'protocol'  # noqa
+    __tablename__ = 'protocol_use'  # noqa
     id = db.Column(db.Integer(), primary_key=True)
     protocol_chosen = db.Column(db.Integer())
     protocol_was_useful = db.Column(db.String(64))
