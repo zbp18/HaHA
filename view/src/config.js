@@ -36,7 +36,16 @@ const config = {
       height: '16px', fontFamily: 'Arial', borderTopLeftRadius: '5px', borderTopRightRadius: '5px',
       background: '#EBECED', color: '#4A4A4A', padding: '8px', borderBottom: '1px solid #B8BABA'
     }}>Conversation</div>,
-    botAvatar: () => <div class="react-chatbot-kit-chat-bot-avatar-container" style={{ fontFamily: 'Arial' }}><p class="react-chatbot-kit-chat-bot-avatar-letter">S</p></div>
+    botAvatar: () => <div className="react-chatbot-kit-chat-bot-avatar">
+      <div className="react-chatbot-kit-chat-bot-avatar-container">
+        <p className="react-chatbot-kit-chat-bot-avatar-letter">H</p>
+      </div>
+    </div>,
+    userAvatar: () => <div className="react-chatbot-kit-user-avatar">
+      <div className="react-chatbot-kit-user-avatar-container">
+        <p className="react-chatbot-kit-user-avatar-letter">U</p>
+      </div>
+    </div>
   },
 
   widgets: [
