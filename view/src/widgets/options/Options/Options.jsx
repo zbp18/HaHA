@@ -9,7 +9,7 @@ const Options = ({ options }) => {
   const markup = options.map((option) => (
     <button
       key={option.id}
-      className={styles.option}
+      className={option.userInputType === "Feeling" || option.userInputType === "Feeling2" ? styles.emoji : styles.option}
       onClick={() =>
         runHandler(
           option.handler,

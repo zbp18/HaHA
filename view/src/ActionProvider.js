@@ -121,6 +121,10 @@ class ActionProvider {
       optionsToShow = "Emotion"
     } else if (userOptions.length === 3 && userOptions[0] === "better" && userOptions[1] === "worse" && userOptions[2] === "no change") {
       optionsToShow = "Feedback"
+    } else if (userOptions.length === 3 && userOptions[0] === "\uD83D\uDE00" && userOptions[1] === "\uD83D\uDE10" && userOptions[2] === "\uD83D\uDE41") {
+      optionsToShow = "Feeling"
+    } else if (userOptions.length === 2 && userOptions[0] === "\uD83D\uDE00" && userOptions[1] === "\uD83D\uDE41") {
+      optionsToShow = "Feeling2"
     } else {
       // Protocol case
       optionsToShow = "Protocol"

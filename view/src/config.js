@@ -9,6 +9,9 @@ import FeedbackOptions from "./widgets/options/GeneralOptions/FeedbackOptions";
 import EmotionOptions from "./widgets/options/GeneralOptions/EmotionOptions";
 import EventOptions from "./widgets/options/GeneralOptions/EventOptions";
 import YesNoProtocolOptions from "./widgets/options/GeneralOptions/YesNoProtocolsOptions";
+import FeelingOptions from "./widgets/options/GeneralOptions/FeelingOptions";
+import FeelingOptions2 from "./widgets/options/GeneralOptions/FeelingOptions2";
+
 const botName = "HumBERT";
 
 const config = {
@@ -70,6 +73,16 @@ const config = {
     {
       widgetName: "RecentDistant",
       widgetFunc: (props) => <EventOptions {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Feeling",
+      widgetFunc: (props) => <FeelingOptions {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Feeling2",
+      widgetFunc: (props) => <FeelingOptions2 {...props} />,
       mapStateToProps: ["userState", "sessionID"],
     },
   ],
