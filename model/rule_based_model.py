@@ -3,6 +3,7 @@ import nltk
 
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
 from model.classifiers import get_emotion, get_sentence_score
+from model.utterances import *
 import pandas as pd
 import numpy as np
 import random
@@ -13,6 +14,7 @@ import time
 
 nltk.download("wordnet")
 from nltk.corpus import wordnet  # noqa
+
 class ModelDecisionMaker:
     def __init__(self):
 
@@ -31,34 +33,61 @@ class ModelDecisionMaker:
             "8: Our own laughter brand",
             "9: Feigning laughter",
             "10: Self-laughter",
-            "11: Laughing at misfortunes and distrurbing circumstances",
+            "11: Laughing at misfortunes and disturbing circumstances",
             "12: Laughing at long-term suffering",
         ]
 
         self.TITLE_TO_PROTOCOL = {
-            # 1 maps to protocol 1 
+            # "Playful mind" (protocol 1) maps to 1
             self.PROTOCOL_TITLES[i]: i for i in range(len(self.PROTOCOL_TITLES))
         }
 
         # map each protocol to a 'difficulty level' to help determine which protocol the chatbot should recommend
-        self.PROTOCOL_TO_LEVEL = dict(zip(self.PROTOCOL_TITLES, [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3]))
+        self.PROTOCOL_TO_LEVEL = dict(zip(self.PROTOCOL_TITLES, [0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3]))
 
-        # each tiny session consists of a single or group of similar themes protocols
-        self.PROTOCOL_TINY_SESSIONS = [{"1: Playful mind", "2: Playful face"}, {"3: Self-glory"}, {"4: Incongruous world",
-            "5: Incongruous self",
-            "6: Self/world incongruity"}, {"7: Contrasting views"}, {"8: Our own laughter brand",
-            "9: Feigning laughter"}, {"10: Self-laughter"}, {"11: Laughing at misfortunes and distrurbing circumstances"}, {"12: Laughing at long-term suffering"}]
+        self.TINY_SESSION_TITLES = [
+            ("1: Playful mind", "2: Playful face"), 
+            ("3: Self-glory",), 
+            ("4: Incongruous world", "5: Incongruous self", "6: Self/world incongruity"), 
+            ("7: Contrasting views",), 
+            ("8: Our own laughter brand", "9: Feigning laughter"), 
+            ("10: Self-laughter",), 
+            ("11: Laughing at misfortunes and disturbing circumstances",), 
+            ("12: Laughing at long-term suffering",)
+        ]
 
-        self.LEVEL_TO_PROTOCOL_TINY_SESSION = dict(zip([0, 0, 1, 1, 1, 2, 3, 3], self.PROTOCOL_TINY_SESSIONS))
+        self.TINY_SESSION_TITLE_TO_LEVEL = dict(zip(self.TINY_SESSION_TITLES, [0, 0, 1, 1, 1, 2, 3, 3]))
+
+        self.TINY_SESSION_QUESTIONS = ["ask_playful_mode", "ask_self_glory", "ask_incongruity", "ask_feel_pre_cv", "ask_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
+
+        self.TINY_SESSION_TO_QUESTION = dict(zip(self.TINY_SESSION_TITLES, self.TINY_SESSION_QUESTIONS))
+        self.QUESTION_TO_TINY_SESSION = dict(zip(self.TINY_SESSION_QUESTIONS, self.TINY_SESSION_TITLES))
+
+        #TODO: check if we need self.NEGATIVE_TINY_SESSION_TITLES, QUESTIONS, self.PROTOCOL_MINI_SESSIONS,etc.
+
+        self.NEGATIVE_TINY_SESSION_TITLES = [
+            ("4: Incongruous world", "5: Incongruous self", "6: Self/world incongruity"), 
+            ("10: Self-laughter",), 
+            ("11: Laughing at misfortunes and disturbing circumstances",), 
+            ("12: Laughing at long-term suffering",)
+        ]
+        self.NEGATIVE_TINY_SESSION_TITLE_TO_LEVEL = dict(zip(self.NEGATIVE_TINY_SESSION_TITLES, [1, 2, 3, 3]))
+        self.NEGATIVE_TINY_SESSION_QUESTIONS = ["ask_laughter_incongruity", "ask_feel_pre_error", "ask_laughter_setback", "ask_accept_hardship"]
+        self.NEGATIVE_TINY_SESSION_TO_QUESTION = dict(zip(self.NEGATIVE_TINY_SESSION_TITLES, self.NEGATIVE_TINY_SESSION_QUESTIONS))
+        self.QUESTION_TO_NEGATIVE_TINY_SESSION = dict(zip(self.NEGATIVE_TINY_SESSION_QUESTIONS, self.NEGATIVE_TINY_SESSION_TITLES))
+
         
-        # each mini session consists of a group of similar themed protocols (low difficulty level for use at the start of a conversation)
-        self.PROTOCOL_MINI_SESSIONS = [{"1: Playful mind", "2: Playful face", "3: Self-glory"}, {"4: Incongruous world",
-            "5: Incongruous self",
-            "6: Self/world incongruity",
-            "7: Contrasting views"}, {"8: Our own laughter brand",
-            "9: Feigning laughter"}]
-
-        self.LEVEL_TO_PROTOCOL_MINI_SESSION = dict(zip([0, 1, 1], self.PROTOCOL_MINI_SESSIONS))
+        # Stores the initial emotional state of each user after they classify it (positive or negative)
+        self.user_states_initial = {}
+        # Tracks the current emotional state of each user (positive or negative)
+        self.user_states = {}
+        # Tracks the feeling of each user before or aftter attempting the current protocol (positive & negative or better, worse & same)
+        # keys: user ids, values: string tuples: (pre/post, feeling)
+        self.user_protocol_feelings = {}
+        # Tracks each user's current tiny session (including None)
+        self.user_tiny_sessions = {}
+        # Tracks the tiny sessions covered by each user so far 
+        self.user_covered_sessions = {}
 
         self.recent_protocols = deque(maxlen=12)
         self.reordered_protocol_questions = {}
@@ -72,13 +101,6 @@ class ModelDecisionMaker:
 
         self.positive_protocols = [i for i in range(1, 13)]
 
-        self.INTERNAL_PERSECUTOR_PROTOCOLS = [
-            self.PROTOCOL_TITLES[5],
-            self.PROTOCOL_TITLES[6],
-            self.PROTOCOL_TITLES[8],
-            self.PROTOCOL_TITLES[9],
-        ]
-
         # Keys: user ids, values: dictionaries describing each choice (in list)
         # and current choice
         self.user_choices = {}
@@ -91,10 +113,9 @@ class ModelDecisionMaker:
 
         # Tracks current emotion of each user after they classify it
         self.user_emotions = {}
-        # Tracks the initial emotional state of each user after they classify it (positive or negative)
-        self.user_states_initial = {}
-        # Tracks the current emotional state of each user (positive or negative)
-        self.user_states = {}
+
+        # Tracks whether each user has received the contempt message 
+        self.contempt_message = {}
         
         self.guess_emotion_predictions = {}
 
@@ -106,39 +127,6 @@ class ModelDecisionMaker:
         self.chosen_personas = {}
         self.datasets = {}
 
-        # repeated statements
-        empathetic_response_pos = "Great, I\'m glad to hear that."
-        # TODO - add and better, worse or same
-        ask_present_feeling = "How are you now feeling?"
-        continue_other = "Would you like to continue exploring other contexts for humour?"
-        empathetic_response_neg = "Sorry to hear that."
-        further_clarification = "Would you like some further clarification on this exercise?"
-        # TODO: (on the right)
-        established_humour_context_and_sheet = ["You may be able to exploit one or some of the Superiority, Incongruity and Playful Theories of humour.”, “These are at the start of the introductory document (on the right).”, “I know it's quite lengthy, so they may be worth reviewing."]
-        # TODO: reflect on, neutralise, and convert
-        not_contempt = "Remember not to laugh with contempt, both towards yourself and the external world; this can cause one to feel down."
-        how_not_contempt = "If you experience any contempt during your laughter, try to reflect on, neutralise, and convert it into non-hostile humour (by surprise and amusement - refer to the incongruity protocols)."
-        try_this = "Try practicing this on your own, whenever you\'re feeling up to it."
-        ask_pre_protocol_feeling_laughter = "How do you feel about laughing it off?"
-        ask_pre_protocol_feeling = "How do you feel about trying this out?"
-        empathetic_resp_pos_pre = "Great, I look forward to hearing how you find it."
-        try_this_again = "Feel free to practise this again wherever you can."
-        ask_post_protocol_feeling = "How did you feel after trying this out?"
-        # TODO: (on the right)
-        look_at_sheet = "The details of this exercise are in the introductory document under the title: , feel free to review this if you need." # (Have a continue option if not mobile?)
-        incongruity_and_superiority = "The underlying theories used here are the incongruity and superiority theories."
-        encourage_own_laughter = "It is best to constantly work on this, whenever possible, to develop it further, as it can become a major advantage throughout your life."
-        make_sense = "Does that make sense?"
-        laughed_off = "Have you tried laughing this off?"
-        clarify_errors_protocol_and_example = ["This exercise conforms to the evolutionary theory of humour as we learn to become playful with our everyday errors.", "We can laugh them off by the Incongruity and Playful Theories.", "An example could be burning a piece of toast, as long as it didn\'t set the house on fire!"]
-        clarify_setbacks_protocol_and_example = ["To laugh it off, we must, despite its painfulness, focus on any positive impact it has brought to us.", "This idea resides with Nietzsche\'s famous saying: \"What doesn\'t kill you makes you stronger.", "For example, last year, when I was training for the marathon, I twisted my ankle and could not compete. But I am now more careful during any exercise and am healthy enough to retry if I would like to."] 
-        review_protocols_and_return = "No problem. Feel free to review the protocol sheet for a more detailed explanation, and once you've finished, let me know."
-        clarify_hardship_protocol = ["To laugh this off, we must try to adjust our interpretation of it and focus on the positives instead.", "This idea (also) resides with Nietzsche\'s famous saying: \"What doesn\'t kill you makes you stronger\"."]
-        encourage_hardship_practice = ["The ability to laugh at our hardships will eventually allow us to overcome them and even use them for personal strength and growth.", "So, by practising this, you can become more advanced, by human standards at least!"]
-        ask_want_to_try = "Would you like to try this?"
-        encourage_setback_practice = ["Once you\'ve performed this exercise successfully on distant problems, you can start to apply this to more recent setbacks.", "You might find this difficult at first - I definitely did! But it becomes easier and feels more natural with practice, like learning to swim."]
-        read_quote = "Great. We can read the complete quote now to get started."
-
         # Structure of dictionary: {question: {
         #                           model_prompt: str or list[str],
         #                           choices: {maps user response to next protocol},
@@ -149,7 +137,7 @@ class ModelDecisionMaker:
         # mapping callable functions over for parsing).
         self.QUESTIONS = {
 
-            ############################# MAIN SESSION
+            #################### MAIN SESSION ####################
 
             "ask_name": {
                "model_prompt": "Hi! I\'m Humbert, a self-employed laughter assistant. May I know your name?",
@@ -161,55 +149,85 @@ class ModelDecisionMaker:
 
             "opening_prompt": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_opening_prompt(user_id),
-
                 "choices": {
-                    "yes": "user_knows_protocols",
-                    "no": "user_not_know_protocols"
+                    "yes": "remind_review",
+                    "no": "recommend_review" 
                 },
-                # TODO remove (added for testing protocols)
                 "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[7]],
-                    "no": [self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[6]],
+                    "yes":[],
+                    "no": [],
                     },
             },
 
-            "user_knows_protocols": {
+            "remind_review": {
                 "model_prompt": "Great. Just to let you know, they are also being displayed on the right if you wish to review them at any point in our conversation.",
                 "choices": {
-                    "continue": "get_started",
+                    "continue": "constant_practice",
                 },
                 "protocols": {
                     "continue": []
                 },
             }, 
 
-            "user_not_know_protocols": {
+            "constant_practice": {
+                "model_prompt": ["We will be discussing some of these today, but practising these during your daily life is where you will receive the real benefit as your laughter will become more natural and frequent, and you\'ll feel happier for it.", 
+                "Practice makes perfect. And I make comedians! Ok, that may not be completely true; but we can take it in steps!"],
+                "choices": {
+                    "Haha": "constant_practice_funny",
+                    "That wasn't funny": "constant_practice_not_funny"
+                },
+                "protocols": {
+                    "Haha": [],
+                    "That wasn't funny": [],
+                },
+            },
+
+            "recommend_review": {
                 "model_prompt": ["I would recommend reviewing these briefly before we talk as you can use this session to consolidate your understanding of them.", 
                 "They are being displayed on the right if you wish to review them now or at any point in our conversation."],
                 "choices": {
-                    "continue": "get_started",
+                    "continue": "constant_practice",
                 },
                 "protocols": {
                     "continue": []
                 },
             }, 
 
-            "get_started": {
-                "model_prompt": ["We will be discussing some of these today but practising these during your daily life is where you will receive the real benefit.", 
-                "The more you do, the more natural and frequent your laughter will become and the happier you will feel. Practice makes perfect!", 
-                "Anyway, enough with the intros - let\'s get started!"],
+            "constant_practice_funny": {
+                "model_prompt": "I\'m glad you found that funny. I\'ve also been trying to develop my sense of humour!",
                 "choices": {
-                    "continue": "ask_emotion",
+                    "continue": "get_started",
                 },
                 "protocols": {
-                    "continue": []
+                    "continue": [],
+                },
+            },
+
+            "constant_practice_not_funny": {
+                "model_prompt": "You\'re hard to impress. I\'ll try harder next time!",
+                "choices": {
+                    "continue": "get_started",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "get_started": {
+                "model_prompt": ["Just to let you know, our conversation might include some humour jargon. But don\'t worry, I\'ll identify this with CAPITALS, and you can ask me for clarification or look it up in the documentation in your own time.", 
+                "Anyway, enough with the intros - we can start whenever you're ready!"],
+                "choices": {
+                    "Let's start": "ask_emotion",
+                },
+                "protocols": {
+                    "Let's start": []
                 },
             }, 
 
             "ask_emotion": {
                "model_prompt": "How are you feeling today? Try to be honest; I will not judge you!", 
                "choices": {
-                    "open_text": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_get_started(user_id, app, db_session)
+                    "open_text": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_start_session(user_id, app, db_session)
                 },
                 "protocols": {"open_text": []},
            },
@@ -220,16 +238,16 @@ class ModelDecisionMaker:
                 ),
                 "choices": {
                     "yes": {
-                        "Sad": "after_classification_minus", # changed all from negative for initial rule-based implementation
-                        "Angry": "after_classification_minus",
-                        "Anxious/Scared": "after_classification_minus",
-                        "Happy/Content": "after_classification_plus", # changed from positive for initial rule-based implementation
+                        "Sad": "after_classification_negative", # changed all from negative for initial rule-based implementation
+                        "Angry": "after_classification_negative",
+                        "Anxious/Scared": "after_classification_negative",
+                        "Happy/Content": "after_classification_positive", # changed from positive for initial rule-based implementation
                     },
                     "no": "check_emotion",
                 },
                 "protocols": {
                     "yes": [],
-                    "no": []
+                    "no": [],
                     },
             },
 
@@ -250,13 +268,166 @@ class ModelDecisionMaker:
                 },
             },
 
-            ############################# REPEATED PARTS OF CONVERSATION
+            # start positive session 
+            # conversation redirects to MAIN SESSION (POSITIVE)
+            "after_classification_positive": {
+                "model_prompt": "Great! Let\'s start exploring how to develop your sense of humour.",
 
-            "continue_exploring": {
+                "choices": {
+                    "continue": lambda user_id, db_session, curr_session, app: self.determine_first_mini_session(),
+                },
+                "protocols": {
+                    "continue": [], 
+                },
+            },
+
+            # start negative session
+            # conversation redirects to MAIN SESSION (NEGATIVE)
+            "after_classification_negative": {
+                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_opening_prompt_negative(user_id),
+                "choices": {
+                    "yes": "underlying_reason_yes", 
+                    "no": "underlying_reason_no", 
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            # before ending conversation
+
+            # main session covered all 12 protocols (in tiny/mini sessions)
+            "covered_all_sessions": {
+                "model_prompt": "We have now covered all the relevant contexts for humour. Congratulations! Are there any specific protocols that you'd like to review?",
+                "choices": {
+                    "Yes": "choose_any",
+                    "No (end session)": lambda user_id, db_session, curr_session, app: self.end_session(user_id)
+                },
+                "protocols": {
+                    "Yes": [],
+                    "No (end session)": []
+                },
+            },
+
+            "review_any_session": {
+                "model_prompt": "Before we end our conversation, are there any specific protocols that you'd like to review?",
+                "choices": {
+                    "Yes": "choose_any",
+                    "No (end session)": lambda user_id, db_session, curr_session, app: self.end_session(user_id)
+                },
+                "protocols": {
+                    "Yes": [],
+                    "No (end session)": []
+                },
+            },
+
+            "choose_any": {
+                "model_prompt": "Please select the protocol you wish to review?",
+                "choices": {
+                    "Playful mode": "ask_playful_mode",
+                    "Self-glory": "ask_acknowledge_achievements",
+                    "Incongruity (self and or world)": "ask_incongruity",
+                    "Contrasting views": "ask_feel_pre_cv",
+                    "Our own laughter brand": "ask_laughter_brand",
+                    "Feigning laughter": "ask_feigning_laughter",
+                    "Self-laughter": "ask_recent_error",
+                    "Laughing at setbacks": "ask_setback",
+                    "Laughing at hardships": "ask_hardship",                    
+                },
+                "protocols": {
+                    "Playful mode": [],
+                    "Self-glory": [],
+                    "Incongruity (self and or world)": [],
+                    "Contrasting views": [],
+                    "Our own laughter brand": [],
+                    "Feigning laughter": [],
+                    "Self-laughter": [],
+                    "Laughing at setbacks": [],
+                    "Laughing at hardships": [], 
+                },
+            },
+
+            #################### ENDING MAIN SESSION
+
+            "final_feeling_check": {
+                #TODO: only use variable once so don't need
+                "model_prompt": ["That ends our session then!", ask_present_feeling],
+                "choices": {
+                    "Better": "ending_better",
+                    "Worse": "ending_neg",
+                    "No change": "ending_neg",
+                },
+                "protocols": {
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
+                },
+            },
+
+            "ending_better": {
+                "model_prompt": [empathetic_response_pos, "It would be most beneficial if you could recognise the discussed contexts for laughter (i.e. self and or world incongruity, error/fault, daily routine-accomplishment, etc.) as often as possible throughout your life.", 
+                "There is no endpoint to developing a sense of humour, it is a journey, and the most important thing is to enjoy it!", 
+                "And I am always here if you need me – I have nowhere else to go!"],
+                "choices": {
+                    "Goodbye": "ending_message",
+                    "I'd like to have another session": "another_session",
+                },
+                "protocols": {
+                    "Goodbye": [],
+                    "I'd like to have another session": [],
+                },
+            },
+
+            "ending_neg": {
+                "model_prompt": [empathetic_response_neg, "It would be most beneficial if you could recognise the discussed contexts for laughter (i.e. self and or world incongruity, error/fault, daily routine-accomplishment, etc.) as often as possible throughout your life.", 
+                "There is no endpoint to developing a sense of humour, it is a journey, and the most important thing is to enjoy it!", 
+                "And I am always here if you need me – I have nowhere else to go!"],
+                "choices": {
+                    "Goodbye": "ending_message",
+                    "I'd like to have another session": "another_session",
+                },
+                "protocols": {
+                    "Goodbye": [],
+                    "I'd like to have another session": [],
+                },
+            },
+
+            "ending_session_initial_pos": {
+                "model_prompt": ["It would be most beneficial if you could recognise the discussed contexts for laughter (i.e. self and or world incongruity, error/fault, daily routine-accomplishment, etc.) as often as possible throughout your life.", 
+                "There is no endpoint to developing a sense of humour, it is a journey, and the most important thing is to enjoy it!", 
+                "And I am always here if you need me – I have nowhere else to go!"],
+                "choices": {
+                    "Goodbye": "ending_message",
+                    "I'd like to have another session": "another_session",
+                },
+                "protocols": {
+                    "Goodbye": [],
+                    "I'd like to have another session": [],
+                },
+            },
+
+            "ending_message": {
+                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_ending_message(user_id),
+                "choices": {},
+                "protocols": {},
+            },
+
+            "another_session": {
+                "model_prompt": lambda user_id, db_session, curr_session, app: self.want_another_session(user_id),
+                "choices": {},
+                "protocols": {},
+            },
+
+            #################### REUSED PARTS OF CONVERSATION ####################
+            
+            # continue exploring
+
+            "continue_curr_can't_do": {
                 "model_prompt": continue_other,
                 "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "can't_do"), # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "review_any_session",#"lambda user_id, db_session, curr_session, app: self.end_session(user_id)"
                 },
                 "protocols": {
                     "yes": [],
@@ -264,11 +435,47 @@ class ModelDecisionMaker:
                 },
             },
 
-            "positive_pre_protocol": {
+            "empathetic_continue_curr_can't_do": {
+                "model_prompt": [empathetic_response_pos, continue_other],
+                "choices": {
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "can't_do"), # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "review_any_session" #lambda user_id, db_session, curr_session, app: self.end_session(user_id)
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "continue_curr_not_willing": {
+                "model_prompt": continue_other,
+                "choices": {
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "not_willing"), # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "review_any_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "continue_curr_willing": {
+                "model_prompt": continue_other,
+                "choices": {
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "willing"), # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "review_any_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "continue_pos_pre_protocol": {
                 "model_prompt": [empathetic_resp_pos_pre, continue_other], 
                 "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "willing"), # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "review_any_session"
                 },
                 "protocols": {
                     "yes": [],
@@ -276,129 +483,133 @@ class ModelDecisionMaker:
                 },
             },
 
-            "positive_try_pre_protocol": {
-                "model_prompt": [empathetic_response_pos, try_this, continue_other], 
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
+            # encourage practice
 
-            "positive_post_protocol": {
-                "model_prompt": [empathetic_response_pos, try_this_again, continue_other], 
+            "try_pre_protocol_pos": {
+                "model_prompt": [empathetic_response_pos, try_this], 
                 "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "negative_post_protocol": {
-                "model_prompt": [empathetic_response_neg, look_at_sheet, try_this_again],
-                "choices": {
-                    "continue": "continue_exploring", 
+                    "continue": "continue_curr_willing"
                 },
                 "protocols": {
                     "continue": [],
                 },
             },
 
-            "remind_contempt_post":{
+            "try_pre_protocol_neg": {
+                "model_prompt": try_this,
+                "choices": {
+                    "continue": "continue_curr_not_willing",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            }, 
+
+            "try_pre_protocol_neg_no_contempt":{
+                "model_prompt": [how_not_contempt, try_this],
+                "choices": {
+                    "continue": "continue_curr_not_willing",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "try_laughter_pre_protocol_pos": {
+                "model_prompt": try_this,
+                "choices": {
+                    "continue": "continue_curr_willing",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "try_post_protocol_pos": {
+                "model_prompt": [empathetic_response_pos, try_this_again], 
+                "choices": {
+                    "continue": "continue_curr_willing"                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "try_post_protocol_neg":{
+                "model_prompt": try_this_again, 
+                "choices": {
+                    "continue": "continue_curr_not_willing",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            # more explanation
+            "review_post_protocol_neg": {
+                "model_prompt": [empathetic_response_neg, look_at_sheet],
+                "choices": {
+                    "continue": "try_post_protocol_neg", 
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            # no contempt 
+
+            "remind_contempt_post_protocol":{
                 "model_prompt": not_contempt, 
                 "choices": {
-                    "Continue": "try_post", 
-                    "How can I control this?": "how_not_contempt_post",
+                    "Sure": "try_post_protocol_neg", 
+                    "How can I stop this?": "explain_contempt_post_protocol",
                 },
                 "protocols": {
-                    "Continue": [],
-                    "How can I control this?": []
+                    "Sure": [],
+                    "How can I stop this?": []
                 },
             },
 
-            "how_not_contempt_post":{
-                "model_prompt": [how_not_contempt, try_this_again, continue_other], 
+            "explain_contempt_post_protocol":{
+                "model_prompt": [how_not_contempt, try_this_again], 
                 "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
+                    "continue": "continue_curr_not_willing",
                 },
                 "protocols": {
-                    "yes": [],
-                    "no": []
+                    "continue": [],
                 },
             },
 
-            "try_post":{
-                "model_prompt": [try_this_again, continue_other], 
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "remind_contempt_pre":{
+            "remind_contempt_pre_protocol":{
                 "model_prompt": not_contempt, 
                 "choices": {
-                    "Continue": "continue_exploring", 
-                    "How can I control this?": "how_not_contempt_pre",
+                    "Sure": "continue_curr_not_willing", 
+                    "How can I stop this?": "explain_contempt_pre_protocol",
                 },
                 "protocols": {
-                    "Continue": [],
-                    "How can I control this?": []
+                    "Sure": [],
+                    "How can I stop this?": []
                 },
             },
 
-            "how_not_contempt_pre":{
-                "model_prompt": [how_not_contempt, continue_other], 
+            "explain_contempt_pre_protocol":{
+                "model_prompt": how_not_contempt, 
                 "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ending_session",
+                    "continue": "continue_curr_not_willing",
                 },
                 "protocols": {
-                    "yes": [],
-                    "no": []
+                    "continue": [],
                 },
             },
 
-            "try_protocol": {
-                "model_prompt": [try_this, continue_other],
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(),
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": [],
-                },
-            },
+            #################### TINY SESSIONS ####################
 
-            "ending_session": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.end_session(user_id),
-                "choices": {},
-                "protocols": {},
-            },
-
-            ############################# TINY SESSIONS
-
-            #### Playful mode
+            # playful mode
 
             "ask_playful_mode": {
-                "model_prompt": ["Is your body in a playful mode?", 
-                "As adults, we sometimes get stuck in a serious mode!"],
-                #TODO: should we have choices: haha & not funny
+                "model_prompt": "Is your body in a playful mode?",
                 "choices": {
                     "yes": "ask_acknowledge_achievements",
-                    "no": "inform_use_and_eg"
+                    "no": "inform_playful"
                 },
                 "protocols": {
                     "yes": [self.PROTOCOL_TITLES[1], self.PROTOCOL_TITLES[2]],
@@ -406,32 +617,30 @@ class ModelDecisionMaker:
                 },
             },
 
-            "inform_use_and_eg": {
-                "model_prompt": ["A useful skill for developing your sense of humour is to become more flexible and playful about your thoughts and beliefs.",
-                "For example, by exploring counterpositions to a strongly followed belief.", "Would you like an example?"],
+             "ask_acknowledge_achievements": {
+                "model_prompt": [empathetic_response_pos, "As adults, we sometimes get stuck in a serious mode!"],
+                #TODO: should we have choices: haha & not funny
                 "choices": {
-                    "yes": "give_eg",
-                    "no": "ask_song"
+                    "continue": lambda user_id, db_session, curr_session, app: self.check_acknowledge_achievements(user_id),
                 },
                 "protocols": {
-                    "yes": [],
-                    "no": []
+                    "continue": [self.PROTOCOL_TITLES[1], self.PROTOCOL_TITLES[2]],
                 },
             },
 
-            "give_eg": {
-                "model_prompt": ["I have used this example before: employees are happier and therefore more productive in clothes they feel comfortable in, so I believe everyone should be allowed to turn up to work in their pyjamas!",
-                try_this],
+            "inform_playful": {
+                "model_prompt": "A useful skill for developing your sense of humour is to become more flexible and playful about your thoughts and beliefs.",
                 "choices": {
-                    "continue": "ask_song"
+                    "I see": "explore_playful",
+                    "Can I have an example": "example_playful",
                 },
                 "protocols": {
-                    "continue": []
+                    "I see": [],
+                    "Can I have an example": [],
                 },
             },
 
             "explore_playful":{
-                # TODO: too many continues? is a delay better to use? or both?
                 "model_prompt": "Let\'s explore another way to get into a playful mode.",
                 "choices": {
                     "continue": "ask_song",
@@ -464,6 +673,19 @@ class ModelDecisionMaker:
                 },
             },
 
+            "recommend_playful_protocol": {
+                "model_prompt": ["Another way to become more playful is to loosen up your mouth and eye muscles by moving them around and singing your chosen song.", 
+                ask_pre_protocol_feeling],
+                "choices": {
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": "pre_playful_neg"
+                },
+                "protocols": {
+                    "Positive": [],
+                    "Negative": [],
+                },
+            },
+
             "recommend_song": {
                 "model_prompt": "How about {}? Or even make up your own!",
                 "choices": {
@@ -474,32 +696,31 @@ class ModelDecisionMaker:
                 },
             },
 
-            "recommend_playful_protocol": {
-                "model_prompt": ["Another way to become more playful is to loosen up your mouth and eye muscles by moving them around and singing your chosen song.", 
-                ask_pre_protocol_feeling],
-                "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_playful_protocol"
-                },
-                "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
-            },
-
-            "negative_pre_playful_protocol": {
+            "pre_playful_neg": {
                 "model_prompt": [look_at_sheet, try_this],
                 "choices": {
-                    "continue": "continue_exploring",
+                    "continue": "continue_curr_not_willing",
                 },
                 "protocols": {
                     "continue": [],
                 },
             },
 
-            #### Self-glory
+            "example_playful": {
+                "model_prompt": ["You could explore counterpositions to a strongly followed belief.",
+                "For example, employees are happier and therefore more productive in clothes they feel comfortable in, so I believe everyone should be allowed to turn up to work in their pyjamas!",
+                try_this],
+                "choices": {
+                    "continue": "explore_playful"
+                },
+                "protocols": {
+                    "continue": []
+                },
+            },
 
-            "ask_acknowledge_achievements": {
+            # self-glory
+
+            "ask_self_glory": {
                 "model_prompt": "Do you spend any time acknowledging your simple achievements, such as daily routine tasks?",
                 "choices": {
                     "yes": "ask_congratulate_with_smile",
@@ -514,7 +735,7 @@ class ModelDecisionMaker:
             "ask_congratulate_with_smile": {
                 "model_prompt": "Have you tried congratulating yourself on these achievements with a laugh or smile?",
                 "choices": {
-                    "yes": "ask_how_felt_post_protocol",
+                    "yes": "ask_feel_post_sg",
                     "no": "propose_sg_and_eg"
                 },
                 "protocols": {
@@ -523,25 +744,26 @@ class ModelDecisionMaker:
                 },
             },
 
-            "ask_how_felt_post_protocol": {
-                # TODO: change choices to better, worse or the same?
+            "ask_feel_post_sg": {
+                # TODO: change choices to better, worse or the same? - for now the same and worse is same 
                 "model_prompt": ask_post_protocol_feeling,
                 "choices": {
-                    "Positive": "positive_post_protocol", 
-                    "Negative": "negative_post_protocol"
+                    "Better": "try_post_protocol_pos", 
+                    "Worse": "review_post_protocol_neg",
+                    "No change": "review_post_protocol_neg",
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
                 },
             },
             
             "propose_sg_and_eg": {
-                "model_prompt": ["How about trying this on your own, over simple things, like brushing your teeth?",
-                ask_pre_protocol_feeling],
+                "model_prompt": "How would you feel about trying this on your own, over simple things, like brushing your teeth?",
                 "choices": {
-                    "Positive": "positive_pre_protocol", 
-                    "Negative": "negative_pre_sg"
+                    "Positive": "continue_pos_pre_protocol", 
+                    "Negative": "pre_sg_neg"
                 },
                 "protocols": {
                     "Positive": [],
@@ -549,12 +771,12 @@ class ModelDecisionMaker:
                 },
             },
 
-            "negative_pre_sg": {
+            "pre_sg_neg": {
                 # TODO: do we want empathetic_response_neg?
                 "model_prompt": [empathetic_response_neg, further_clarification],
                 "choices": {
-                    "yes": "clarify_sg",
-                    "no": "continue_exploring"
+                    "yes": "further_clarify_sg",
+                    "no": "continue_curr_not_willing"
                 },
                 "protocols": {
                     "yes": [],
@@ -562,13 +784,10 @@ class ModelDecisionMaker:
                 },
             },
 
-            "clarify_sg": {
+            "further_clarify_sg": {
                 "model_prompt": [incongruity_and_superiority, look_at_sheet],
                 "choices": {
-                    #add continue_other to prompt
-                    #"yes": ,
-                    #"no": "continue_exploring"
-                    "continue": "continue_exploring"
+                    "continue": "continue_curr_not_willing"
                 },
                 "protocols": {
                     "continue": [],
@@ -578,25 +797,21 @@ class ModelDecisionMaker:
             "propose_congratulate_with_smile": {
                 "model_prompt": ["Try congratulating yourself, via a smile or laugh, on something simple that you have completed, such as doing the dishes or even the act of breathing!"],
                 "choices": {
-                    # add continue_other to model prompt
-                    # "yes": ,
-                    # "no": "continue_exploring"
-                    #TODO: does this continue make sense???
-                    "continue": "continue_exploring"
+                    "continue": "continue_curr_can't_do"
                 },
                 "protocols": {
                     "continue": [],
                 },
             },
 
-            #### Incongruity
+            # incongruity
 
             "ask_incongruity": {
-                "model_prompt": "Have you experienced any inconsistency in your life lately?",
+                "model_prompt": "Have you experienced any incongruity in your life lately?",
                 "choices": {
-                    "Yes": "ask_feel_about_laughter",
-                    "No": "continue_exploring",
-                    "Not sure": "remind_incongruity_and_eg",
+                    "Yes": "ask_laughter_incongruity",
+                    "No": "no_incongruity",
+                    "Not sure": "reminder_incongruity",
                 },
                 "protocols": {
                     "Yes": [self.PROTOCOL_TITLES[4], self.PROTOCOL_TITLES[5], self.PROTOCOL_TITLES[6]],
@@ -605,100 +820,11 @@ class ModelDecisionMaker:
                 },
             },
 
-            "ask_feel_about_laughter": {
-                "model_prompt": [ask_pre_protocol_feeling_laughter],
+            "ask_laughter_incongruity": {
+                "model_prompt": ask_pre_protocol_feeling_laughter, # are you able to laugh this off
                 "choices": {
-                    "Positive": "positive_try_pre_protocol", 
-                    "Negative": "negative_pre_incongruity"
-                },
-                "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
-            },
-
-            "negative_pre_incongruity": {
-                #TODO check this
-                "model_prompt": [empathetic_response_neg, further_clarification],
-                "choices": {
-                    "yes": "clarify_incongruity",
-                    "no": "encourage_incongruity",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": [], 
-                },
-            },
-
-            "clarify_incongruity": {
-                "model_prompt": ["Incongruity can be a trigger for true (Duchenne) laughter.",
-                "You might have experienced this through any changes in the outside world or your own contradictions or change of attitudes.",
-                "On the other hand, it could be an inconsistency between the reality of the external world and our expectations.", 
-                look_at_sheet],
-                "choices": {
-                    "continue": "encourage_incongruity",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "encourage_incongruity": {
-                "model_prompt": ["If you\'re feeling up to it, try laughing at this incongruity on your own.", continue_other],
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(),
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": [],
-                },
-            },
-
-            "remind_incongruity_and_eg": {
-                "model_prompt": ["No problem, I know it can be hard to remember as the documentation is quite long!",
-                "An incongruity is an inconsistency or discrepancy that can usually be in the outside world or your own life, mind and behaviours.",
-                "It could even be a contrast between world realities compared to our expectations.",
-                "For example, I recently caught my grandma riding my bike - that was quite bizarre!"],
-                "choices": {
-                    "continue": "ask_incongruity_without_unsure",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "ask_incongruity_without_unsure": {
-                "model_prompt": "Have you experienced any inconsistency in your life lately?",
-                "choices": {
-                    "Yes": "ask_feel_about_laughter",
-                    "No": "continue_exploring",
-                },
-                "protocols": {
-                    "Yes": [],
-                    "No": [], 
-                },
-            },
-
-            #### Contrasting views
-
-            "inform_cv_and_ask_feel": {
-                "model_prompt": ["How do you feel about exploiting a change in your perception of an image as a trigger for laughter?"],
-                "choices": {
-                    "Positive": "positive_pre_cv", 
-                    "Negative": "negative_pre_cv"
-                },
-                "protocols": {
-                    "Positive": [self.PROTOCOL_TITLES[7]],
-                    "Negative": [self.PROTOCOL_TITLES[7]]
-                },
-            },
-
-            "positive_pre_cv": {
-                "model_prompt": [empathetic_response_pos, further_clarification], 
-                "choices": {
-                    "yes": "clarify_cv", 
-                    "no": "encourage_cv",
+                    "yes": "try_laughter_pre_protocol_pos", 
+                    "no": "pre_incongruity_neg"
                 },
                 "protocols": {
                     "yes": [],
@@ -706,12 +832,12 @@ class ModelDecisionMaker:
                 },
             },
 
-            "negative_pre_cv": {
-                #TODO
-                "model_prompt": [empathetic_response_neg, further_clarification],
+            "pre_incongruity_neg": {
+                #TODO check this
+                "model_prompt": further_clarification,
                 "choices": {
-                    "yes": "clarify_cv",
-                    "no": "encourage_cv",
+                    "yes": "further_clarify_incongruity",
+                    "no": "try_laughter_incongruity",
                 },
                 "protocols": {
                     "yes": [],
@@ -719,26 +845,164 @@ class ModelDecisionMaker:
                 },
             },
 
-            "clarify_cv": {
-                #TODO: should we perform a search?
-                "model_prompt": ["You can induce a change in perception by staring at the image of this Gestalt vase where you should also see two white faces and smile or laugh while repetitively switching between both interpretations.", 
-                "It sounds fancy, right?", "It comes from Gestalt psychology.", # extension - wiki search if user would like to know more
+            "further_clarify_incongruity": {
+                "model_prompt": ["Incongruity can be a trigger for true (Duchenne) laughter.",
+                "You might have experienced this through any changes in the outside world or your own contradictions or change of attitudes.",
+                "On the other hand, it could be an inconsistency between the reality of the external world and our expectations.", 
                 look_at_sheet],
                 "choices": {
-                    "continue": "try_protocol",
+                    "continue": "try_laughter_incongruity",
                 },
                 "protocols": {
                     "continue": [],
                 },
             },
 
-            #### Own laughter brand
+            "try_laughter_incongruity": {
+                "model_prompt": "If you\'re feeling up to it, try laughing at this incongruity on your own.", # how does that sound? + -> great - come back tell me
+                "choices": {
+                    "continue": "ask_feel_pre_incongruity", 
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
 
-            "ask_tried_laughter_brand": {
+            "ask_feel_pre_incongruity": {
+                "model_prompt": ask_pre_protocol_feeling,
+                "choices": {
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre(user_id),
+                    "Neutral": "continue_curr_not_willing",
+                },
+                "protocols": {
+                    "Positive": [],
+                    "Negative": [],
+                    "Neutral": [],
+                },
+            },
+
+            "no_incongruity": {
+                "model_prompt": ["I see. I hope you're not finding it too boring then!", continue_other],
+                "choices": {
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "can't_do"), # function that returns next prompt (random based on user's choice, emotion and current level)
+                    "no": "review_any_session"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },          
+
+            "reminder_incongruity": {
+                "model_prompt": ["No problem - there are lots of terms associated with humour, as I'm sure you'ved realised!",
+                "An incongruity is an inconsistency or discrepancy that can usually be in the outside world or your own life, mind and behaviours.",
+                "It could even be a contrast between world realities compared to our expectations.",
+                ],
+                "choices": {
+                    "I see": "ask_incongruity_no_unsure",
+                    "Can I have an example": "example_incongruity",
+                },
+                "protocols": {
+                    "I see": [],
+                    "Can I have an example": [],
+                },
+            },
+
+            "ask_incongruity_no_unsure": {
+                "model_prompt": "Have you experienced any incongruity in your life lately?",
+                "choices": {
+                    "yes": "ask_laughter_incongruity",
+                    "no": "continue_curr_can't_do",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": [], 
+                },
+            },
+
+            "example_incongruity": {
+                "model_prompt": "One example I can think of is when I caught my grandma riding my bike last week - that was quite bizarre!",
+                "choices": {
+                    "continue": "ask_incongruity_no_unsure",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            # contrasting views
+
+            "ask_feel_pre_cv": {
+                "model_prompt": "How do you feel about the idea of exploiting a change in your perception of an image as a trigger for laughter?",
+                "choices": {
+                    "Sounds interesting": "pre_cv_pos", 
+                    "What?": "pre_cv_neg"
+                },
+                "protocols": {
+                    "Sounds interesting": [self.PROTOCOL_TITLES[7]],
+                    "What?": [self.PROTOCOL_TITLES[7]]
+                },
+            },
+
+            "pre_cv_pos": {
+                "model_prompt": [empathetic_response_pos, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_cv", 
+                    "no": "try_laughter_pre_protocol_pos",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "further_clarify_cv": {
+                #TODO: should we perform a search?
+                "model_prompt": ["You can induce a change in perception by staring at the image of this Gestalt vase where you should also see two white faces and smile or laugh while repetitively switching between both interpretations.", 
+                "It sounds fancy, right? It comes from Gestalt psychology.", # extension - wiki search if user would like to know more
+                ],
+                "choices": {
+                    "Sounds interesting": "try_pre_protocol_neg",
+                    "What?": "explain_cv",
+                },
+                "protocols": {
+                    "Sounds interesting": [],
+                    "What?": [],
+                },
+            },
+
+            "explain_cv": {
+                #TODO: should we perform a search?
+                "model_prompt": [look_at_sheet, try_this],
+                "choices": {
+                    "continue": "continue_curr_can't_do",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },    
+
+            "pre_cv_neg": {
+                #TODO
+                "model_prompt": further_clarification,
+                "choices": {
+                    "yes": "further_clarify_cv",
+                    "no": "try_pre_protocol_neg",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": [], 
+                },
+            },    
+
+            # own laughter brand
+
+            "ask_laughter_brand": {
                 "model_prompt": "Have you tried producing new forms of laughter?",
                 "choices": {
-                    "yes": "ask_how_felt_lb",
-                    "no": "explain_process_lb"
+                    "yes": "ask_feel_post_lb",
+                    "no": "explain_lb"
                 },
                 "protocols": {
                     "yes": [self.PROTOCOL_TITLES[8], self.PROTOCOL_TITLES[9]],
@@ -746,19 +1010,21 @@ class ModelDecisionMaker:
                 },
             },
 
-            "ask_how_felt_lb": {
+            "ask_feel_post_lb": {
                 "model_prompt": ask_post_protocol_feeling,
                 "choices": {
-                    "Positive": "positive_post_lb", 
-                    "Negative": "negative_post_lb"
+                    "Better": "post_lb_pos",
+                    "Worse": "post_lb_neg",
+                    "No change": "post_lb_neg",
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
                 },
             },
 
-            "positive_post_lb": {
+            "post_lb_pos": {
                 "model_prompt": [empathetic_response_pos, encourage_own_laughter],
                 "choices": {
                     "continue": "ask_explore_related",
@@ -768,22 +1034,11 @@ class ModelDecisionMaker:
                 },
             },
 
-            "negative_post_lb": {
-                "model_prompt": [empathetic_response_neg, "Creating your own form of laughter can be very beneficial to your general mood and when trying to cope with stress.",
-                "But it does take time to perfect, so don\'t feel you need to rush it!"],
-                "choices": {
-                    "continue": "ask_explore_related",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
             "ask_explore_related": {
-                "model_prompt": "Would you like to continue exploring a related exercise?",
+                "model_prompt": "Would you like to explore a related exercise?",
                 "choices": {
                     "yes": "ask_feigning_laughter",
-                    "no": "continue_exploring"
+                    "no": "continue_curr_not_willing"
                 },
                 "protocols": {
                     "yes": [],
@@ -795,8 +1050,8 @@ class ModelDecisionMaker:
                 "model_prompt": ["Another related exercise often practised in laughter yoga is feigning Duchenne laughter.",
                 "You could try this in your own time as a mental exercise to keep your spirits high.", ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_fl_protocol",
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": "pre_fl_neg",
                 },
                 "protocols": {
                     "Positive": [],
@@ -804,99 +1059,12 @@ class ModelDecisionMaker:
                 },
             },
 
-            "explain_process_lb": {
-                "model_prompt": ["Then this should be fun! To playfully create your form of laughter, perform the following:", 
-                "loosen the muscles around your mouth and keep your mouth open while repeating one of the following repetitious phrases (using any vowel) and turning it into laughter:", 
-                "ah, ah, ah, ah, eh, eh, eh, eh, oh, oh, oh, oh, ih, ih, ih, ih, ih, uh, uh, uh, uh, ..."],
-                "choices": {
-                    "continue": "continue_explaining_process_lb",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "continue_explaining_process_lb": {
-                "model_prompt": ["Try to ensure that your form of laughter requires a minimum amount of energy (so you can use it for extended periods).",
-                make_sense],
-                "choices": {
-                    "yes": "encourage_lb_pos",
-                    "no": "further_clarification_lb"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "further_clarification_lb": {
-                "model_prompt": [look_at_sheet],
-                "choices": {
-                    "continue": "encourage_lb",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "encourage_lb_pos": {
-                "model_prompt": [empathetic_response_pos, encourage_own_laughter, 
-                "Maybe don\'t try this at the zoo, though, as they might not let you out!"],
-                "choices": {
-                    "Haha": "found_funny_lb",
-                    "That wasn't funny": "not_found_funny_lb"
-                },
-                "protocols": {
-                    "Haha": [],
-                    "That wasn't funny": []
-                },
-            },
-
-            "encourage_lb": {
-                "model_prompt": [encourage_own_laughter, 
-                "Maybe don\'t try this at the zoo, though, as they might not let you out!"],
-                "choices": {
-                    "Haha": "found_funny_lb",
-                    "That wasn't funny": "not_found_funny_lb"
-                },
-                "protocols": {
-                    "Haha": [],
-                    "That wasn't funny": []
-                },
-            },
-
-            "found_funny_lb": {
-                "model_prompt": ["I\'m glad you found that funny. I\'ve also been trying to develop my sense of humour!", 
-                "Would you like to continue exploring a related exercise?"],
-                "choices": {
-                    "yes": "ask_feigning_laughter",
-                    "no": "continue_exploring"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "not_found_funny_lb": {
-                "model_prompt": ["You\'re hard to impress. I\'ll try harder next time!", 
-                "Would you like to continue exploring a related exercise?"],
-                "choices": {
-                    "yes": "ask_feigning_laughter",
-                    "no": "continue_exploring"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "negative_pre_fl_protocol": {
+            "pre_fl_neg": {
                 # TODO: wording change? Perhaps some further clarification might help?
                 "model_prompt": [empathetic_response_neg, further_clarification],
                 "choices": {
-                    "yes": "further_clarification_fl",
-                    "no": "continue_exploring"
+                    "yes": "further_clarify_fl",
+                    "no": "continue_curr_not_willing"
                 },
                 "protocols": {
                     "yes": [],
@@ -904,172 +1072,340 @@ class ModelDecisionMaker:
                 },
             },
 
-            "further_clarification_fl": {
+            "further_clarify_fl": {
                 "model_prompt": ["Duchenne laughter is considered the sole indicator of true enjoyment.",
                 "Just as we practice swimming or running as a physical exercise rather than trying to get from A to B, we practice feigning laughter (laughing without humour) to exercise our minds.", 
                 look_at_sheet],
                 "choices": {
-                    "continue": "continue_exploring",
+                    "continue": "continue_curr_not_willing",
                 },
                 "protocols": {
                     "continue": [],
                 },
             },
 
-            #### Self-laughter
-
-            "ask_recent_error": {
-                "model_prompt": "Have you experienced a recent error or shortcoming?",
+            "post_lb_neg": {
+                "model_prompt": [empathetic_response_neg, "Creating your own form of laughter can be very beneficial to your general mood and when trying to cope with stress.",
+                "But it does take time to perfect, so don\'t feel you need to rush it!"],
                 "choices": {
-                    "yes": "ask_laughed_off_error", 
-                    "no": "no_recent_errors",
+                    "continue": "ask_explore_related",
                 },
                 "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[10]],
-                    "no": [self.PROTOCOL_TITLES[10]]
+                    "continue": [],
                 },
             },
 
-            "ask_laughed_off_error": {  
+            "explain_lb": {
+                "model_prompt": ["Then this should be fun! To playfully create your form of laughter, perform the following:", 
+                "loosen the muscles around your mouth and keep your mouth open while repeating one of the following repetitious phrases (using any vowel) and turning it into laughter:", 
+                "ah, ah, ah, ah, eh, eh, eh, eh, oh, oh, oh, oh, ih, ih, ih, ih, ih, uh, uh, uh, uh, ..."],
+                "choices": {
+                    "continue": "continue_explaining_lb",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "continue_explaining_lb": {
+                "model_prompt": ["Try to ensure that your form of laughter requires a minimum amount of energy (so you can use it for extended periods).",
+                make_sense],
+                "choices": {
+                    "yes": "try_pre_lb",
+                    "no": "further_clarify_lb"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "try_pre_lb": {
+                "model_prompt": [empathetic_response_pos, encourage_own_laughter, 
+                "Maybe don\'t try this at the zoo, though, as they might not let you out!"],
+                "choices": {
+                    "Haha": "funny_lb",
+                    "That wasn't funny": "not_funny_lb"
+                },
+                "protocols": {
+                    "Haha": [],
+                    "That wasn't funny": []
+                },
+            },
+
+            "further_clarify_lb": {
+                "model_prompt": look_at_sheet,
+                "choices": {
+                    "continue": "encourage_try_lb",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "encourage_try_lb": {
+                "model_prompt": [encourage_own_laughter, 
+                "Maybe don\'t try this at the zoo, though, as they might not let you out!"],
+                "choices": {
+                    "Haha": "funny_lb",
+                    "That wasn't funny": "not_funny_lb"
+                },
+                "protocols": {
+                    "Haha": [],
+                    "That wasn't funny": []
+                },
+            },
+
+            "funny_lb": {
+                "model_prompt": ["I\'m glad you found that funny. I\'ve also been trying to develop my sense of humour!", 
+                "Would you like to explore a related exercise?"],
+                "choices": {
+                    "yes": "ask_feigning_laughter",
+                    "no": "continue_curr_not_willing"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "not_funny_lb": {
+                "model_prompt": ["You\'re hard to impress. I\'ll try harder next time!", 
+                "Would you like to explore a related exercise?"],
+                "choices": {
+                    "yes": "ask_feigning_laughter",
+                    "no": "continue_curr_not_willing"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            # self-laughter
+
+            "ask_recent_error": {
+                "model_prompt": "Have you made any errors or blunders recently? Nothing major, just in your day-to-day life.",
+                "choices": {
+                    "yes": "ask_laugher_error", 
+                    "no": "no_error",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "ask_laugher_error": {  
                 "model_prompt": laughed_off,
                 "choices": {
-                    "Yes": "ask_how_felt_error", 
-                    "No": "propose_laugh_off_error",
-                    "Not sure": "explain_laugh_off_error" 
+                    "yes": "ask_feel_post_error", 
+                    "no": "encourage_laughter_error",
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": [], 
+                },
+            },
+
+            "ask_feel_post_error": {  
+                "model_prompt": ask_post_protocol_feeling,
+                "choices": {
+                    "Better": "try_post_protocol_pos",
+                    "Worse": lambda user_id, db_session, curr_session, app: self.check_contempt_post_error(user_id),
+                    "No change": lambda user_id, db_session, curr_session, app: self.check_contempt_post_error(user_id),
+                },
+                "protocols": {
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
+                },
+            },
+
+            "remind_contempt_post_error": { 
+                "model_prompt": [empathetic_response_neg, not_contempt], 
+                "choices": {
+                    "Sure": "ask_fc_post_error", 
+                    "How can I stop this?": "how_not_contempt_post_error",
+                },
+                "protocols": {
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+
+            "ask_fc_post_error": { 
+                "model_prompt": further_clarification,
+                "choices": {
+                    "yes": "further_clarify_post_error", 
+                    "no": "try_post_protocol_neg"
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "further_clarify_post_error": { 
+                # TODO
+                "model_prompt": [clarify_errors_protocol_and_example_1, clarify_errors_protocol_and_example_2, look_at_sheet], 
+                "choices": {
+                    "continue": "try_post_protocol_neg",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "how_not_contempt_post_error":{
+                "model_prompt": [how_not_contempt, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_post_error", 
+                    "no": "try_post_protocol_neg" 
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "post_error_neg": { 
+                "model_prompt": [empathetic_response_neg, further_clarification],
+                "choices": {
+                    "yes": "further_clarify_post_error", 
+                    "no": "try_post_protocol_neg"
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "encourage_laughter_error": {
+                "model_prompt": ["Feel free to practice laughing at this in your own time, along with any other minor errors in the future.",
+                "And don\'t be embarrassed, I\'m sure mine are much worse!"],
+                "choices": {
+                    "continue": "ask_feel_pre_error",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "ask_feel_pre_error": {
+                "model_prompt": ask_pre_protocol_feeling,
+                "choices": {
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id),
+                    "Unsure": "explain_laughter_error"
+                },
+                "protocols": {
+                    "Positive": [],
+                    "Negative": [],
+                    "Unsure": []
+                },
+            },
+
+            "remind_contempt_pre_error": { 
+                "model_prompt": [empathetic_response_neg, not_contempt], 
+                "choices": {
+                    "Sure": "ask_fc_pre_error", 
+                    "How can I stop this?": "how_not_contempt_pre_error",
+                },
+                "protocols": {
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+
+            "ask_fc_pre_error": { 
+                "model_prompt": further_clarification, 
+                "choices": {
+                    "yes": "further_clarify_pre_error",
+                    "no": "try_pre_protocol_neg"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "how_not_contempt_pre_error":{
+                "model_prompt": [how_not_contempt, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_pre_error", 
+                    "no": "try_pre_protocol_neg" 
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "pre_error_neg": {
+                "model_prompt": [empathetic_response_neg, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_pre_error",
+                    "no": "try_pre_protocol_neg"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "further_clarify_pre_error": {
+                "model_prompt": [clarify_errors_protocol_and_example_1, clarify_errors_protocol_and_example_2, look_at_sheet], 
+                "choices": {
+                    "continue": "try_pre_protocol_neg",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "explain_laughter_error": {
+                "model_prompt": ["An example could be wearing two different colour socks to work by mistake.", 
+                "A good ice breaker for everyone to laugh at when the conversation gets boring!"],  
+                "choices": {
+                    "continue": "continue_explaining_laughter_error",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "continue_explaining_laughter_error": {
+                "model_prompt": ["You can try laughing at any of your errors on your own in the same way.", ask_pre_protocol_feeling],
+                "choices": {
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id)
+                },
+                "protocols": {
+                    "Positive": [],
+                    "Negative": []
+                },
+            },
+
+            "no_error": {
+                "model_prompt": ["Wow, I am jealous! I make mistakes all the time!", "Would you like to explore another more relevant context for laughter?"],
+                "choices": {
+                    #can't do it
+                    "Yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "can't_do"), # TODO function that returns next prompt (random based on user's choice, emotion and current level)
+                    "No, I'd like to continue exploring errors": "continue_exploring_error"
                 },
                 "protocols": {
                     "Yes": [],
-                    "No": [], 
-                    "Not sure": []
+                    "No, I'd like to continue exploring errors": []
                 },
             },
 
-            "ask_how_felt_error": {  
-                "model_prompt": ask_post_protocol_feeling,
-                "choices": {
-                    "Positive": "positive_post_protocol", 
-                    "Negative": "negative_post_error"
-                },
-                "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
-            },
-
-            "negative_post_error": { 
-                "model_prompt": [empathetic_response_neg, further_clarification],
-                "choices": {
-                    "yes": "further_clarification_error", 
-                    "no": "remind_contempt_post"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "further_clarification_error": { 
-                "model_prompt": [clarify_errors_protocol_and_example, look_at_sheet], 
-                "choices": {
-                    "continue": "try_again_protocol",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "try_again_protocol": {
-                "model_prompt": [try_this_again, continue_other],
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(),
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": [],
-                },
-            },
-
-            "propose_laugh_off_error": {
-                "model_prompt": ["Feel free to practice laughing at this in your own time, along with any other minor errors you find yourself making (if any!)",
-                "And don\'t be embarrassed, I\'m sure mine are much worse!"],
-                "choices": {
-                    "continue": "ask_feeling_pre_error",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "ask_feeling_pre_error": {
-                "model_prompt": ask_pre_protocol_feeling_laughter,
-                "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_error_protocol"
-                },
-                "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
-            },
-
-            "negative_pre_error_protocol": {
-                "model_prompt": [empathetic_response_neg, further_clarification], 
-                "choices": {
-                    "yes": "clarify_errors_protocol",
-                    "no": "remind_contempt_pre"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "clarify_errors_protocol": {
-                "model_prompt": [clarify_errors_protocol_and_example,
-                look_at_sheet, continue_other], 
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(),
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "explain_laugh_off_error": {
-                "model_prompt": ["An example could be wearing two different colour socks to work by mistake.", 
-                "A good ice breaker for everyone to laugh at when the conversation gets boring!",  
-                "Try laughing at any of your errors on your own in the same way.", ask_pre_protocol_feeling],
-                "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_error_protocol"
-                },
-                "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
-            },
-
-            "no_recent_errors": {
-                "model_prompt": ["Wow, I am jealous! I make mistakes all the time!", "Would you like to explore another more relevant context for laughter?"],
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(), # TODO function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "continue_exploring_errors"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "continue_exploring_errors": {
+            "continue_exploring_error": {
                 "model_prompt": ["If you do recognise making any errors, try to become playful and laugh at them on your own.", 
                 ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_error_protocol"
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id)
                 },
                 "protocols": {
                     "Positive": [],
@@ -1077,13 +1413,13 @@ class ModelDecisionMaker:
                 },
             },
 
-            #### Setbacks
+            # setbacks
 
             "ask_setback": {
                 "model_prompt": "Have you experienced any setbacks in your distant past?",
                 "choices": {
-                    "yes": "ask_laughed_at_setback",
-                    "no": "continue_exploring"
+                    "yes": "ask_laughter_setback",
+                    "no": "empathetic_continue_curr_can't_do"
                 },
                 "protocols": {
                     "yes": [self.PROTOCOL_TITLES[11]],
@@ -1091,11 +1427,11 @@ class ModelDecisionMaker:
                 },
             },
 
-            "ask_laughed_at_setback": {
-                "model_prompt": "Have you tried laughing at the setback, while changing your interpretation of this? Are there any positive aspects to it?",
+            "ask_laughter_setback": {
+                "model_prompt": "Have you tried laughing at the setback, while changing your interpretation of this? Can you identify any positive aspects to this setback?",
                 "choices": {
-                    "yes": "ask_how_felt_setback",
-                    "no": "ask_try_setback"
+                    "yes": "ask_feel_post_setback",
+                    "no": "ask_try_pre_setback"
                 },
                 "protocols": {
                     "yes": [],
@@ -1103,45 +1439,83 @@ class ModelDecisionMaker:
                 },
             },
 
-            "ask_how_felt_setback": {  
+            "ask_feel_post_setback": {  
                 "model_prompt": ask_post_protocol_feeling,
                 "choices": {
-                    "Positive": "positive_post_protocol", 
-                    "Negative": "negative_post_setback"
+                    "Better": "try_post_protocol_pos",
+                    "Worse": lambda user_id, db_session, curr_session, app: self.check_contempt_post_setback(user_id), #"post_setback_neg" #if already given contempt reminder otherwise, empathetic_response_neg, contempt, further_clar,
+                    "No change": lambda user_id, db_session, curr_session, app: self.check_contempt_post_setback(user_id),
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
                 },
             },
 
-            "negative_post_setback": {
-                "model_prompt": [empathetic_response_neg, further_clarification],
+            "remind_contempt_post_setback": {
+                "model_prompt": [empathetic_response_neg, not_contempt], 
                 "choices": {
-                    "yes": "further_clarification_setback",
-                    "no": "remind_contempt"
+                    "Sure": "ask_fc_post_setback", 
+                    "How can I stop this?": "how_not_contempt_post_setback",
                 },
+                "protocols": {
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+
+            "ask_fc_post_setback": { 
+                "model_prompt": further_clarification,
+                "choices": {
+                    "yes": "further_clarify_post_setback", 
+                    "no": "try_post_protocol_neg"
+                }, 
                 "protocols": {
                     "yes": [],
                     "no": []
                 },
             },
 
-            "further_clarification_setback": {
+            "further_clarify_post_setback": {
                 "model_prompt": [clarify_setbacks_protocol_and_example, look_at_sheet, try_this_again],
                 "choices": {
-                    "continue": "continue_exploring",
+                    "continue": "continue_curr_not_willing",
                 },
                 "protocols": {
                     "continue": [],
                 },
             }, 
 
-            "ask_try_setback": {
+            "how_not_contempt_post_setback": {
+                "model_prompt": [how_not_contempt, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_post_setback", 
+                    "no": "try_post_protocol_neg" 
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "post_setback_neg": {
+                "model_prompt": [empathetic_response_neg, further_clarification],
+                "choices": {
+                    "yes": "further_clarify_post_setback",
+                    "no": "try_post_protocol_neg"
+                },
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },            
+
+            "ask_try_pre_setback": {
                 "model_prompt": ask_want_to_try,
                 "choices": {
-                    "Yes": "experienced_setback_past",
-                    "No": "continue_exploring",
+                    "Yes": "ask_setback_past",
+                    "No": "continue_curr_not_willing",
                     "Not sure": "clarify_setback",
                 },
                 "protocols": {
@@ -1151,7 +1525,7 @@ class ModelDecisionMaker:
                 },
             },    
 
-            "experienced_setback_past": {
+            "ask_setback_past": {
                 "model_prompt": "Have you experienced this setback in the distant past and struggled with it for a long time?",
                 "choices": {
                     "yes": "remind_objectives_setback",
@@ -1170,7 +1544,7 @@ class ModelDecisionMaker:
                 make_sense],
                 "choices": {
                     "yes": "read_quote_setback",
-                    "no": "remind_protocols_and_practice",
+                    "no": "review_and_return_setback",
                 },
                 "protocols": {
                     "yes": [],
@@ -1194,29 +1568,19 @@ class ModelDecisionMaker:
                 "Let me know once you\'ve read this."],
                 #TODO: check order!
                 "choices": {
-                    "continue": "propose_practice_setback", 
+                    "Done": "encourage_laughter_setback", 
                 },
                 "protocols": {
-                    "continue": [],
+                    "Done": [],
                 },
             },
 
-            "remind_protocols_and_practice": {
-                "model_prompt": review_protocols_and_return,
-                "choices": {
-                    "continue": "propose_practice_setback"
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "propose_practice_setback": {
+            "encourage_laughter_setback": {
                 #TODO check encourage_setback_practice
                 "model_prompt": [encourage_setback_practice, ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_setback"
+                    "Positive": "continue_pos_pre_protocol",
+                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_setback(user_id)#"pre_setback_neg"
                 },
                 "protocols": {
                     "Positive": [],
@@ -1224,11 +1588,33 @@ class ModelDecisionMaker:
                 },
             },
 
-            "negative_pre_setback": {
-                "model_prompt": [empathetic_response_neg, further_clarification],
+            "remind_contempt_pre_setback": {
+                "model_prompt": not_contempt, 
                 "choices": {
-                    "yes": "further_clarification_setback_pre",
-                    "no": "remind_contempt_pre"
+                    "Sure": "pre_setback_neg", 
+                    "How can I stop this?": "how_not_contempt_pre_setback",
+                },
+                "protocols": {
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+
+            "review_and_return_setback": {
+                "model_prompt": review_protocols_and_return,
+                "choices": {
+                    "continue": "encourage_laughter_setback"
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },           
+            
+            "pre_setback_neg": {
+                "model_prompt": further_clarification,
+                "choices": {
+                    "yes": "further_clarify_pre_setback",
+                    "no":  "try_pre_protocol_neg"# or "continue_curr_not_willing"
                 },
                 "protocols": {
                     "yes": [],
@@ -1236,45 +1622,44 @@ class ModelDecisionMaker:
                 },
             },
 
-            "further_clarification_setback_pre": {
+            "further_clarify_pre_setback": {
                 "model_prompt": [clarify_setbacks_protocol_and_example, look_at_sheet],
                 "choices": {
-                    "continue": "continue_exploring",
+                    "continue": "try_pre_protocol_neg"# or "continue_curr_not_willing",
                 },
                 "protocols": {
                     "continue": [],
                 },
             }, 
+
+            "how_not_contempt_pre_setback": {
+                "model_prompt": [how_not_contempt, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_pre_setback", 
+                    "no": "try_pre_protocol_neg" 
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
 
             "propose_reflect_setback": {
-                "model_prompt": ["It is important to take some time to reflect on any setbacks before attempting to laugh them off, as we are not in a race!", 
-                further_clarification],
+                "model_prompt": ["It is important to take some time to reflect on any setbacks before attempting to laugh them off. We are not in a race!"],
                 "choices": {
-                    "yes": "clarification_setback",
-                    "no": "remind_contempt_pre",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "clarification_setback": {
-                "model_prompt": [clarify_setbacks_protocol_and_example, look_at_sheet],
-                "choices": {
-                    "continue": "continue_exploring",
+                    "continue": "continue_curr_can't_do",#lambda user_id, db_session, curr_session, app: self.check_contempt_pre_setback(user_id),
                 },
                 "protocols": {
                     "continue": [],
                 },
-            }, 
+            },
 
             "clarify_setback": {
                 "model_prompt": ["This would involve you trying to change your interpretation of this setback and acknowledge any of its positive impacts.", 
                 ask_want_to_try],
                 "choices": {
-                    "yes": "experienced_setback_past",
-                    "no": "continue_exploring",
+                    "yes": "ask_setback_past",
+                    "no": "continue_curr_not_willing",
                 },
                 "protocols": {
                     "yes": [],
@@ -1282,14 +1667,14 @@ class ModelDecisionMaker:
                 },
             },     
 
-            #### Hardships
+            # hardships
 
             "ask_hardship": {
                 "model_prompt": "Do you recognise any long-standing hardship or difficulty present in your life, such as an illness or loss?",
                 "choices": {
-                    "Yes": "inform_user_accept_hardship",
-                    "No": "continue_exploring", 
-                    "Rather not say": "understanding_response"
+                    "Yes": "ask_accept_hardship",
+                    "No": "empathetic_continue_curr_can't_do", 
+                    "Rather not say": "empathetic_response_hardship"
                 },
                 "protocols": {
                     "Yes": [self.PROTOCOL_TITLES[12]],
@@ -1298,12 +1683,12 @@ class ModelDecisionMaker:
                 },
             },
 
-            "inform_user_accept_hardship": {
+            "ask_accept_hardship": {
                 "model_prompt": ["I\'ve found that it helps to come to terms with, accept and even try to \'love\' our hardships.", 
                 "Have you tried this before?"],
                 "choices": {
-                    "yes": "ask_how_felt_hardship",
-                    "no": "ask_try_hardship", 
+                    "yes": "ask_feel_post_hardship",
+                    "no": "ask_try_pre_hardship", 
                 },
                 "protocols": {
                     "yes": [],
@@ -1311,23 +1696,59 @@ class ModelDecisionMaker:
                 },
             },
 
-            "ask_how_felt_hardship": {
+            "ask_feel_post_hardship": {
                 "model_prompt": ask_post_protocol_feeling,
                 "choices": {
-                    "Positive": "positive_post_protocol", 
-                    "Negative": "negative_post_hardship"
+                    "Better": "try_post_protocol_pos",
+                    "Worse": lambda user_id, db_session, curr_session, app: self.check_contempt_post_hardship(user_id),
+                    "No change": lambda user_id, db_session, curr_session, app: self.check_contempt_post_hardship(user_id),
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
                 },
             },
 
-            "negative_post_hardship": {
+            "remind_contempt_post_hardship": {
+                "model_prompt": [empathetic_response_neg, not_contempt], 
+                "choices": {
+                    "Sure": "further_clarify_post_hardship", 
+                    "How can I stop this?": "how_not_contempt_post_hardship",
+                },
+                "protocols": {
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+
+            "further_clarify_post_hardship": {
+                "model_prompt": [clarify_hardship_protocol, look_at_sheet],
+                "choices": {
+                    "continue": "try_post_protocol_neg",
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
+
+            "how_not_contempt_post_hardship": {
+                "model_prompt": [how_not_contempt, further_clarification], 
+                "choices": {
+                    "yes": "further_clarify_post_hardship", 
+                    "no": "try_post_protocol_neg" 
+                }, 
+                "protocols": {
+                    "yes": [],
+                    "no": []
+                },
+            },
+
+            "post_hardship_neg": {
                 "model_prompt": [empathetic_response_neg, further_clarification],
                 "choices": {
-                    "yes": "further_clarification_hardship",
-                    "no": "remind_contempt_post"
+                    "yes": "further_clarify_post_hardship",
+                    "no": lambda user_id, db_session, curr_session, app: self.check_contempt_post(user_id) 
                 },
                 "protocols": {
                     "yes": [],
@@ -1335,21 +1756,11 @@ class ModelDecisionMaker:
                 },
             },
 
-            "further_clarification_hardship": {
-                "model_prompt": [clarify_hardship_protocol, look_at_sheet],
-                "choices": {
-                    "continue": "try_again_protocol",
-                },
-                "protocols": {
-                    "continue": [],
-                },
-            },
-
-            "ask_try_hardship": {
+            "ask_try_pre_hardship": {
                 "model_prompt": ask_want_to_try, 
                 "choices": {
-                    "Yes": "experienced_hardship_past",
-                    "No": "continue_exploring", 
+                    "Yes": "ask_hardship_past",
+                    "No": "continue_curr_not_willing", 
                     "Not sure": "clarify_hardship",
                 },
                 "protocols": {
@@ -1359,7 +1770,7 @@ class ModelDecisionMaker:
                 },
             },
 
-            "experienced_hardship_past": {
+            "ask_hardship_past": {
                 "model_prompt": "Do you feel this hardship has been around for a long time and that you have had enough time to reflect on it?",
                 "choices": {
                     "yes": "remind_objectives_hardship",
@@ -1377,7 +1788,7 @@ class ModelDecisionMaker:
                 make_sense],
                 "choices": {
                     "yes": "read_quote_hardship",
-                    "no": "remind_protocols_and_practice_hardship",
+                    "no": "review_and_return_hardship",
                 },
                 "protocols": {
                     "yes": [],
@@ -1401,40 +1812,54 @@ class ModelDecisionMaker:
                 "Let me know once you’ve read this."],
                 #TODO: check order!
                 "choices": {
-                    "continue": "propose_practice_hardship", 
+                    "Done": "encourage_laughter_hardship", 
                 },
                 "protocols": {
-                    "continue": [],
+                    "Done": [],
                 },
             },
 
-            "remind_protocols_and_practice_hardship": {
+            "review_and_return_hardship": {
                 "model_prompt": review_protocols_and_return,
                 "choices": {
-                    "continue": "propose_practice_hardship"
+                    "continue": "encourage_laughter_hardship"
                 },
                 "protocols": {
                     "continue": [],
                 },
             },
 
-            "propose_practice_hardship": {
+            "encourage_laughter_hardship": {
                 "model_prompt": [encourage_hardship_practice, ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "positive_pre_protocol", 
-                    "Negative": "negative_pre_hardship"
+                    "Positive": "continue_pos_pre_protocol", 
+                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_hardship(user_id), 
+                    "Unsure": "pre_hardship_neg"
                 },
                 "protocols": {
                     "Positive": [],
                     "Negative": [],
+                    "Unsure": [],
                 },
             },
 
-            "negative_pre_hardship": {
-                "model_prompt": [empathetic_response_neg, further_clarification],
+            "remind_contempt_pre_hardship": {
+                "model_prompt": not_contempt, 
                 "choices": {
-                    "yes": "further_clarification_hardship_pre",
-                    "no": "remind_contempt_pre"
+                    "Sure": "pre_hardship_neg", 
+                    "How can I stop this?": "how_not_contempt_pre_hardship",
+                },
+                "protocols": {
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+
+            "pre_hardship_neg": {
+                "model_prompt": further_clarification,
+                "choices": {
+                    "yes": "further_clarify_pre_hardship",
+                    "no": "try_pre_protocol_neg" # or "continue_curr_not_willing",
                 },
                 "protocols": {
                     "yes": [],
@@ -1442,29 +1867,40 @@ class ModelDecisionMaker:
                 },
             },
 
-            "propose_reflect_hardship": {
-                "model_prompt": ["It is important to spend some time reflecting on any hardships before attempting to laugh them off. Don’t try run before you can walk!", 
-                further_clarification],
+            "how_not_contempt_pre_hardship": {
+                "model_prompt": [how_not_contempt, further_clarification], 
                 "choices": {
-                    "yes": "further_clarification_hardship_pre",
-                    "no": "remind_contempt_pre",
-                },
+                    "yes": "further_clarify_pre_hardship", 
+                    "no": "try_pre_protocol_neg" 
+                }, 
                 "protocols": {
                     "yes": [],
                     "no": []
                 },
             },
 
-            "further_clarification_hardship_pre": {
+            "further_clarify_pre_hardship": {
                 #TODO check this
                 "model_prompt": [clarify_hardship_protocol, look_at_sheet],
                 "choices": {
-                    "continue": "continue_exploring",
+                    "continue": "try_pre_protocol_neg",
                 },
                 "protocols": {
                     "continue": [],
                 },
             }, 
+
+            "propose_reflect_hardship": {
+                "model_prompt": ["It is important to spend some time reflecting on any hardships before attempting to laugh them off.",
+                "As they say, you can't run before you can walk!", #TODO
+                ],
+                "choices": {
+                    "continue": "continue_curr_can't_do",#lambda user_id, db_session, curr_session, app: self.check_contempt_pre_setback(user_id),
+                },
+                "protocols": {
+                    "continue": [],
+                },
+            },
 
             "clarify_hardship": {
                 "model_prompt": ["This would involve developing a new interpretation of this hardship.",
@@ -1473,8 +1909,8 @@ class ModelDecisionMaker:
                 ask_want_to_try],
                 #TODO: do we want a pause or a continue before asking want to try?
                 "choices": {
-                    "yes": "experienced_hardship_past",
-                    "no": "continue_exploring", 
+                    "yes": "ask_hardship_past",
+                    "no": "continue_curr_not_willing", 
                 },
                 "protocols": {
                     "yes": [],
@@ -1482,11 +1918,12 @@ class ModelDecisionMaker:
                 },
             },
 
-            "understanding_response": {
+            "empathetic_response_hardship": {
                 "model_prompt": ["No problem!", continue_other],
                 "choices": {
-                    "yes": "lambda user_id, db_session, curr_session, app: self.choose_tiny_session()",
-                    "no": "ending_session"
+                    #negative/rather not
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "not_willing"),
+                    "no": "review_any_session"
                 },
                 "protocols": {
                     "yes": [],
@@ -1494,18 +1931,18 @@ class ModelDecisionMaker:
                 },
             },
 
-            ############################# MINI SESSIONS
+            #################### MAIN SESSION (POSITIVE) ####################
+            # pick from 3 mini sessions: 
+            # 1) playful mode and self-glory: 
+            # "ask_playful_mode" (see above)
 
-            ### Playful mode and seld-glory: ask_playful_mode
-
-            #### Incongruity and contrasting views:
-
+            # 2) incongruity and contrasting views:
             "ask_incongruity_and_cv": {
-                "model_prompt": "Have you experienced any inconsistency in your life lately?",
+                "model_prompt": "Have you experienced any incongruity in your life lately?",
                 "choices": {
-                    "Yes": "ask_feel_about_laughter",
-                    "No": "inform_cv_and_ask_feel",
-                    "Not sure": "remind_incongruity_and_eg",
+                    "Yes": "ask_laughter_incongruity",
+                    "No": "no_incongruity_cv",
+                    "Not sure": "reminder_incongruity",
                 },
                 "protocols": {
                     "Yes": [],
@@ -1513,53 +1950,42 @@ class ModelDecisionMaker:
                     "Not sure": []
                 },
             },
-            
-            #### Own laughter brand and feigning laughter: "ask_tried_laughter_brand"
 
-            ############################# MAIN SESSION (NEGATIVE)
-            
-            # changed from "after_classification_negative" for initial rule-based implementation
-            "after_classification_minus": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_opening_prompt_negative(user_id),
+            "no_incongruity_cv": {
+                "model_prompt": ["I see. I hope you're not finding it too boring then!", 
+                "How do you feel about the idea of exploiting a change in your perception of an image as a trigger for laughter?"],
                 "choices": {
-                    "yes": "underlying_reason_yes", 
-                    "no": "underlying_reason_no", 
+                    "Sounds interesting": "pre_cv_pos", 
+                    "What?": "pre_cv_neg"
                 },
                 "protocols": {
-                    "yes": [],
-                    "no": []
+                    "Sounds interesting": [self.PROTOCOL_TITLES[7]],
+                    "What?": [self.PROTOCOL_TITLES[7]]
                 },
             },
+            
+            # 3) own laughter brand and feigning laughter: 
+            # "ask_laughter_brand" (see above)
 
+            #################### MAIN SESSION (NEGATIVE)
+            
             "underlying_reason_yes": {
                 "model_prompt": ask_pre_protocol_feeling_laughter,
                 "choices": {
-                    "Positive": "can_laugh_off",
-                    "Negative": "negative_pre_laugh_off", 
+                    "yes": "pre_laughter_pos",
+                    "no": "pre_laughter_neg", 
                 },
                 "protocols": {
                     #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
                     #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "Positive": [],
-                    "Negative": [],
-                },
-            },
-
-            "negative_pre_laugh_off": {
-                # TODO: check
-                "model_prompt": further_clarification,
-                "choices": {
-                    "yes": "clarify_laugh_off",
-                    "no": "remind_contempt_pre",
-                },
-                "protocols": {
                     "yes": [],
-                    "no": [], 
+                    "no": [],
                 },
             },
 
-            "can_laugh_off": {
-                "model_prompt": "How do you feel you can laugh it off? (i.e. using which theory(ies)?)",
+            "pre_laughter_pos": {
+                "model_prompt": ["How do you feel you can laugh it off? Do any of these theories seem applicable?", 
+                "If you're unsure, feel free to review them (on the right)."],
                 "choices": {
                     "Superiority": "propose_laugh_off",
                     "Incongruity": "propose_laugh_off",
@@ -1580,47 +2006,73 @@ class ModelDecisionMaker:
             },
 
             "propose_laugh_off": {
-                "model_prompt": ["It\'s great that you can recognise this context for laughter.", ask_pre_protocol_feeling],
+                "model_prompt": ["It\'s great that you can recognise the context behind laughing it off.", ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "positive_pre_protocol",
-                    "Negative": "negative_pre_laugh_off_reason"
+                    "\U0001F600": "try_pre_protocol_pos",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt(user_id)
                 },
                 "protocols": {
                     #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
                     #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "Positive": [],
-                    "Negative": []
+                    "\U0001F600": [],
+                    "\U0001F641": [],
                 },
             },
 
-            "negative_pre_laugh_off_reason": {
-                #TODO: do we want empathetic_response_neg here?
-                "model_prompt": [empathetic_response_neg, not_contempt],
+            # TODO
+            #"propose_laugh_off": {
+            #    "model_prompt": ["It\'s great that you can recognise the context behind laughing it off.", ask_pre_protocol_feeling],
+            #    "choices": {
+            #        "\U0001F600": "try_pre_protocol_pos",
+            #        "\U0001F610": lambda user_id, db_session, curr_session, app: self.check_contempt(user_id),
+            #        "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt(user_id)
+            #    },
+            #    "protocols": {
+            #        #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
+            #        #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+            #        "\U0001F600": [],
+            #        "\U0001F610": [],
+            #        "\U0001F641": [],
+            #    },
+            #},
+
+            "remind_contempt_pre_laughter": {
+                # TODO: what response?
+                "model_prompt": [empathetic_response_neg, not_contempt], 
                 "choices": {
-                    "continue": "try_laugh_off_reason",
+                    "Sure": "try_pre_protocol_neg", 
+                    "How can I stop this?": "try_pre_protocol_neg_no_contempt",
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+                    "Sure": [],
+                    "How can I stop this?": []
+                },
+            },
+            
+            "encourage_laughter": {
+                "model_prompt": [empathetic_resp_neg_pre, try_this],
+                "choices": {
+                    "continue": "continue_curr_not_willing",
+                },
+                "protocols": {
                     "continue": [],
                 },
             },
 
-            "try_laugh_off_reason": {
-                "model_prompt": [try_this, continue_other],
+            "pre_laughter_neg": {
+                # TODO: check
+                "model_prompt": further_clarification,
                 "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.choose_tiny_session(),
-                    "no": "ending_session",
+                    "yes": "clarify_laughter",
+                    "no": lambda user_id, db_session, curr_session, app: self.check_contempt_pre(user_id) 
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "yes": [],
-                    "no": [],
+                    "no": [], 
                 },
             },
 
-            "clarify_laugh_off": {
+            "clarify_laughter": {
                 "model_prompt": established_humour_context_and_sheet,
                 "choices": {
                     "continue": "underlying_reason_yes"
@@ -1636,7 +2088,7 @@ class ModelDecisionMaker:
                 "model_prompt": "Would you like to explore the possible trigger?",
                 "choices": {
                     "yes": "explore_trigger_yes",
-                    "no": "continue_exploring",
+                    "no": "continue_curr_not_willing",
                 },
                 "protocols": {
                     #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
@@ -1649,13 +2101,11 @@ class ModelDecisionMaker:
             "explore_trigger_yes": {
                 "model_prompt": "Do you think it could be an incongruity or inconsistency that\'s causing your negative feeling?",
                 "choices": {
-                    "Yes": "ask_feel_about_laughter", #SKIP TO TINY-SESSION
+                    "Yes": "ask_laughter_incongruity",
                     "No": "trigger_not_incongruity",
                     "Not sure": "trigger_unsure_incongruity"
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "Yes": [],
                     "No": [],
                     "Not sure": []
@@ -1665,12 +2115,10 @@ class ModelDecisionMaker:
             "trigger_not_incongruity": {
                 "model_prompt": "Maybe it’s an everyday error or flaw that you’ve noticed, that’s causing this negative feeling?",
                 "choices": {
-                    "yes": "ask_feeling_pre_error", 
+                    "yes": "ask_feel_pre_error", 
                     "no": "trigger_not_error",
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "yes": [],
                     "no": []
                 },
@@ -1679,24 +2127,32 @@ class ModelDecisionMaker:
             "trigger_unsure_incongruity": {
                 "model_prompt": ["An example could be, your school has extended its closing time by 30 minutes."],
                 "choices": {
-                    "continue": "explore_trigger_yes", 
+                    "continue": "explore_trigger_yes_no_unsure", 
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "continue": []
                 },
             },
 
-            "trigger_not_error": {
-                "model_prompt": "Would you like to continue exploring more involved possible triggers for your negative feeling?",
+            "explore_trigger_yes_no_unsure": {
+                "model_prompt": "Do you think it could be an incongruity or inconsistency that\'s causing your negative feeling?",
                 "choices": {
-                    "yes": "ask_trigger_setback", 
-                    "no": "continue_exploring",
+                    "yes": "ask_laughter_incongruity", # trigger is incongruity -> SKIP TO TINY-SESSION
+                    "no": "trigger_not_incongruity",
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
+                    "yes": [],
+                    "no": [],
+                },
+            },
+
+            "trigger_not_error": {
+                "model_prompt": "Would you like to explore more involved possible triggers for your negative feeling?",
+                "choices": {
+                    "yes": "ask_trigger_setback", 
+                    "no": "continue_curr_not_willing",
+                },
+                "protocols": {
                     "yes": [],
                     "no": []
                 },
@@ -1705,12 +2161,10 @@ class ModelDecisionMaker:
             "ask_trigger_setback": {
                 "model_prompt": "Could it be a distant setback that\'s causing this negative feeling?",
                 "choices": {
-                    "yes": "ask_laughed_at_setback", #SKIP TO TINY-SESSION
+                    "yes": "ask_laughter_setback", 
                     "no": "trigger_not_setback",
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "yes": [],
                     "no": []
                 },
@@ -1719,32 +2173,30 @@ class ModelDecisionMaker:
             "trigger_not_setback": {
                 "model_prompt": "Are you facing a long-term hardship that\'s causing this negative feeling?",
                 "choices": {
-                    "yes": "trigger_is_hardship", 
+                    "yes": "ask_accept_hardship", 
                     "no": "trigger_not_hardship",
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "yes": [],
                     "no": []
                 },
             },
 
-            "trigger_is_hardship": {
-                "model_prompt": "Are you facing a long-term hardship that\'s causing this negative feeling?",
+            "trigger_not_hardship": {
+                "model_prompt": ["It seems that the underlying reason is hiding from us at the moment.", 
+                "Not to worry, feeling down is not unusual, and hopefully, this feeling should pass. However, if you suspect it's not improving or things don't feel quite right, it's worth checking up with your doctor.", 
+                "But for now, would you like to explore other contexts for humour?"], 
                 "choices": {
-                    "yes": "inform_user_accept_hardship", # redirect to tiny session
-                    "no": "continue_exploring",
+                    "yes": lambda user_id, db_session, curr_session, app: self.determine_next_tiny_session(user_id, "can't_do"), 
+                    "no": "review_any_session"
                 },
                 "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
                     "yes": [],
                     "no": []
                 },
             },
 
-            ############################# END MAIN SESSION (NEGATIVE)
+            #################### END MAIN SESSION (NEGATIVE)
 
             "event_is_recent": {
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_event_is_recent(user_id, app, db_session),
@@ -1819,7 +2271,7 @@ class ModelDecisionMaker:
                     "no": "internal_persecutor_victim",
                 },
                 "protocols": {
-                    "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
+                    "yes": [], #self.INTERNAL_PERSECUTOR_PROTOCOLS,
                     "no": []
                 },
             },
@@ -1832,7 +2284,7 @@ class ModelDecisionMaker:
                     "no": "internal_persecutor_controlling",
                 },
                 "protocols": {
-                    "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
+                    "yes": [], #self.INTERNAL_PERSECUTOR_PROTOCOLS,
                     "no": []
                 },
             },
@@ -1845,7 +2297,7 @@ class ModelDecisionMaker:
                 "no": "internal_persecutor_accusing"
                 },
                 "protocols": {
-                "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
+                "yes": [],#self.INTERNAL_PERSECUTOR_PROTOCOLS,
                 "no": []
                 },
             },
@@ -1858,7 +2310,7 @@ class ModelDecisionMaker:
                 "no": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
                 },
                 "protocols": {
-                "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
+                "yes": [],#self.INTERNAL_PERSECUTOR_PROTOCOLS,
                 "no": [self.PROTOCOL_TITLES[3]],
                 },
             },
@@ -1889,22 +2341,7 @@ class ModelDecisionMaker:
                 },
             },
 
-            ############################# MAIN SESSION (POSITIVE)
-
-            # changed from "after_classification_positive"
-            "after_classification_plus": {
-                "model_prompt": "Great! Let\'s start exploring how to develop your sense of humour.",
-
-                "choices": {
-                    "continue": lambda user_id, db_session, curr_session, app: self.start_positive_session(),
-                },
-                "protocols": {
-                    "continue": [], 
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                },
-            },
-
-            ############################# ALL EMOTIONS #############################
+            #################### ALL EMOTIONS ####################
 
             "project_emotion": {
                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_project_emotion(user_id, app, db_session),
@@ -1941,14 +2378,14 @@ class ModelDecisionMaker:
                 "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_found_useful(user_id, app, db_session),
 
                 "choices": {
-                    "I feel better": "new_protocol_better",
-                    "I feel worse": "new_protocol_worse",
-                    "I feel no change": "new_protocol_same",
+                    "Better": "new_protocol_better",
+                    "Worse": "new_protocol_worse",
+                    "No change": "new_protocol_same",
                 },
                 "protocols": {
-                    "I feel better": [],
-                    "I feel worse": [],
-                    "I feel no change": []
+                    "Better": [],
+                    "Worse": [],
+                    "No change": [],
                 },
             },
 
@@ -2040,23 +2477,108 @@ class ModelDecisionMaker:
     def initialise_remaining_choices(self, user_id):
         self.remaining_choices[user_id] = ["displaying_antisocial_behaviour", "internal_persecutor_saviour", "personal_crisis", "rigid_thought"]
 
+    def initialise_user_tiny_sessions(self, user_id):
+        # TODO: FOR NOW!!!!!!!
+        # drop negative once donne (from list!)
+        self.user_tiny_sessions[user_id] = ("1: Playful mind", "2: Playful face")
+    
+    def initialise_user_covered_sessions(self, user_id):
+        self.user_covered_sessions[user_id] = []
+
+    def initialise_contempt_message(self, user_id):
+        self.contempt_message[user_id] = False
+
     def save_name(self, user_id):
         try:
             user_response = self.user_choices[user_id]["choices_made"]["ask_name"]
         except:  # noqa
             user_response = ""
         self.users_names[user_id] = user_response
-        #return "choose_persona"
         self.chosen_personas[user_id] = "Kai"
         self.datasets[user_id] = self.kai
         return "opening_prompt"
+    
+    def check_acknowledge_achievements(self, user_id):
+        if ('3: Self-glory',) in self.user_covered_sessions[user_id]: 
+            return "continue_curr_can't_do" 
+        return "ask_self_glory"
 
-    # added an ending dialogue for initial rule-based implementation
+    def check_contempt(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_laughter" 
+        return "encourage_laughter"
+
+    def check_contempt_pre(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_protocol" 
+        else: return "continue_curr_not_willing"
+    
+    def check_contempt_post(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_protocol"
+        else: return "try_post_protocol_neg"
+    
+    def check_contempt_post_error(self, user_id):
+        print("contempt_message shown?: ", self.contempt_message[user_id])
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_error"
+        else: return "post_error_neg"
+
+    def check_contempt_post_setback(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_setback"
+        else: return "post_setback_neg"
+
+    def check_contempt_post_hardship(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_hardship"
+        else: return "post_hardship_neg"
+    
+    def check_contempt_pre_error(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_error"
+        else: return "pre_error_neg"
+    
+    def check_contempt_pre_setback(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_setback"
+        else: return "pre_setback_neg"
+
+    def check_contempt_pre_hardship(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_hardship"
+        else: return "pre_hardship_neg"
+        
     # TODO: add a time delay?
     def end_session(self, user_id):
-        return ["That ends our session then!", 
-                "It would be most beneficial if you could recognise the discussed contexts for laughter (i.e. self and or world incongruity, error/fault, daily routine-accomplishment, etc.) as often as possible throughout your life. There is no endpoint to developing a sense of humour, it is a journey, and the most important thing is to enjoy it! And I am always here if you need me – I have nowhere else to go!", 
-                "Thanks " + self.users_names[user_id] + ", I hope you enjoyed our conversation and that we speak again soon."]
+        if self.user_states_initial[user_id] == "Negative":
+            return "final_feeling_check"
+        else:
+            return "ending_session_initial_pos"
+           
+    def want_another_session(self, user_id):
+        if self.users_names[user_id] == "":
+            message = ["Glad to hear it."]
+        else:
+            message = ["Glad to hear it " + self.users_names[user_id] + "."]
+        message.append("Feel free to reload the page and re-enter your credentials and we can have another chat!")
+        return message
+    
+    def get_ending_message(self, user_id):
+        if self.users_names[user_id] == "":
+            message = ["Thanks! I hope you enjoyed our conversation and that we speak again soon."]
+        else:
+            message = ["Thanks " + self.users_names[user_id] + "! I hope you enjoyed our conversation and that we speak again soon."]
+        return message
 
     def get_suggestions(self, user_id, app): #from all the lists of protocols collected at each step of the dialogue it puts together some and returns these as suggestions
         suggestions = []
@@ -2076,7 +2598,6 @@ class ModelDecisionMaker:
                         suggestions.append(self.PROTOCOL_TITLES[p])
                         self.suggestions[user_id].extend([self.PROTOCOL_TITLES[p]])
         return suggestions
-
 
     def clear_suggestions(self, user_id):
         self.suggestions[user_id] = []
@@ -2118,14 +2639,15 @@ class ModelDecisionMaker:
     def get_opening_prompt(self, user_id):
         # time.sleep(7)
         if self.users_names[user_id] == "":
-            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
+            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh.", # \N{grinning face with smiling eyes}
             "Are you familiar with the self-initiated humorous protocols?"]
         else:
-            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + ". I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
+            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + ". I will do my best to help you learn to laugh.", # \N{grinning face with smiling eyes}
             "Are you familiar with the self-initiated humorous protocols?"]
         return opening_prompt
 
     def get_restart_prompt(self, user_id):
+        #TODO: why time.sleep()
         time.sleep(7)
         if self.users_names[user_id] == "":
             restart_prompt = ["Please tell me again, how are you feeling today?"]
@@ -2133,45 +2655,70 @@ class ModelDecisionMaker:
             restart_prompt = ["Please tell me again, " + self.users_names[user_id] + ", how are you feeling today?"]
         return restart_prompt
     
-    def get_emotional_state(self, user_emotion):
-        emotion = ""
-        if user_emotion == "Angry":
-            emotion = "anger"
-        elif user_emotion == "Anxious":
-            emotion = "fear"
-        elif user_emotion == "Sad":
-            emotion = "sadness"
-        return emotion
+    # TODO added (right place)
+    #def choose_tiny_session(self, user_id): 
+    #from user_id: current emotional state, current protocol/level, previous protocols 
+    # state can be "Positive" (Better), "Negative" (Worse) or "Neutral" (Same) 
+    def determine_next_tiny_session(self, user_id, state):
+        sessions_left = list(set(self.TINY_SESSION_TITLES) - set(self.user_covered_sessions[user_id]))
+        print("self.user_covered_sessions: ", self.user_covered_sessions)
+        print("sessions_left: ", sessions_left)
+        next_session_options = set() #random non recent if no options or if user's finnished all - suggest they chooose
 
-    def get_opening_prompt_negative(self, user_id):
-        # time.sleep(7) TODO: decide how long
-        state = self.user_emotions[user_id]
-        emotion = self.get_emotional_state(state)
-        if emotion == "":
-            opening_prompt = ["Sorry to hear that. Can you identify the underlying reason behind this feeling?", 
-            "You don\'t need to share the reason."]
+        current_state = self.user_states[user_id]
+        current_session = self.user_tiny_sessions[user_id]
+        print("current_session: ", current_session)
+        current_level = self.TINY_SESSION_TITLE_TO_LEVEL[current_session]
+
+        if len(sessions_left) > 0:
+            sorted_sessions = sorted(sessions_left,key=self.TINY_SESSION_TITLES.index)
+            min_session_level = self.TINY_SESSION_TITLE_TO_LEVEL[sorted_sessions[0]]
+
+            print("sorted sessions: ", sorted_sessions)
+            print("min_session_level: ", min_session_level)
+            for session in sessions_left:
+                session_level = self.TINY_SESSION_TITLE_TO_LEVEL[session]
+                print("session_level: ", session_level)
+                if current_state == "Positive":
+                    if state == "willing":
+                        if session_level >= current_level:
+                            next_session_options.add(session)
+                    elif state == "not_willing":
+                        if session_level <= current_level:
+                            next_session_options.add(session)
+                    elif state == "can't_do":
+                        if current_level < 3 and session_level == current_level + 1:
+                            next_session_options.add(session)
+                elif current_state == "Negative":
+                    # User can’t do current protocol due to circumstance: Random protocol from session pool with level <= current protocol level
+                    # User doesn’t want to do a protocol: Random protocol from session pool with lowest level protocol
+                    # User would like to continue: Random protocol from session pool with level <= current protocol level
+                    if state == "Positive":
+                        print("I'm negative and positive!!!!!")
+                        if session_level <= current_level:
+                            next_session_options.add(session)
+                    elif state == "Negative":
+                        print("I'm negative and negative!!!!!")
+                        if session_level == min_session_level:
+                            next_session_options.add(session)
+                    elif state == "Neutral":
+                        print("I'm negative and neutral!!!!!")
+                        if session_level <= current_level:
+                            next_session_options.add(session)
         else:
-            opening_prompt = ["Sorry to hear that. Can you identify the underlying reason behind your " + emotion + "?", 
-            "You don\'t need to share the reason."]
-        return opening_prompt
-    
-    # TODO added (right place)
-    # choose_mini_session
-    def start_positive_session(self):
-        mini_sessions = ["ask_playful_mode", "ask_incongruity_and_cv", "ask_tried_laughter_brand"]
-        chosen_session = np.random.choice(mini_sessions)
-        print("chosen session: ", chosen_session)
-        return chosen_session
-    
-    # TODO added (right place)
-    def choose_tiny_session(self):
-        tiny_sessions = ["ask_playful_mode", "ask_acknowledge_achievements", "ask_incongruity", "inform_cv_and_ask_feel", "ask_tried_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
-        chosen_session = np.random.choice(tiny_sessions)
-        chosen_session = "ask_hardship"
-        print("chosen session: ", chosen_session)
-        return chosen_session
+            # covered all tiny sessions
+            return "covered_all_sessions"
+        if next_session_options == set():
+            print("THERE ARE NO next_session_options")
+            random_choice = random.sample(sessions_left, 1)
+            next_session_options.add(tuple(random_choice)[0])
+            #next_session_options.add(np.random.choice(sessions_left))
 
-    # TODO change this
+        random_choice = random.sample(next_session_options, 1)
+        return self.TINY_SESSION_TO_QUESTION[tuple(random_choice)[0]]
+        return self.TINY_SESSION_TO_QUESTION[np.random.choice(next_session_options)]
+
+    # TODO 
     def get_next_question(self, user_id):
         if self.remaining_choices[user_id] == []:
             return "project_emotion"
@@ -2201,16 +2748,20 @@ class ModelDecisionMaker:
         self.recent_protocols.append(recent_protocol)
 
     # previously determine_next_prompt_opening - get emotion at start of session
-    def determine_next_prompt_get_started(self, user_id, app, db_session):
+    def determine_next_prompt_start_session(self, user_id, app, db_session):
         user_response = self.user_choices[user_id]["choices_made"]["ask_emotion"]
         emotion = user_response.lower()
         if emotion == 'sad' or emotion == 'angry' or emotion == 'anxious' or emotion == 'happy':
             self.user_emotions[user_id] = string.capwords(user_response)
             if user_response.lower() == 'happy':
                 #self.get_happy_emotion(user_id)
-                return "after_classification_plus"
+                self.user_states[user_id] = "Positive"
+                self.user_states_initial[user_id] = "Positive"
+                return "after_classification_positive"
             else:
-                return "after_classification_minus"
+                self.user_states[user_id] = "Negative"
+                self.user_states_initial[user_id] = "Negative"
+                return "after_classification_negative"
         
         emotion = get_emotion(user_response)
         #emotion = np.random.choice(["Happy", "Sad", "Angry", "Anxious"]) #random choice to be replaced with emotion classifier
@@ -2276,7 +2827,7 @@ class ModelDecisionMaker:
         question = my_string.format(self.guess_emotion_predictions[user_id].lower())
         return self.split_sentence(question)
 
-    # TODO: need to keep this
+    # TODO: keep this
     def get_model_prompt_check_emotion(self, user_id, app, db_session):
         prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
         data = self.datasets[user_id]
@@ -2294,28 +2845,58 @@ class ModelDecisionMaker:
         self.user_emotions[user_id] = "Sad"
         self.user_states_initial[user_id] = "Negative"
         self.user_states[user_id] = "Negative"
-        return "after_classification_minus" # for initial rule-based implementation
+        return "after_classification_negative"
+
     def get_angry_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Angry"
         self.user_emotions[user_id] = "Angry"
         self.user_states_initial[user_id] = "Negative"
         self.user_states[user_id] = "Negative"
-        return "after_classification_minus" # for initial rule-based implementation
+        return "after_classification_negative"
+
     def get_anxious_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Anxious/Scared"
         self.user_emotions[user_id] = "Anxious"
         self.user_states_initial[user_id] = "Negative"
         self.user_states[user_id] = "Negative"
-        return "after_classification_minus" # for initial rule-based implementation
+        return "after_classification_negative" 
+
     def get_happy_emotion(self, user_id):
         self.guess_emotion_predictions[user_id] = "Happy/Content"
         self.user_emotions[user_id] = "Happy"
         self.user_states_initial[user_id] = "Positive"
         self.user_states[user_id] = "Positive"
-        return "after_classification_plus"
+        return "after_classification_positive"
+
+    # TODO added (check right place)
+    def determine_first_mini_session(self):
+        mini_sessions = ["ask_playful_mode", "ask_incongruity_and_cv", "ask_laughter_brand"]
+        chosen_session = np.random.choice(mini_sessions)
+        return chosen_session
+    
+    def get_opening_prompt_negative(self, user_id):
+        # time.sleep(7) TODO: decide how long
+        state = self.user_emotions[user_id]
+        emotion = self.get_emotional_state(state)
+        if emotion == "":
+            opening_prompt = ["Sorry to hear that. Can you identify the underlying reason behind this feeling?", 
+            "You don\'t need to share the reason."]
+        else:
+            opening_prompt = ["Sorry to hear that. Can you identify the underlying reason behind your " + emotion + "?", 
+            "You don\'t need to share the reason."]
+        return opening_prompt
+    
+    def get_emotional_state(self, user_emotion):
+        emotion = ""
+        if user_emotion == "Angry":
+            emotion = "anger"
+        elif user_emotion == "Anxious":
+            emotion = "fear"
+        elif user_emotion == "Sad":
+            emotion = "sadness"
+        return emotion
 
     # TODO: add my get_model_prompt_s
-
     # use a couple of original: add 1 or 2 items to the dataset - ending, opening, guessing emotion, etc.
 
 
@@ -2746,7 +3327,8 @@ class ModelDecisionMaker:
                     if len(curr_protocols) == 0:
                         self.suggestions[user_id].pop(i)
                     break
-
+        
+        # TODO: use protocols for this from QUESTIONS
         # PRE: User choice is string in ["Better", "Worse"]
         # TODO: change here for recording insights on protocols
         # 'protocol' table changed to 'protocol_use'
@@ -2803,7 +3385,7 @@ class ModelDecisionMaker:
                 current_choice != "suggestions"
                 and current_choice != "event_is_recent"
                 and current_choice != "more_questions"
-                and current_choice != "after_classification_positive"
+                #and current_choice != "after_classification_positive"
 
                 and current_choice != "user_found_useful"
                 and current_choice != "check_emotion"
@@ -2812,45 +3394,94 @@ class ModelDecisionMaker:
                 and current_choice != "new_protocol_same"
                 and current_choice != "choose_persona"
                 and current_choice != "project_emotion"
-                and current_choice != "after_classification_negative"
+                #and current_choice != "after_classification_negative"
+                
                 # Added these
-                and current_choice != "can_laugh_off" 
+                and current_choice != "pre_laughter_pos" 
                 and current_choice != "explore_trigger_yes"
-                and current_choice != "underlying_reason_yes"
                 and current_choice != "recommend_playful_protocol"
-                and current_choice != "ask_how_felt_post_protocol"
+                and current_choice != "ask_feel_post_sg"
                 and current_choice != "propose_sg_and_eg"
                 and current_choice != "ask_incongruity"
-                and current_choice != "ask_feel_about_laughter"
-                and current_choice != "inform_cv_and_ask_feel"
-                and current_choice != "ask_how_felt_lb"
-                and current_choice != "encourage_feigning_laughter"
-                and current_choice != "ask_how_felt_error"
-                and current_choice != "ask_feeling_pre_error"
-                and current_choice != "explain_laugh_off_error"
-                and current_choice != "continue_exploring_errors"
-                and current_choice != "ask_how_felt_setback"
-                and current_choice != "propose_practice_setback" 
-                and current_choice != "ask_how_felt_hardship"
-                and current_choice != "propose_practice_hardship"
-                and current_choice != "propose_laugh_off"
+                and current_choice != "ask_feel_pre_cv"
+                and current_choice != "ask_feel_post_lb"
+                #and current_choice != "encourage_feigning_laughter"
+                and current_choice != "ask_feel_post_error"
+                and current_choice != "ask_feel_pre_error"
+                and current_choice != "continue_explaining_laughter_error"
+                and current_choice != "continue_exploring_error"
+                and current_choice != "ask_feel_post_setback"
+                and current_choice != "encourage_laughter_setback" 
+                and current_choice != "ask_feel_post_hardship"
+                and current_choice != "remind_contempt_post_hardship"
+                and current_choice != "encourage_laughter_hardship"
                 and current_choice != "ask_feigning_laughter"
-                and current_choice != "encourage_lb_pos"
-                and current_choice != "encourage_lb"
-                and current_choice != "ask_laughed_off_error"
-                and current_choice != "ask_try_setback"
+                and current_choice != "try_pre_lb"
+                and current_choice != "encourage_try_lb"
+                and current_choice != "ask_try_pre_setback"
                 and current_choice != "ask_hardship"
-                and current_choice != "ask_try_hardship"
-                and current_choice != "remind_contempt_post"
-                and current_choice != "remind_contempt_pre"
+                and current_choice != "ask_try_pre_hardship"
+                and current_choice != "remind_contempt_post_protocol"
+                and current_choice != "remind_contempt_pre_protocol"
                 and current_choice != "ask_incongruity_and_cv"
-                and current_choice != "underlying_reason_yes"
-                and current_choice != "ask_incongruity_without_unsure"
+                and current_choice != "covered_all_sessions"
+                and current_choice != "choose_any"
+                and current_choice != "final_feeling_check"
+                and current_choice != "ending_neg"
+                and current_choice != "ending_better"
+                and current_choice != "remind_contempt_pre_laughter"
+                and current_choice != "further_clarify_cv"
+                and current_choice != "remind_contempt_post_error"
+                and current_choice != "remind_contempt_pre_error"
+                and current_choice != "remind_contempt_post_setback"
+                and current_choice != "give_quote_setback"
+                and current_choice != "give_quote_hardship"
+                and current_choice != "remind_contempt_pre_setback"
+                and current_choice != "remind_contempt_pre_hardship"
+                and current_choice != "no_error"
+                and current_choice != "ask_feel_pre_incongruity"
+                and current_choice != "no_incongruity_cv"
+                and current_choice != "constant_practice"
+                and current_choice != "get_started"
+                and current_choice != "review_any_session"
+                and current_choice != "inform_playful"
+                and current_choice != "reminder_incongruity"
+                and current_choice != "ending_session_initial_pos"
             ):
                 user_choice = user_choice.lower()
                 # TODO: remove this annd all print statements
                 # yes or no (positive or negative, etc.)
                 print("user_choice: ", user_choice)
+
+             # update emotional state
+            if current_choice == "ask_present_feeling":
+                self.user_states[user_id] = user_choice
+
+            # update user's tiny session info
+            if current_choice in self.TINY_SESSION_QUESTIONS:
+                print("current_choice in self.TINY_SESSION_QUESTIONS")
+                current_tiny_session_title = self.QUESTION_TO_TINY_SESSION[current_choice]
+                self.user_tiny_sessions[user_id] = current_tiny_session_title
+                #TODO
+                #next_choice = 
+                if len(self.user_covered_sessions[user_id]) == 0:
+                    self.user_covered_sessions[user_id] = [current_tiny_session_title]
+                else:
+                    self.user_covered_sessions[user_id].append(current_tiny_session_title) 
+                print("self.user_covered_sessions: ", self.user_covered_sessions)
+            
+            #ADDED THISE-------------
+            if current_choice in self.NEGATIVE_TINY_SESSION_QUESTIONS:
+                current_tiny_session_title = self.QUESTION_TO_NEGATIVE_TINY_SESSION[current_choice]
+                self.user_tiny_sessions[user_id] = current_tiny_session_title
+                # TODO:
+                #next_choice = 
+                if len(self.user_covered_sessions[user_id]) == 0:
+                    self.user_covered_sessions[user_id] = [current_tiny_session_title]
+                else:
+                    self.user_covered_sessions[user_id].append(current_tiny_session_title) 
+            #UP TO HERE-------------
+        
             if (
                 current_choice == "suggestions"
             ):
@@ -2891,7 +3522,7 @@ class ModelDecisionMaker:
         if callable(next_choice):
             next_choice = next_choice(user_id, db_session, user_session, app)
 
-        if current_choice == "guess_emotion" and user_choice.lower() == "yes":
+        if current_choice == "guess_emotion" and user_choice.lower() == "yes": #TODO
             if self.guess_emotion_predictions[user_id] == "Sad":
                 next_choice = next_choice["Sad"]
             elif self.guess_emotion_predictions[user_id] == "Angry":

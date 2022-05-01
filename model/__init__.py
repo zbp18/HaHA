@@ -125,6 +125,11 @@ def create_app():
             decision_maker.clear_names(user.id)
             decision_maker.initialise_remaining_choices(user.id)
             decision_maker.initialise_prev_questions(user.id)
+            # added initialise
+            #decision_maker.initialise_user_states(user.id)
+            decision_maker.initialise_user_tiny_sessions(user.id)
+            decision_maker.initialise_user_covered_sessions(user.id)
+            decision_maker.initialise_contempt_message(user.id)
             decision_maker.clear_suggestions(user.id)
             decision_maker.clear_choices(user.id)
             decision_maker.clear_persona(user.id)
