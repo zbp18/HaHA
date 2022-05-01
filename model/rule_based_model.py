@@ -323,7 +323,7 @@ class ModelDecisionMaker:
             },
 
             "choose_any": {
-                "model_prompt": "Please select the protocol you wish to review?",
+                "model_prompt": "Please select the protocol you wish to review.",
                 "choices": {
                     "Playful mode": "ask_playful_mode",
                     "Self-glory": "ask_acknowledge_achievements",
@@ -807,7 +807,7 @@ class ModelDecisionMaker:
             # incongruity
 
             "ask_incongruity": {
-                "model_prompt": "Have you experienced any incongruity in your life lately?",
+                "model_prompt": incongruity_q,
                 "choices": {
                     "Yes": "ask_laughter_incongruity",
                     "No": "no_incongruity",
@@ -910,7 +910,7 @@ class ModelDecisionMaker:
             },
 
             "ask_incongruity_no_unsure": {
-                "model_prompt": "Have you experienced any incongruity in your life lately?",
+                "model_prompt": incongruity_q,
                 "choices": {
                     "yes": "ask_laughter_incongruity",
                     "no": "continue_curr_can't_do",
@@ -1158,7 +1158,7 @@ class ModelDecisionMaker:
 
             "funny_lb": {
                 "model_prompt": ["I\'m glad you found that funny. I\'ve also been trying to develop my sense of humour!", 
-                "Would you like to explore a related exercise?"],
+                explore_related_q],
                 "choices": {
                     "yes": "ask_feigning_laughter",
                     "no": "continue_curr_not_willing"
@@ -1171,7 +1171,7 @@ class ModelDecisionMaker:
 
             "not_funny_lb": {
                 "model_prompt": ["You\'re hard to impress. I\'ll try harder next time!", 
-                "Would you like to explore a related exercise?"],
+                explore_related_q],
                 "choices": {
                     "yes": "ask_feigning_laughter",
                     "no": "continue_curr_not_willing"
@@ -1416,7 +1416,7 @@ class ModelDecisionMaker:
             # setbacks
 
             "ask_setback": {
-                "model_prompt": "Have you experienced any setbacks in your distant past?",
+                "model_prompt": setback_q,
                 "choices": {
                     "yes": "ask_laughter_setback",
                     "no": "empathetic_continue_curr_can't_do"
@@ -1478,7 +1478,7 @@ class ModelDecisionMaker:
             },
 
             "further_clarify_post_setback": {
-                "model_prompt": [clarify_setbacks_protocol_and_example, look_at_sheet, try_this_again],
+                "model_prompt": clarify_setbacks_protocol_and_example + [look_at_sheet, try_this_again],
                 "choices": {
                     "continue": "continue_curr_not_willing",
                 },
@@ -1623,7 +1623,7 @@ class ModelDecisionMaker:
             },
 
             "further_clarify_pre_setback": {
-                "model_prompt": [clarify_setbacks_protocol_and_example, look_at_sheet],
+                "model_prompt": clarify_setbacks_protocol_and_example + [look_at_sheet],
                 "choices": {
                     "continue": "try_pre_protocol_neg"# or "continue_curr_not_willing",
                 },
@@ -1938,7 +1938,7 @@ class ModelDecisionMaker:
 
             # 2) incongruity and contrasting views:
             "ask_incongruity_and_cv": {
-                "model_prompt": "Have you experienced any incongruity in your life lately?",
+                "model_prompt": incongruity_q,
                 "choices": {
                     "Yes": "ask_laughter_incongruity",
                     "No": "no_incongruity_cv",
@@ -1952,8 +1952,7 @@ class ModelDecisionMaker:
             },
 
             "no_incongruity_cv": {
-                "model_prompt": ["I see. I hope you're not finding it too boring then!", 
-                "How do you feel about the idea of exploiting a change in your perception of an image as a trigger for laughter?"],
+                "model_prompt": [incongruity_none, contrasting_views_q],
                 "choices": {
                     "Sounds interesting": "pre_cv_pos", 
                     "What?": "pre_cv_neg"
