@@ -136,6 +136,8 @@
   padding: 0;
   font-family: arial;
   font-weight: 700;
+  /*chatbot-avatar-letter is 19.2px font-size*/
+  font-size: 18px;
 }
 
 .react-chatbot-kit-user-chat-message {

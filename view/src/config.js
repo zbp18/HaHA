@@ -43,7 +43,7 @@ const config = {
     </div>,
     userAvatar: () => <div className="react-chatbot-kit-user-avatar">
       <div className="react-chatbot-kit-user-avatar-container">
-        <p className="react-chatbot-kit-user-avatar-letter">U</p>
+        <p className="react-chatbot-kit-user-avatar-letter">Me</p>
       </div>
     </div>
   },
