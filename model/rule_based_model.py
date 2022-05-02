@@ -677,13 +677,13 @@ class ModelDecisionMaker:
                 "model_prompt": ["Another way to become more playful is to loosen up your mouth and eye muscles by moving them around and singing your chosen song.", 
                 ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": "pre_playful_neg"
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F641": "pre_playful_neg"
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": [],
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        },
             },
 
             "recommend_song": {
@@ -762,13 +762,13 @@ class ModelDecisionMaker:
             "propose_sg_and_eg": {
                 "model_prompt": "How would you feel about trying this on your own, over simple things, like brushing your teeth?",
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol", 
-                    "Negative": "pre_sg_neg"
+                    "\U0001F600": "continue_pos_pre_protocol", 
+                    "\U0001F641": "pre_sg_neg"
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "pre_sg_neg": {
@@ -871,15 +871,16 @@ class ModelDecisionMaker:
             "ask_feel_pre_incongruity": {
                 "model_prompt": ask_pre_protocol_feeling,
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre(user_id),
-                    "Neutral": "continue_curr_not_willing",
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F610": "continue_curr_not_willing",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt_pre(user_id),
+
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": [],
-                    "Neutral": [],
-                },
+		            "\U0001F600": [],
+                    "\U0001F610": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "no_incongruity": {
@@ -936,13 +937,14 @@ class ModelDecisionMaker:
             "ask_feel_pre_cv": {
                 "model_prompt": "How do you feel about the idea of exploiting a change in your perception of an image as a trigger for laughter?",
                 "choices": {
-                    "Sounds interesting": "pre_cv_pos", 
-                    "What?": "pre_cv_neg"
+                    # add emojis
+                    "\U0001F600": "pre_cv_pos", 
+                    "\U0001F641?": "pre_cv_neg"
                 },
                 "protocols": {
-                    "Sounds interesting": [self.PROTOCOL_TITLES[7]],
-                    "What?": [self.PROTOCOL_TITLES[7]]
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "pre_cv_pos": {
@@ -1050,13 +1052,13 @@ class ModelDecisionMaker:
                 "model_prompt": ["Another related exercise often practised in laughter yoga is feigning Duchenne laughter.",
                 "You could try this in your own time as a mental exercise to keep your spirits high.", ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": "pre_fl_neg",
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F641": "pre_fl_neg",
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": [],
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "pre_fl_neg": {
@@ -1097,7 +1099,7 @@ class ModelDecisionMaker:
 
             "explain_lb": {
                 "model_prompt": ["Then this should be fun! To playfully create your form of laughter, perform the following:", 
-                "loosen the muscles around your mouth and keep your mouth open while repeating one of the following repetitious phrases (using any vowel) and turning it into laughter:", 
+                "Loosen the muscles around your mouth and keep your mouth open while repeating one of the following repetitious phrases (using any vowel) and turning it into laughter:", 
                 "ah, ah, ah, ah, eh, eh, eh, eh, oh, oh, oh, oh, ih, ih, ih, ih, ih, uh, uh, uh, uh, ..."],
                 "choices": {
                     "continue": "continue_explaining_lb",
@@ -1295,15 +1297,15 @@ class ModelDecisionMaker:
             "ask_feel_pre_error": {
                 "model_prompt": ask_pre_protocol_feeling,
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id),
-                    "Unsure": "explain_laughter_error"
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F610": "explain_laughter_error",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id),
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": [],
-                    "Unsure": []
-                },
+		            "\U0001F600": [],
+                    "\U0001F610": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "remind_contempt_pre_error": { 
@@ -1378,13 +1380,13 @@ class ModelDecisionMaker:
             "continue_explaining_laughter_error": {
                 "model_prompt": ["You can try laughing at any of your errors on your own in the same way.", ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id)
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id)
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "no_error": {
@@ -1404,13 +1406,13 @@ class ModelDecisionMaker:
                 "model_prompt": ["If you do recognise making any errors, try to become playful and laugh at them on your own.", 
                 ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id)
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_error(user_id)
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": []
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
 
             # setbacks
@@ -1579,13 +1581,13 @@ class ModelDecisionMaker:
                 #TODO check encourage_setback_practice
                 "model_prompt": [encourage_setback_practice, ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol",
-                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_setback(user_id)#"pre_setback_neg"
+                    "\U0001F600": "continue_pos_pre_protocol",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_setback(user_id)#"pre_setback_neg"
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": [],
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "remind_contempt_pre_setback": {
@@ -1832,15 +1834,15 @@ class ModelDecisionMaker:
             "encourage_laughter_hardship": {
                 "model_prompt": [encourage_hardship_practice, ask_pre_protocol_feeling],
                 "choices": {
-                    "Positive": "continue_pos_pre_protocol", 
-                    "Negative": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_hardship(user_id), 
-                    "Unsure": "pre_hardship_neg"
+                    "\U0001F600": "continue_pos_pre_protocol", 
+                    "\U0001F610": "pre_hardship_neg",
+                    "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt_pre_hardship(user_id), 
                 },
                 "protocols": {
-                    "Positive": [],
-                    "Negative": [],
-                    "Unsure": [],
-                },
+		            "\U0001F600": [],
+                    "\U0001F610": [],
+                    "\U0001F641": [],
+		        }
             },
 
             "remind_contempt_pre_hardship": {
@@ -1954,13 +1956,13 @@ class ModelDecisionMaker:
             "no_incongruity_cv": {
                 "model_prompt": [incongruity_none, contrasting_views_q],
                 "choices": {
-                    "Sounds interesting": "pre_cv_pos", 
-                    "What?": "pre_cv_neg"
+                    "\U0001F600": "pre_cv_pos", 
+                    "\U0001F641?": "pre_cv_neg"
                 },
                 "protocols": {
-                    "Sounds interesting": [self.PROTOCOL_TITLES[7]],
-                    "What?": [self.PROTOCOL_TITLES[7]]
-                },
+		            "\U0001F600": [],
+                    "\U0001F641": [],
+		        }
             },
             
             # 3) own laughter brand and feigning laughter: 
@@ -2017,23 +2019,6 @@ class ModelDecisionMaker:
                     "\U0001F641": [],
                 },
             },
-
-            # TODO
-            #"propose_laugh_off": {
-            #    "model_prompt": ["It\'s great that you can recognise the context behind laughing it off.", ask_pre_protocol_feeling],
-            #    "choices": {
-            #        "\U0001F600": "try_pre_protocol_pos",
-            #        "\U0001F610": lambda user_id, db_session, curr_session, app: self.check_contempt(user_id),
-            #        "\U0001F641": lambda user_id, db_session, curr_session, app: self.check_contempt(user_id)
-            #    },
-            #    "protocols": {
-            #        #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-            #        #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-            #        "\U0001F600": [],
-            #        "\U0001F610": [],
-            #        "\U0001F641": [],
-            #    },
-            #},
 
             "remind_contempt_pre_laughter": {
                 # TODO: what response?
@@ -3398,23 +3383,23 @@ class ModelDecisionMaker:
                 # Added these
                 and current_choice != "pre_laughter_pos" 
                 and current_choice != "explore_trigger_yes"
-                and current_choice != "recommend_playful_protocol"
+                #and current_choice != "recommend_playful_protocol" #smileysss
                 and current_choice != "ask_feel_post_sg"
-                and current_choice != "propose_sg_and_eg"
+                #and current_choice != "propose_sg_and_eg" #smileysss
                 and current_choice != "ask_incongruity"
-                and current_choice != "ask_feel_pre_cv"
+                #and current_choice != "ask_feel_pre_cv" #smileysss
                 and current_choice != "ask_feel_post_lb"
                 #and current_choice != "encourage_feigning_laughter"
                 and current_choice != "ask_feel_post_error"
-                and current_choice != "ask_feel_pre_error"
-                and current_choice != "continue_explaining_laughter_error"
-                and current_choice != "continue_exploring_error"
+                #and current_choice != "ask_feel_pre_error" #smileysss
+                #and current_choice != "continue_explaining_laughter_error" #smileysss
+                #and current_choice != "continue_exploring_error" #smileysss
                 and current_choice != "ask_feel_post_setback"
-                and current_choice != "encourage_laughter_setback" 
+                #and current_choice != "encourage_laughter_setback" #smileysss
                 and current_choice != "ask_feel_post_hardship"
                 and current_choice != "remind_contempt_post_hardship"
-                and current_choice != "encourage_laughter_hardship"
-                and current_choice != "ask_feigning_laughter"
+                #and current_choice != "encourage_laughter_hardship" #smileysss
+                #and current_choice != "ask_feigning_laughter" #smileysss
                 and current_choice != "try_pre_lb"
                 and current_choice != "encourage_try_lb"
                 and current_choice != "ask_try_pre_setback"
@@ -3438,8 +3423,8 @@ class ModelDecisionMaker:
                 and current_choice != "remind_contempt_pre_setback"
                 and current_choice != "remind_contempt_pre_hardship"
                 and current_choice != "no_error"
-                and current_choice != "ask_feel_pre_incongruity"
-                and current_choice != "no_incongruity_cv"
+                #and current_choice != "ask_feel_pre_incongruity" #smileys
+                #and current_choice != "no_incongruity_cv" #smileys
                 and current_choice != "constant_practice"
                 and current_choice != "get_started"
                 and current_choice != "review_any_session"
