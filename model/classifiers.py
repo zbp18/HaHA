@@ -214,3 +214,11 @@ def get_sentence_score(sentence, dataframe):
   novelty = novelty_score(sentence, dataframe)
   score = empathy + 0.75*fluency + 2*novelty
   return score
+
+def get_empathy_score(sentence):
+  '''
+  Calculates how fit a sentence is based on its weighted empathy, fluency
+  and novelty values
+  '''
+  score = empathy_score(sentence)
+  return score
