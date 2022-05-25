@@ -276,28 +276,6 @@ class ModelDecisionMaker:
             self.contempt_message[user_id] = True
             return "remind_contempt_pre_hardship"
         else: return "pre_hardship_neg"
-        
-    # TODO: add a time delay?
-    def end_session(self, user_id):
-        if self.user_states_initial[user_id] == "Negative":
-            return "final_feeling_check"
-        else:
-            return "ending_session_initial_pos"
-           
-    def want_another_session(self, user_id):
-        if self.users_names[user_id] == "":
-            message = ["Glad to hear it."]
-        else:
-            message = ["Glad to hear it " + self.users_names[user_id] + "."]
-        message.append("Feel free to reload the page and re-enter your credentials and we can have another chat!")
-        return message
-    
-    def get_ending_message(self, user_id):
-        if self.users_names[user_id] == "":
-            message = ["Thanks! I hope you enjoyed our conversation and that we speak again soon."]
-        else:
-            message = ["Thanks " + self.users_names[user_id] + "! I hope you enjoyed our conversation and that we speak again soon."]
-        return message
 
     def get_suggestions(self, user_id, app): #from all the lists of protocols collected at each step of the dialogue it puts together some and returns these as suggestions
         suggestions = []
@@ -520,34 +498,6 @@ class ModelDecisionMaker:
             return temp_list[0], temp_list[1], temp_list[2]
         else:
             return sentence   
-    
-    def get_opening_prompt_negative(self, user_id):
-        # time.sleep(7) TODO: decide how long
-        state = self.user_emotions[user_id]
-        emotion = self.get_emotional_state(state)
-        if emotion == "":
-            opening_prompt = ["Sorry to hear that. Can you identify the underlying reason behind this feeling?", 
-            "You don\'t need to share the reason."]
-        else:
-            opening_prompt = ["Sorry to hear that. Can you identify the underlying reason behind your " + emotion + "?", 
-            "You don\'t need to share the reason."]
-        return opening_prompt
-    
-    def get_emotional_state(self, user_emotion):
-        emotion = ""
-        if user_emotion == "Angry":
-            emotion = "anger"
-        elif user_emotion == "Anxious":
-            emotion = "fear"
-        elif user_emotion == "Sad":
-            emotion = "sadness"
-        return emotion
-
-    # TODO: add my get_model_prompt_s
-    # use a couple of original: add 1 or 2 items to the dataset - ending, opening, guessing emotion, etc.
-
-
-
 
     def get_model_prompt_project_emotion(self, user_id, app, db_session):
         #time.sleep(7) # TODO: should we removed the sleeps

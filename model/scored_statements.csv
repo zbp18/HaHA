@@ -267,7 +267,7 @@ Aaaand our session has come to a close! Sorry for being so dramatic!,0.5,0.12,1
 "That means it's almost time to say goodbye, {}!",0,0.05,1
 "I don't want to say it, but unfortunately, that means our session has come to an end!",0.5,0.28,1
 "Then our session has come to an end, unfortunately!",0,0.14,1
-"So it's almost time for our goodbyes, sadly. I better get my tissues ready...",0.5,0.14,1
+"So it's almost time for our goodbyes, sadly. I better get my tissues ready!",0.5,0.14,1
 "That means we're finished, {}!",0,0.01,1
 "Then we've reached the end of our conversation, {}.",0,0.09,0
 Then I guess we're done here already!,0,0.12,1
@@ -313,37 +313,37 @@ So this is the end of our conversation then!,0,0.17,1
 "Thanks, {}! I hope you had a good time and we speak again soon.",1,0.13,0
 "Thanks, {}! I hope you had a great time, let's chat again soon!",1,0.15,1
 "Many thanks, {}! I hope you enjoyed it and we chat again soon.",1,0.08,0
-"Nice to hear it, {}. You can reload the page and enter your details in again for another talk!",0.5,0.05,0
-"I'm really happy to hear it, {}. Reload the page, re-enter your credentials, and we are ready for another chat!",1,0.1,0
-"Happy to hear it, {}. Feel free to reload the page and re-enter your credentials, and we can have another chat!",1,0.12,0
-"That's great to hear, {}.*Feel free to reload the page and we can have another conversation anytime. As long as I'm not sleeping! ",1,0.09,1
-"Love to hear it, {}.*If you want, you can reload the page and we can have another go at it, after you re-enter your credentials.",1,0.14,0
-"Yay - I'm glad to hear that, {}!*Feel free to have another chat by reloading the page and re-entering your credentials.",1,0.1,0
-"Great to hear that, {}.*For another talk, you can just reload and re-enter your username and password. I'll still be here!",1,0.08,1
-"Glad to hear that, {}.*When you feel like it, go on and reload the page and re-enter your credentials, so we can meet again and have another chat!",1,0.11,0
-"Really pleased to hear that, {}.*Whenever you feel like it, go ahead and reload the page and re-enter your credentials, and we can have another chat!",1,0.09,0
-"I'm happy to hear that, {}.*You can reload this page and enter your information again whenever you want so we can talk again.",1,0.09,0
-"Very pleased to hear this, {}.*Feel free to reload the page and re-enter your details (username and password) whenever you're ready, and let's have another chat!",1,0.11,0
-"Ah, you made my day, {}!*Feel free to reload the page and re-enter your credentials, and we can have another chat whenever you're ready - I'm always ready!",0,0.07,1
+"Nice to hear it, {}. You can reload the page and enter your details in again for another talk!*Goodbye for now then!",0.5,0.05,0
+"I'm really happy to hear it, {}. Reload the page, re-enter your credentials, and we are ready for another chat!*And bye for now!",1,0.1,0
+"Happy to hear it, {}. Feel free to reload the page and re-enter your credentials, and we can have another chat!*Goodbye for now then!",1,0.12,0
+"That's great to hear, {}.*Feel free to reload the page and we can have another conversation anytime. As long as I'm not sleeping!*But goodbye for now!",1,0.09,1
+"Love to hear it, {}.*If you want, you can reload the page and we can have another go at it, after you re-enter your credentials. But goodbye for now!",1,0.14,0
+"Yay - I'm glad to hear that, {}!*Feel free to have another chat by reloading the page and re-entering your credentials. But goodbye for now!",1,0.1,0
+"Great to hear that, {}.*For another talk, you can just reload and re-enter your username and password. I'll still be here!*Goodbye for now then!",1,0.08,1
+"Glad to hear that, {}.*When you feel like it, go on and reload the page and re-enter your credentials, so we can meet again and have another chat!*Goodbye for now then!",1,0.11,0
+"Really pleased to hear that, {}.*Whenever you feel like it, go ahead and reload the page and re-enter your credentials, and we can have another chat! But goodbye for now!",1,0.09,0
+"I'm happy to hear that, {}.*You can reload this page and enter your information again whenever you want so we can talk again. Goodbye for now then!",1,0.09,0
+"Very pleased to hear this, {}.*Feel free to reload the page and re-enter your details (username and password) whenever you're ready, and let's have another chat!*Speak soon, hopefully!",1,0.11,0
+"Ah, you made my day, {}!*Feel free to reload the page and re-enter your credentials, and we can have another chat whenever you're ready - I'm always ready!*Anyway, speak soon, hopefully!",0,0.07,1
 "Good to hear this, {}.*You can reload the page and enter your credentials again to start another session - I hope you haven't forgotten your username and password! Speak soon, hopefully!",0.5,0.03,1
-"I'm very glad, {}!*Feel free to reload the page and enter your credentials so we can talk again whenever you wish.",1,0.05,0
-"Great to hear you say that, {}! You can reload this page and enter your details again if you wish to have another chat.",1,0.11,0
-"Happy to hear that, {}.*Please reload my page and re-enter your credentials for another conversation.",0.5,0.04,0
-"Glad to hear it, {}, thanks. You can reload the page and re-enter your credentials, whenever you're ready to speak again.",1,0.12,0
-"Aw, I'm very glad to hear it, {}.*If you want to chat again, feel free to reload this page and re-enter your credentials.",1,0.18,0
-"Great to hear it, {}.*Whenever you are ready to speak again, give the current page a quick reload and log in with the same details.",1,0.07,0
-"That's really great to hear, {}, thanks!*If you wish to have another conversation, please reload the page and re-enter your login details.",1,0.14,0
+"I'm very glad, {}!*Feel free to reload the page and enter your credentials so we can talk again whenever you wish. But goodbye for now!",1,0.05,0
+"Great to hear you say that, {}! You can reload this page and enter your details again if you wish to have another chat. Goodbye for now then!",1,0.11,0
+"Happy to hear that, {}.*Please reload my page and re-enter your credentials for another conversation. Goodbye for now then!",0.5,0.04,0
+"Glad to hear it, {}, thanks. You can reload the page and re-enter your credentials, whenever you're ready to speak again. Goodbye for now then!",1,0.12,0
+"Aw, I'm very glad to hear it, {}.*If you want to chat again, feel free to reload this page and re-enter your credentials. Speak soon, hopefully!",1,0.18,0
+"Great to hear it, {}.*Whenever you are ready to speak again, give the current page a quick reload and log in with the same details.*But goodbye for now!",1,0.07,0
+"That's really great to hear, {}, thanks!*If you wish to have another conversation, please reload the page and re-enter your login details. But goodbye for now!",1,0.14,0
 "That's great, {}, I would too!*You can reload the page and enter your credentials again to start another session - I hope you haven't forgotten your username and password! Speak soon, hopefully!",1,0.01,1
-"Glad to hear it, {}.*Feel free to reload the page and re-enter your credentials, and we can have another chat!",1,0.09,0
-"Good, I'm glad, {}.*Feel free to reload the page and re-enter your credentials, whenever you wish to start another chat. I hope my girlfriend doesn't get jealous!",1,0.11,1
-"So would I, {}!*Feel free to reload the page and re-enter your credentials for another conversation.",0,0.05,0
-"I would as well, {}!*Just reload the page and re-enter your credentials whenever you want to start another chat!",0.5,0.06,1
-"Nice to hear it, {}.*You can reload the page and re-enter your credentials for another chat! It's better for me actually, it gets boring without someone to talk to…",0.5,0.05,1
-"I'm really happy to hear this, {}.*Feel free to reload the page and re-enter your username and password - I hope you've kept these details safe - so we can have lots more sessions in the future!",1,0.14,1
-"Great, I would love to as well, {}!*You can reload the page and re-enter your credentials when you're ready. I'll see you soon!",1,0.15,1
-"I am happy to hear it, {}.*Whenever you're in the mood, just reload the page and re-enter your credentials. That way we can have another chat!",1,0.11,0
-"Glad to hear it, {}.*If you want another chat, all you have to do is refresh the page and log in with the same credentials. Feel free to come by whenever you like. I'll just be chilling here...",1,0.17,1
-"Glad to know that, {}.*Feel free to reload the page and put your details in again so we can talk some more.",1,0.07,0
+"Glad to hear it, {}.*Feel free to reload the page and re-enter your credentials, and we can have another chat! Speak soon, hopefully!",1,0.09,0
+"Good, I'm glad, {}.*Feel free to reload the page and re-enter your credentials, whenever you wish to start another chat. I hope my girlfriend doesn't get jealous!*Anyway, goodbye for now!",1,0.11,1
+"So would I, {}!*Feel free to reload the page and re-enter your credentials for another conversation. But goodbye for now!",0,0.05,0
+"I would as well, {}!*Just reload the page and re-enter your credentials whenever you want to start another chat!*But goodbye for now and speak to you soon, hopefully!",0.5,0.06,1
+"Nice to hear it, {}.*You can reload the page and re-enter your credentials for another chat! It's better for me actually, it gets boring without someone to talk to…*Anyway, goodbye for now!",0.5,0.05,1
+"I'm really happy to hear this, {}.*Feel free to reload the page and re-enter your username and password - I hope you've kept these details safe - so we can have lots more sessions in the future!*Goodbye for now   then!",1,0.14,1
+"Great, I would love to as well, {}!*You can reload the page and re-enter your credentials when you're ready. I'll see you soon; bye for now!",1,0.15,1
+"I am happy to hear it, {}.*Whenever you're in the mood, just reload the page and re-enter your credentials. That way we can have another chat, but goodbye for now!",1,0.11,0
+"Glad to hear it, {}.*If you want another chat, all you have to do is refresh the page and log in with the same credentials. Feel free to come by whenever you like. I'll just be chilling here...*Anyway, goodbye for now!",1,0.17,1
+"Glad to know that, {}.*Feel free to reload the page and put your details in again so we can talk some more. But goodbye for now!",1,0.07,0
 Do you want to look at other triggers for humour?,0,0.09,0
 "So, {}, would you like to explore another humour exercise?",0,0.03,0
 Do you want to learn about another humour exercise?,0,0.06,0
@@ -1179,25 +1179,25 @@ Let's begin our exploration of how to develop your sense of humour.,0.5,0.21,0
 Let's start exploring how to develop your sense of humour.,0.5,0.15,0
 We will now be exploring ways to grow your sense of humour. Don't worry; you won't need magic beans for this!,1,0.19,1
 What time is it?*It's time to explore how to develop your sense of humour!,0,0.09,1
-"Do you think you might be able to identify the reason behind this feeling?*Don't worry, {}; you do not need to share the actual reason with me.",0.5,0.11,0
-"Can you understand why you are feeling this way?*You don't have to share this with me, {}; I'm just trying to see if you can identify why.",0.5,0.21,0
-Are you able to recognise the underlying reason behind this feeling? Don't worry; you don't need to share the reason.,0.5,0.15,0
-"Can you identify the underlying reason behind this feeling, {}?*You don't need to share the reason. I do my best to respect others' privacy; I understand that tech can be frightening for users in today's world!",1,0.03,1
-Are you able to identify the underlying reason behind this feeling? You don't need to share this with me; don't worry!,1,0.23,1
-There is almost always a reason behind this feeling; can you identify it? You don't need to share it.,1,0.22,0
-Can you realise the underlying reason behind your feeling? You don't need to tell me.,0.5,0.14,0
-"Can you identify the reason behind this feeling? You don't need to share it, but it's important to be aware of it.",1,0.45,0
-"Can you detect the underlying reason behind this feeling? I won't ask you to share further details, don't worry, {}.",0.5,0.1,0
-Is it possible that you can identify the underlying reason behind this feeling?*I don't need to know this reason; it's for your own benefit.,0.5,0.15,0
-Is the underlying reason behind this feeling clear to you? I won't ask what it is; I'm not invasive like that!,0.5,0.12,1
-Can you determine why you're feeling this way?*You don't need to tell me; I'm just asking as this will help you overcome it.,0.5,0.27,0
-"Can you identify the underlying reason behind this feeling, {}? You don't need to share the reason.",0.5,0.04,0
-Do you know why you are feeling like this?*Don't feel pressured to tell me; I'm just asking as it would be helpful to you.,0.5,0.14,0
-"Do you recognise the root cause of your feeling? I won't ask you to share it, {}; don't worry.",0.5,0.11,0
-Can you understand why you are feeling this way?*You don't have to share this with me; I'm just trying to see if you can identify why.,0.5,0.36,0
-Can you identify the underlying reason behind this feeling? You don't need to share the reason.,0.5,0.11,0
-"Can you detect the underlying reason behind this feeling? I won't ask you to share further details, don't worry.",0.5,0.16,0
-Do you recognise the root cause of your feeling? I won't ask you to share it; don't worry.,0.5,0.2,0
+"Do you think you might be able to identify the reason behind your {}?*Don't worry, {}; you do not need to share the actual reason with me.",0.5,0.11,0
+"Can you understand why you are feeling {}?*You don't have to share this with me, {}; I'm just trying to see if you can identify why.",0.5,0.21,0
+Are you able to recognise the underlying reason behind your {}? Don't worry; you don't need to share the reason.,0.5,0.15,0
+"Can you identify the underlying reason behind your {}, {}?*You don't need to share the reason. I do my best to respect others' privacy; I understand that tech can be frightening for users in today's world!",1,0.03,1
+Are you able to identify the underlying reason behind your {}? You don't need to share this with me; don't worry!,1,0.23,1
+There is almost always a reason behind your {}; can you identify it? You don't need to share it.,1,0.22,0
+Can you realise the underlying reason behind your {}? You don't need to tell me.,0.5,0.14,0
+"Can you identify the reason behind your {}? You don't need to share it, but it's important to be aware of it.",1,0.45,0
+"Can you detect the underlying reason behind your {}? I won't ask you to share further details, don't worry, {}.",0.5,0.1,0
+Is it possible that you can identify the underlying reason behind your {}?*I don't need to know this reason; it's for your own benefit.,0.5,0.15,0
+Is the underlying reason behind your {} clear to you? I won't ask what it is; I'm not invasive like that!,0.5,0.12,1
+Can you determine why you're feeling this {}?*You don't need to tell me; I'm just asking as this will help you overcome it.,0.5,0.27,0
+"Can you identify the underlying reason behind your {}, {}? You don't need to share the reason.",0.5,0.04,0
+Do you know why you are feeling this {}?*Don't feel pressured to tell me; I'm just asking as it would be helpful to you.,0.5,0.14,0
+"Do you recognise the root cause of your {}? I won't ask you to share it, {}; don't worry.",0.5,0.11,0
+Can you understand why you are feeling this {}?*You don't have to share this with me; I'm just trying to see if you can identify why.,0.5,0.36,0
+Can you identify the underlying reason behind your {}? You don't need to share the reason.,0.5,0.11,0
+"Can you detect the underlying reason behind your {}? I won't ask you to share further details, don't worry.",0.5,0.16,0
+Do you recognise the root cause of your {}? I won't ask you to share it; don't worry.,0.5,0.2,0
 "To confirm, would I be correct in saying you are feeling {}?",0.5,0.03,0
 "Thank you so much for sharing with me. From your answer, it sounds like you are feeling {}, does it sound right?",1,0.1,0
 "I see, thank you. From what you have told me I would say that you are feeling {} right now, does that sound about right?",1,0.09,0
@@ -1411,7 +1411,7 @@ Sorry about that.,0,0.27,0
 I'm sad to hear that.,0.5,0.18,0
 "That's unfortunate, sorry.",0,0.07,0
 "Ah, that's not good. ",0,0.6,1
-"Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more. ",1,0.38,0
+"Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more.",1,0.38,0
 Sorry to hear that. ,0,0.13,0
 "Thank you, I understand you're feeling down right now, but I would appreciate it if you could tell me a bit more. ",1,0.69,0
 I understand. Thank you for opening up to me. ,0.5,0.26,0
@@ -2058,7 +2058,7 @@ What's sizzling? Other than your breakfast this morning!,0,0.05,1
 "Howdy! It's short for ""how do you do?""",0,0.14,1
 ".... --- .-- / .- .-. . / -.-- --- ..- ..--.. Sorry, I was just practising my morse code! It means ""how are you?""",1,0.11,1
 What's new? Other than the fact you're sharing your true feelings with a humourist chatbot.,0.5,0.09,1
-"Now, if you can recognise the discussed triggers for laughter (i.e. daily routine-accomplishments, incongruities, faults, etc.) throughout your life, this would be most beneficial.*Remember, developing a sense of humour has no defined endpoint but is a journey. The most important thing is to enjoy it!*And I am always here if you need me - I have nowhere else to go! ",1,0.17,1
+"Now, if you can recognise the discussed triggers for laughter (i.e. daily routine-accomplishments, incongruities, faults, etc.) throughout your life, this would be most beneficial.*Remember, developing a sense of humour has no defined endpoint but is a journey. The most important thing is to enjoy it!*And I am always here if you need me - I have nowhere else to go!",1,0.17,1
 "Try to now recognise the discussed contexts for laughter (i.e. achievements, incongruities, errors, etc.) as often as possible throughout your life to maximise their benefits.*Developing your sense of humour is a journey and one to enjoy! And remember, I am always here if you need me unless I'm eating or sleeping.",1,0.12,1
 "Now, recognising the discussed contexts for laughter (i.e. daily routine accomplishments (SELF-GLORY), incongruities (INCONGRUOUS SELF and or WORLD), faults (SELF-ERROR), etc.) throughout your life is where the magic begins. Enjoy the show!*And remember, there is no completion point to developing a sense of humour; it's a continuous journey, and I'm here to help if you need me.",1,0,1
 "Now, to get the maximum benefits for your sense of humour and general happiness, you should now try to recognise the discussed contexts for laughter (i.e. daily routine-accomplishments, incongruities, faults, etc.) as often as possible throughout your life.*There is no endpoint to developing a sense of humour, it is a journey. And remember, the most important thing is to enjoy the process! I believe in you, and of course, I will be here if you need me; unless I'm on my daily jog.*If only that was true!",1,0,1

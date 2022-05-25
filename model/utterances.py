@@ -208,7 +208,7 @@ review_any = "But are there any particular protocols you want to go over before 
 select_protocol = "Please choose the protocol you want to go over."
 conclusion_note = "That concludes our session, {}!"
 goodbye = "Many thanks, {}! I hope you enjoyed it and we chat again soon."
-restart_note = "Nice to hear it, {}. You can reload the page and enter your details in again for another talk!"
+restart_note = "Nice to hear it, {}. You can reload the page and enter your details in again for another talk!*Goodbye for now then!"
 more_exercises_ask = "So, {}, would you like to explore another humour exercise?"
 playful_mind_inform = "By being more open to our thinking and beliefs and having a PLAYFUL MIND we can nurture our sense of humour."
 playful_mode_other = "Let's look at another way to get into a more open and flexible mode. It's really as easy as it sounds!"
@@ -256,7 +256,7 @@ laugh_setback_inform = "To laugh it off, we need to try finding its positive sid
 laugh_hardship_inform = "To try to laugh this off, it is important that we attempt to change our interpretation of this (as with LAUGHING AT MISFORTUNES or setbacks) and focus on any positives that may have resulted from it."
 try_contrasting_views_ask = "Would you like to try exploiting CONTRASTING VIEWS (of an image, for example) as a trigger for laughter?"
 start_exploring = "Now we will start exploring ways to develop and improve your sense of humour!"
-identified_reason_ask = "Do you think you might be able to identify the reason behind this feeling?*Don't worry, {}; you do not need to share the actual reason with me."
+identified_reason_ask = "Do you think you might be able to identify the reason behind your {}?*Don't worry, {}; you do not need to share the actual reason with me."
 
 # SURVEY 3
 funny_respond = "Glad you liked that; they don't call me artificial intelligence for nothing!"
