@@ -10,7 +10,7 @@ import datetime
 import time
 
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
-from model.classifiers import get_emotion, get_sentence_score, get_empathy_score
+from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_new, empathy_score, get_humour_scores
 from model.utterances import *
 from model.questions_main import *
 from model.questions_reused import *
@@ -26,7 +26,7 @@ class ModelDecisionMaker:
 
         # removed personas
         self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
-        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert.csv', encoding='ISO-8859-1') # changed path
+        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1') # changed path
 
         self.PROTOCOL_TITLES = [
             "0: None",
@@ -136,6 +136,7 @@ class ModelDecisionMaker:
         self.remaining_choices = {}
 
         self.recent_questions = {}
+        self.recent_statements = {}
 
         self.chosen_personas = {}
         self.datasets = {}
@@ -160,6 +161,7 @@ class ModelDecisionMaker:
 
     def initialise_prev_questions(self, user_id):
         self.recent_questions[user_id] = []
+        self.recent_statements[user_id] = []
 
     def clear_persona(self, user_id):
         self.chosen_personas[user_id] = ""
@@ -171,36 +173,48 @@ class ModelDecisionMaker:
         self.datasets[user_id] = pd.DataFrame(columns=['sentences'])
     
     def pre_compute_empathy_scores(self):
-        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humour_detection_rewritings.csv', encoding='ISO-8859-1')
-        scores = []
-        for row in data['sentences'].dropna():
-            score = get_empathy_score(row)
-            print('score is: ', score)
-            scores.append(score)
-        data['scores'] = scores
-        data.to_csv('/Users/zeenapatel/dev/HumBERT/model/humour_detection_rewritings.csv')
+        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        empathy_scores = []
+        if 'empathy' not in data.columns:
+            for row in data['sentences'].dropna():
+                score = empathy_score(row)
+                print('score is: ', score)
+                empathy_scores.append(score)
+            data['empathy'] = empathy_scores
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+
+    def pre_compute_fluency_scores(self):
+        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        fluency_scores = []
+        if 'fluency' not in data.columns:
+            for row in data['sentences'].dropna():
+                score = fluency_score(row)
+                print('score is: ', score)
+                fluency_scores.append(score)
+            data['fluency'] = fluency_scores
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+
+    def pre_compute_humour_scores(self):
+        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        if 'humour' not in data.columns:
+            humour_scores = get_humour_scores(data)
+            data['humour'] = pd.Series(humour_scores)
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+        else:
+            print('humour scores calculated!')
+
 
     def initialise_remaining_choices(self, user_id):
         self.remaining_choices[user_id] = ["displaying_antisocial_behaviour", "internal_persecutor_saviour", "personal_crisis", "rigid_thought"]
     
     def initialise_user_session_vars(self, user_id):
         # TODO: FOR NOW!!!!!!!
-        # drop negative once donne (from list!)
+        # drop negative once done (from list!)
         self.user_mini_sessions[user_id] = ("1: Playful mind", "2: Playful face")
         self.user_covered_sessions[user_id] = []
         self.contempt_message[user_id] = False
         self.covered_all_message[user_id] = False
         self.haha_count[user_id] = 0
-
-    def save_name(self, user_id):
-        try:
-            user_response = self.user_choices[user_id]["choices_made"]["ask_name"]
-        except:  # noqa
-            user_response = ""
-        self.users_names[user_id] = user_response
-        self.chosen_personas[user_id] = "Kai"
-        self.datasets[user_id] = self.kai
-        return "opening_prompt"
     
     def check_acknowledge_achievements(self, user_id):
         if ('3: Self-glory',) in self.user_covered_sessions[user_id]: 
@@ -347,6 +361,7 @@ class ModelDecisionMaker:
             column = data[base_prompt].dropna()
             #question = self.get_best_sentence(column, prev_qs)
             question = np.random.choice(column)
+            get_sentence_score_new(question, self.dataset)
             not_perfect = '\u0336'.join("perfect") + '\u0336'
             phrases = ["ah, ah, ah, ah, ...", "eh, eh, eh, eh, ...", "ih, ih, ih, ih, ...", "oh, oh, oh, oh, ...", "uh, uh, uh, uh, ..."]
             nl = '\n'
@@ -360,17 +375,6 @@ class ModelDecisionMaker:
             #    self.recent_questions[user_id] = []
             #    self.recent_questions[user_id].append(question)
             #return self.split_sentence(question)
-
-    # add check for whether user is familiar with the humorous protocols
-    def get_opening_prompt(self, user_id):
-        # time.sleep(7)
-        if self.users_names[user_id] == "":
-            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh.", # \N{grinning face with smiling eyes}
-            "Are you familiar with the self-initiated humorous protocols?"]
-        else:
-            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + ". I will do my best to help you learn to laugh.", # \N{grinning face with smiling eyes}
-            "Are you familiar with the self-initiated humorous protocols?"]
-        return opening_prompt
 
     def get_restart_prompt(self, user_id):
         #TODO: why time.sleep()
@@ -477,48 +481,6 @@ class ModelDecisionMaker:
             self.recent_protocols.popleft()
         self.recent_protocols.append(recent_protocol)
 
-    # previously determine_next_prompt_opening - get emotion at start of session
-    def determine_next_prompt_start_session(self, user_id, app, db_session, respond_to_joke):
-        if respond_to_joke:
-            user_response = self.user_choices[user_id]["choices_made"]["ask_emotion_haha"]
-        else:
-            user_response = self.user_choices[user_id]["choices_made"]["ask_emotion_no_haha"]
-        emotion = user_response.lower()
-        if emotion == 'sad' or emotion == 'angry' or emotion == 'anxious' or emotion == 'happy':
-            self.user_emotions[user_id] = string.capwords(user_response)
-            if user_response.lower() == 'happy':
-                #self.get_happy_emotion(user_id)
-                self.user_states[user_id] = "Positive"
-                self.user_states_initial[user_id] = "Positive"
-                return "after_classification_positive"
-            else:
-                self.user_states[user_id] = "Negative"
-                self.user_states_initial[user_id] = "Negative"
-                return "after_classification_negative"
-        
-        emotion = get_emotion(user_response)
-        #emotion = np.random.choice(["Happy", "Sad", "Angry", "Anxious"]) #random choice to be replaced with emotion classifier
-        if emotion == 'fear':
-            self.guess_emotion_predictions[user_id] = 'Anxious/Scared'
-            self.user_emotions[user_id] = 'Anxious'
-            self.user_states_initial[user_id] = 'Negative'
-        elif emotion == 'sadness':
-            self.guess_emotion_predictions[user_id] = 'Sad'
-            self.user_emotions[user_id] = 'Sad'
-            self.user_states_initial[user_id] = 'Negative'
-        elif emotion == 'anger':
-            self.guess_emotion_predictions[user_id] = 'Angry'
-            self.user_emotions[user_id] = 'Angry'
-            self.user_states_initial[user_id] = 'Negative'
-        else:
-            self.guess_emotion_predictions[user_id] = 'Happy/Content'
-            self.user_emotions[user_id] = 'Happy'
-            self.user_states_initial[user_id] = 'Positive'
-        #self.guess_emotion_predictions[user_id] = emotion
-        #self.user_emotions[user_id] = emotion
-        self.user_states[user_id] = self.user_states_initial[user_id]
-        return "guess_emotion"
-
     def get_best_sentence(self, column, prev_qs):
         #return random.choice(column.dropna().sample(n=15).to_list()) #using random choice instead of machine learning
         maxscore = 0
@@ -531,8 +493,21 @@ class ModelDecisionMaker:
         if chosen != '':
             return chosen
         else:
-            return random.choice(column.dropna().sample(n=5).to_list()) #was 25          
+            return random.choice(column.dropna().sample(n=5).to_list()) #was 25    
 
+    def get_best_sentence_new(self, column, prev_qs):
+        #return random.choice(column.dropna().sample(n=15).to_list()) #using random choice instead of machine learning
+        maxscore = 0
+        chosen = ''
+        if not greeting in column.unique():
+            for row in column.dropna().sample(n=10): #was 25 #TODO CHANGE - 12?
+                fitscore = get_sentence_score_new(row, prev_qs)
+                if fitscore > maxscore:
+                    maxscore = fitscore
+                    chosen = row
+            if chosen != '':
+                return chosen
+        return random.choice(column.dropna().to_list())#before was column.dropna().sample(n=5).to_list()) #was 25       
 
     def split_sentence(self, sentence):
         temp_list = re.split('(?<=[.?!]) +', sentence)
@@ -544,70 +519,7 @@ class ModelDecisionMaker:
         elif len(temp_list) == 3:
             return temp_list[0], temp_list[1], temp_list[2]
         else:
-            return sentence
-
-    # TODO: use this as a template for the rest
-    def get_model_prompt_guess_emotion(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - From what you have said I believe you are feeling {}. Is this correct?"].dropna()
-        my_string = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(my_string)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(my_string)
-        question = my_string.format(self.guess_emotion_predictions[user_id].lower())
-        return self.split_sentence(question)
-
-    # TODO: keep this
-    def get_model_prompt_check_emotion(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - I am sorry. Please select from the emotions below the one that best reflects what you are feeling:"].dropna()
-        my_string = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(my_string)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(my_string)
-        return self.split_sentence(my_string)
-
-    def get_sad_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Sad"
-        self.user_emotions[user_id] = "Sad"
-        self.user_states_initial[user_id] = "Negative"
-        self.user_states[user_id] = "Negative"
-        return "after_classification_negative"
-
-    def get_angry_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Angry"
-        self.user_emotions[user_id] = "Angry"
-        self.user_states_initial[user_id] = "Negative"
-        self.user_states[user_id] = "Negative"
-        return "after_classification_negative"
-
-    def get_anxious_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Anxious/Scared"
-        self.user_emotions[user_id] = "Anxious"
-        self.user_states_initial[user_id] = "Negative"
-        self.user_states[user_id] = "Negative"
-        return "after_classification_negative" 
-
-    def get_happy_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Happy/Content"
-        self.user_emotions[user_id] = "Happy"
-        self.user_states_initial[user_id] = "Positive"
-        self.user_states[user_id] = "Positive"
-        return "after_classification_positive"
-
-    # TODO added (check right place)
-    def determine_first_positive_session(self):
-        # TODO decide if want to start with haha always?
-        # positive mini sessions
-        positive_sessions = ["ask_playful_mode_haha", "ask_incongruity_and_cv", "ask_laughter_brand"]
-        chosen_session = np.random.choice(positive_sessions)
-        return chosen_session
+            return sentence   
     
     def get_opening_prompt_negative(self, user_id):
         # time.sleep(7) TODO: decide how long

@@ -50,12 +50,12 @@ class ActionProvider {
     let dataReceived = response.data
     if (!dataReceived.validID) {
       let message = this.createChatBotMessage(
-        "The username and password combination is not valid. Please re-enter these.",
+        "The username and password combination is not valid.",
         {
           withAvatar: true,
         });
       this.addMessageToBotState(message);
-      let user_id_message = this.createChatBotMessage("What is your username?",
+      let user_id_message = this.createChatBotMessage("Please re-enter your username:",
         { withAvatar: true }
       );
       this.addMessageToBotState(user_id_message)

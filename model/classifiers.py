@@ -1,6 +1,7 @@
 import pytorch_lightning as pl
 import textdistance as td
 import numpy as np
+import pandas as pd
 import argparse
 import torch
 from torch import nn
@@ -92,6 +93,25 @@ def get_emotion(text):
       dec = [emo_model.tokenizer.decode(ids) for ids in output]
   label = dec[0]
   return label
+
+
+#TODO
+def get_humour_scores(data):
+  '''
+  Returns an array of discrete numerical humour label for each utterance (0 or 1)
+  '''
+  # TODO: run `preprocessing_for_bert` on the test set, create data_loader, etc.
+
+  # Compute predicted probabilities on the complete dataset
+  #probs = bert_predict(bert_classifier, test_dataloader)
+  probs = [] #for now
+
+  # Get predictions from the probabilities
+  threshold = 0.5
+  preds = np.where(probs[:, 1] > threshold, 1, 0)
+
+  print("Number of statements predicted humorous: ", preds.sum())
+  return preds
 
 
 def empathy_score(text):
@@ -215,10 +235,20 @@ def get_sentence_score(sentence, dataframe):
   score = empathy + 0.75*fluency + 2*novelty
   return score
 
-def get_empathy_score(sentence):
+
+#TODO new arg - another dataframe - prev qs
+def get_sentence_score_new(sentence, dataframe):
   '''
-  Calculates how fit a sentence is based on its weighted empathy, fluency
+  Calculates how fit a sentence is based on its weighted humour, empathy, fluency
   and novelty values
   '''
-  score = empathy_score(sentence)
+  print('sentence: ', sentence)
+  data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+  humour = data.loc[data.index[data['sentences']==sentence].tolist(),'humour'].tolist()[0]
+  empathy = data.loc[data.index[data['sentences']==sentence].tolist(),'empathy'].tolist()[0]
+  fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
+  novelty = novelty_score(sentence, dataframe)
+  score = humour + empathy + 0.75*fluency + 2*novelty
+  
+  print('score: ', score)
   return score

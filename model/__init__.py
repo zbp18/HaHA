@@ -123,8 +123,10 @@ def create_app():
             db.session.commit()
 
             decision_maker.clear_names(user.id)
-            # only run this once
-            #decision_maker.pre_compute_empathy_scores()
+            # TODO only want these pre-computes to run once
+            decision_maker.pre_compute_empathy_scores()
+            decision_maker.pre_compute_fluency_scores()
+            decision_maker.pre_compute_humour_scores()
             decision_maker.initialise_remaining_choices(user.id)
             decision_maker.initialise_prev_questions(user.id)
             decision_maker.initialise_user_session_vars(user.id)
