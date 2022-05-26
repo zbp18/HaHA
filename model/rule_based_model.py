@@ -1050,7 +1050,7 @@ class ModelDecisionMaker:
                 and current_choice != "get_started"
                 and current_choice != "review_any_session"
                 and current_choice != "inform_playful"
-                and current_choice != "reminder_incongruity"
+                #and current_choice != "reminder_incongruity"
                 and current_choice != "ending_session_initial_pos"
                 and current_choice != "guess_emotion"
                 and current_choice != "ask_emotion_haha"

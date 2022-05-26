@@ -1036,7 +1036,7 @@ Notice any incongruities or inconsistencies in your life lately?,0,0.15,0
 Has any incongruity popped up in your life lately? I hope it didn't give you a fright!,0.5,0.16,1
 Have you experienced any incongruity in your life lately?,0,0.28,0
 Is it fair to say that you have experienced some incongruity in your life recently?,0.5,0.4,0
-Shall we try this out?,0,0.18,0
+Are you happy to try this out?,0,0.18,0
 How do you feel about this?,0,0.69,0
 Would you like to try this out?,0,0.65,0
 Are you happy to try this? It's not quite like chocolate but a sugar-free option!,0,0.16,1
@@ -1054,7 +1054,7 @@ What are your feelings towards this?,0,0.23,0
 How does that sound?,0,0.31,0
 "How do you feel about trying this exercise? I'd take this over a jog, any day!",0,0.06,1
 How do you feel about doing this?,0,0.55,0
-"Please tell me, {}, how do you feel now, after attempting this?",0.5,0.07,0
+"Please tell me, {}, how you felt, after attempting this?",0.5,0.07,0
 "Can you reflect how you feel, after trying this?",0.5,0.08,0
 How did it feel once you had tried this?,0,0.14,0
 "Did the exercise make you feel better, worse or the same? Don't worry; I won't get offended!",0.5,0.26,1

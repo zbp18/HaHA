@@ -132,7 +132,7 @@ def get_main_questions(decision_maker):
         },
 
         "ask_emotion_no_haha": {
-            "model_prompt": ask_feeling, 
+            "model_prompt": feeling_ask, 
             "choices": {
                 "open_text": lambda user_id, db_session, curr_session, app: determine_next_prompt_start_session(decision_maker, user_id, False)
             },
