@@ -1191,7 +1191,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "no_error_haha": {
-            "model_prompt": [no_errors_respond, more_relev_exercises_ask],
+            "model_prompt": [no_errors_respond],
             "choices": {
                 "Haha": "funny_no_error",
                 "That wasn't funny": "not_funny_no_error"
