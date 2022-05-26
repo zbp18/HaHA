@@ -11,6 +11,7 @@ import EventOptions from "./widgets/options/GeneralOptions/EventOptions";
 import YesNoProtocolOptions from "./widgets/options/GeneralOptions/YesNoProtocolsOptions";
 import FeelingOptions from "./widgets/options/GeneralOptions/FeelingOptions";
 import FeelingOptions2 from "./widgets/options/GeneralOptions/FeelingOptions2";
+import ImageOptions from "./widgets/options/GeneralOptions/ImageOptions";
 
 const botName = "HumBERT";
 
@@ -92,6 +93,11 @@ const config = {
     {
       widgetName: "Feeling2",
       widgetFunc: (props) => <FeelingOptions2 {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Image",
+      widgetFunc: (props) => <ImageOptions {...props} />,
       mapStateToProps: ["userState", "sessionID"],
     },
   ],

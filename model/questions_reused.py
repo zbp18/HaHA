@@ -2,11 +2,11 @@ from model.utterances import *
 from model.questions_main import *
 
 def get_reused_questions(decision_maker):
-
+    
+    #################### REUSED PARTS OF CONVERSATIO ####################
+    
     QUESTIONS = {            
 
-        #################### REUSED PARTS OF CONVERSATION ####################
-        
         # continue exploring
 
         "continue_curr_can't_do": {

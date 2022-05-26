@@ -171,7 +171,7 @@ def create_app():
         # Update last accessed
         user.last_accessed = datetime.datetime.utcnow()
         db.session.commit()
-
+        
         return {
             "chatbot_response": output["model_prompt"],
             "user_options": output["choices"],

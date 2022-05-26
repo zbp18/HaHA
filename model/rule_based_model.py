@@ -331,29 +331,7 @@ class ModelDecisionMaker:
 
     # Takes next item in queue, or moves on to suggestions
     # if all have been checked
-
-    def get_review_prompt(self, user_id):
-        #prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-            data = self.dataset
-            base_prompt = "Great. Just to let you know, they are also being displayed on the right of the screen in my browser view.*Feel free to review them at any point in our conversation."
-            column = data[base_prompt].dropna()
-            #question = self.get_best_sentence(column, prev_qs)
-            question = np.random.choice(column)
-            get_sentence_score_new(question, self.dataset)
-            not_perfect = '\u0336'.join("perfect") + '\u0336'
-            phrases = ["ah, ah, ah, ah, ...", "eh, eh, eh, eh, ...", "ih, ih, ih, ih, ...", "oh, oh, oh, oh, ...", "uh, uh, uh, uh, ..."]
-            nl = '\n'
-            laughter = "ah, ah, ah, ah, ..., eh, eh, eh, eh, ..., oh, oh, oh, oh, ..., ih, ih, ih, ih, ih, ..., uh, uh, uh, uh, ..."
-            second_laughter = "\"ah, ah, ah, ah, ...\", \"eh, eh, eh, eh, ...\", \"oh, oh, oh, oh, ...\", \"ih, ih, ih, ih, ih, ...\", \"uh, uh, uh, uh, ...\"."
-            question = question.format(second_laughter).split("*")
-            return question
-            #if len(self.recent_questions[user_id]) < 50:
-            #    self.recent_questions[user_id].append(question)
-            #else:
-            #    self.recent_questions[user_id] = []
-            #    self.recent_questions[user_id].append(question)
-            #return self.split_sentence(question)
-
+    
     def get_restart_prompt(self, user_id):
         #TODO: why time.sleep()
         time.sleep(7)
@@ -1029,8 +1007,11 @@ class ModelDecisionMaker:
                 and current_choice != "ending_better_no_haha"
                 and current_choice != "ending_better_haha"
                 and current_choice != "remind_contempt_pre_laughter"
-                and current_choice != "further_clarify_cv_not_haha"
-                and current_choice != "further_clarify_cv_haha"
+                #and current_choice != "further_clarify_cv_not_haha"
+                #and current_choice != "further_clarify_cv_haha"
+                #TODO and current_choice != "further_clarify_cv"
+                and current_choice != "continue_cv_haha"
+                and current_choice != "continue_cv_not_haha"
                 and current_choice != "remind_contempt_post_error"
                 and current_choice != "remind_contempt_pre_error"
                 and current_choice != "remind_contempt_post_setback"

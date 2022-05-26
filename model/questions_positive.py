@@ -3,9 +3,10 @@ from model.questions_main import *
 
 def get_positive_questions(decision_maker):
 
-    QUESTIONS = {
+    #################### MAIN SESSION (POSITIVE) ####################
 
-        #################### MAIN SESSION (POSITIVE) ####################
+    QUESTIONS = {
+        
         # random choice between 3 specific mini sessions: 
         # 1) playful mode and self-glory: 
         # "ask_playful_mode" (see above)

@@ -1,238 +1,11 @@
 from model.utterances import *
 from model.questions_main import *
 
-def get_model_prompt_try_laugh_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[try_laugh_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-        
-def get_model_prompt_laugh_off_low_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[laugh_off_low_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_can_laugh_off_low_ask_feeling_pre(decision_maker, user_id):
-    name = decision_maker.users_names[user_id]
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column1 = data[can_laugh_off_low_pos].dropna()
-    column2 = data[feeling_pre_exercise_ask].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string1)
-        decision_maker.recent_questions[user_id].append(my_string2)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string1)
-        decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
-    return question
-
-def get_model_prompt_neg_respond_not_contempt_note(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column1 = data[neg_respond].dropna()
-    column2 = data[not_contempt_note].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string1)
-        decision_maker.recent_questions[user_id].append(my_string2)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string1)
-        decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
-    return question
-
-def get_model_prompt_laugh_off_low_neg_try(decision_maker, user_id):
-    name = decision_maker.users_names[user_id]
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column1 = data[laugh_off_low_neg_respond].dropna()
-    column2 = data[try_exercise_encourage].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string1)
-        decision_maker.recent_questions[user_id].append(my_string2)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string1)
-        decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
-    return question
-
-def get_model_prompt_further_clarification_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[further_clarification_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_laugh_off_low_inform(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[laugh_off_low_inform].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_explore_reason_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[explore_reason_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_reason_incongruity_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[reason_incongruity_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_reason_error_ask(decision_maker, user_id):
-    # TODO add rewritings (for now just base)
-    return reason_error_ask
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[reason_incongruity_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_incongruity_inform(decision_maker, user_id):
-    name = decision_maker.users_names[user_id]
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[incongruity_inform].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format(name).split("*")
-    return question
-
-
-def get_model_prompt_cont_reason_incongruity_ask(decision_maker, user_id):
-    return cont_reason_incongruity_ask
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[cont_reason_incongruity_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_explore_involved_reason_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[explore_involved_reason_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_reason_setback_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[reason_setback_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_reason_hardship_ask(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[hardship_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
-def get_model_prompt_not_find_reason_reassure(decision_maker, user_id):
-    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
-    data = decision_maker.dataset
-    column = data[not_find_reason_reassure].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
-    if len(decision_maker.recent_questions[user_id]) < 50:
-        decision_maker.recent_questions[user_id].append(my_string)
-    else:
-        decision_maker.recent_questions[user_id] = []
-        decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
-    return question
-
 def get_negative_questions(decision_maker):
 
-    QUESTIONS = {
+    #################### MAIN SESSION (NEGATIVE) ####################
 
-        #################### MAIN SESSION (NEGATIVE)
+    QUESTIONS = {
         
         "underlying_reason_yes": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_try_laugh_ask(decision_maker, user_id),
@@ -509,3 +282,230 @@ def get_negative_questions(decision_maker):
     }
 
     return QUESTIONS
+
+def get_model_prompt_try_laugh_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[try_laugh_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+        
+def get_model_prompt_laugh_off_low_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[laugh_off_low_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_can_laugh_off_low_ask_feeling_pre(decision_maker, user_id):
+    name = decision_maker.users_names[user_id]
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column1 = data[can_laugh_off_low_pos].dropna()
+    column2 = data[feeling_pre_exercise_ask].dropna()
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    return question
+
+def get_model_prompt_neg_respond_not_contempt_note(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column1 = data[neg_respond].dropna()
+    column2 = data[not_contempt_note].dropna()
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    question = "*".join([my_string1, my_string2]).format().split("*")
+    return question
+
+def get_model_prompt_laugh_off_low_neg_try(decision_maker, user_id):
+    name = decision_maker.users_names[user_id]
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column1 = data[laugh_off_low_neg_respond].dropna()
+    column2 = data[try_exercise_encourage].dropna()
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    return question
+
+def get_model_prompt_further_clarification_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[further_clarification_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_laugh_off_low_inform(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[laugh_off_low_inform].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_explore_reason_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[explore_reason_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_reason_incongruity_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[reason_incongruity_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_reason_error_ask(decision_maker, user_id):
+    # TODO add rewritings (for now just base)
+    return reason_error_ask
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[reason_incongruity_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_incongruity_inform(decision_maker, user_id):
+    name = decision_maker.users_names[user_id]
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[incongruity_inform].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format(name).split("*")
+    return question
+
+
+def get_model_prompt_cont_reason_incongruity_ask(decision_maker, user_id):
+    return cont_reason_incongruity_ask
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[cont_reason_incongruity_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_explore_involved_reason_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[explore_involved_reason_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_reason_setback_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[reason_setback_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_reason_hardship_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[hardship_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_not_find_reason_reassure(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[not_find_reason_reassure].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question

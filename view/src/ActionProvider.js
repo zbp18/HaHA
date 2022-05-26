@@ -119,6 +119,8 @@ class ActionProvider {
       optionsToShow = "RecentDistant"
     } else if (userOptions.length === 3 && userOptions[0] === "positive" && userOptions[1] === "neutral" && userOptions[2] === "negative") {
       optionsToShow = "Emotion"
+    } else if (userOptions.length === 1 && userOptions[0] === "staring...") {
+      optionsToShow = "Image"
     } else if (userOptions.length === 3 && userOptions[0] === "better" && userOptions[1] === "worse" && userOptions[2] === "no change") {
       optionsToShow = "Feedback"
     } else if (userOptions.length === 3 && userOptions[0] === "\uD83D\uDE00" && userOptions[1] === "\uD83D\uDE10" && userOptions[2] === "\uD83D\uDE41") {

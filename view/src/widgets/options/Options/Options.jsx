@@ -1,6 +1,7 @@
 import React from "react";
 
 import styles from "./Options.module.css";
+import vase from "/Users/zeenapatel/dev/HumBERT/view/src/images/gestalt vase.png";
 
 const Options = ({ options }) => {
   const runHandler = (handler, userID, sessionID, userInput, userInputType) => {
@@ -20,7 +21,10 @@ const Options = ({ options }) => {
         )
       }
     >
-      {option.name}
+      {option.userInputType === "Image" ? <figure>
+        <img src={vase} width={128} alt="Gestalt Vase" />
+        <figcaption>Click to continue</figcaption>
+      </figure> : option.name}
     </button>
   ));
 
