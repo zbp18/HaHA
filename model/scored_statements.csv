@@ -287,7 +287,7 @@ Then we have now finished our session!,0,0.05,1
 "Then we have finished our session, believe it or not!",0,0.15,1
 So this is the end of our conversation then!,0,0.17,1
 "Thank you very much, {}! I really hope you enjoyed our conversation and I look forward to speaking with you again soon.",1,0.41,0
-"Thanks a lot, {}. I hope this was useful and that you had fun in our conversation - we were discussing humour, after all! It would be great to speak again soon.",1,0.15,1
+"Thanks a lot, {}. I hope this was useful and that you had fun in our conversation - we were discussing humour, after all!*It would be great to speak again soon.",1,0.15,1
 "Thanks, {}! I hope you had a great chat, let's catch up soon!",1,0.14,1
 "Thanks, {}! Hope you enjoyed this as much as I did, would be great to do this anytime soon.",1,0.17,0
 "It was very enjoyable taking to you, {}! We will speak again soon (if you wish - it's in your control, not mine!).",1,0.06,1
@@ -918,7 +918,7 @@ Would you like to explore the possible cause for why you're feeling this way?,0.
 "Thinking about it, could the root of this negative feeling be an incongruity or an inconsistency, perhaps?",0.5,0.17,0
 Is it possible that the source of your negative feelings is an inconsistency?,0.5,0.17,0
 Could it maybe be an incongruity or inconsistency that's causing your negative feeling?,0.5,0.13,0
-"Maybe it's something incongruous that's causing your negative feeling? ""Incongruous"" - The word still makes me uneasy at times …",0.5,0.01,1
+"Maybe it's something incongruous that's causing your negative feeling? ""Incongruous"" - The word still makes me uneasy at times…",0.5,0.01,1
 Do you think you might be feeling like this because of an inconsistency present in your life?,0.5,0.2,0
 Do you think your negative feeling could be due to inconsistency or an incongruity?,0.5,0.18,0
 Do you think that an incongruity might be causing your negative mood?,0.5,0.17,0
@@ -2248,7 +2248,7 @@ Could you try laughing this off? I promise it wouldn't bite!,0.5,0.08,1
 Could you try laughing this off? Maybe it would help if you tickle yourself? I wouldn't know…,0.5,0.07,1
 Are you able to laugh this off? I've been working on a laughter impression if you're stuck on that part: hahahahaha!,0.5,0.11,1
 "Would you be able to laugh this off? Like this: Ha ha ha! Ha ha! Sorry, my laughter impression isn't great yet!",1,0,1
-"Do remember not to laugh with contempt towards yourself or others; this can cause one to feel down.*It sounds obvious, but these bad habits can result in low moods in the long term.*Like bingeing on sugar, which I know all too well…",1,0.08,1
+"Do remember not to laugh with contempt towards yourself or others; this can cause one to feel down.*It sounds obvious, but these bad habits can result in low moods in the long term.*Like bingeing on sugar, which I know all too well :(",1,0.08,1
 "Remember not to laugh with contempt towards yourself or others; this can cause one to have the blues.*I've never understood that phrase, as blue has always been my favourite colour. ",1,0.01,1
 "During our laughter, we must AVOID CONTEMPT both towards ourselves and others.*Yes, I know it's not a humour term, but I think it's important to emphasise, even if I have to spell it out: N-O  C-O-N-T-E-M-P-T.",1,0.1,1
 "We should always avoid laughing with any contempt towards ourselves or the others around us.*It's bad habits, such as these, that really catch up on us, like stress-eating. Glad I got past that one…",1,0,1

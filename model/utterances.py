@@ -98,7 +98,7 @@ self_error_encourage_joke = "Feel free to laugh at this in your own time and at 
 reflect_setback_encourage = "Reflecting on our setbacks is an important prerequisite to laughing them off. We are not in a race!*But there is a prize - personal growth and development in your sense of humour.*I bet I caught your attention when I mentioned the word, \"prize\"."
 not_find_reason_reassure = "It looks like we can't find the underlying reason at the moment.*Don't worry, though; feeling down, temporarily, is very common and hopefully should pass. But, if the feeling is not diminishing after more than a week, it's probably worth checking up with your doctor.*Maybe you'll run into the root cause later. Better keep your helmet on!"
 laugh_off_ask_joke = "Would you be able to try laughing this off?*Rather than laughing your head off!"
-not_contempt_note = "Do remember not to laugh with contempt towards yourself or others; this can cause one to feel down.*It sounds obvious, but these bad habits can result in low moods in the long term.*Like bingeing on sugar, which I know all too well…"
+not_contempt_note = "Do remember not to laugh with contempt towards yourself or others; this can cause one to feel down.*It sounds obvious, but these bad habits can result in low moods in the long term.*Like bingeing on sugar, which I know all too well :("
 self_error_clarify = "This exercise aligns with the PLAYFUL or EVOLUTIONARY THEORY of humour, where we are encouraged to be playful with our everyday errors.*I don't mean by playing games like hide-and-seek with them!"
 laugh_setback_encourage = "After completing this exercise for distant problems, you can move on to more recent setbacks.*I'd be surprised if it isn't a struggle at first! But the more you practice it, the easier and more natural it feels - like learning to swim, only, without the risk of drowning!"
 laugh_hardship_encourage = "Laughing at our hardships will eventually allow us to overcome them and even utilise them for our own personal strength and growth.*So, by practising this, you can become more advanced, by human standards at least!"
@@ -120,7 +120,7 @@ wrong_emotion_ask = "Sorry about that; I am a new bot but learning with time! Pl
 pos_pre_exercise_respond = "Great, I look forward to hearing how you find it."
 pos_respond = "Great, I'm glad to hear that."
 feeling_pos_respond = "Great to hear that!"
-neg_repond = "Sorry to hear that."
+neg_respond = "Sorry to hear that."
 feeling_neg_respond = "Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more."
 # TODO url
 detailed_protocols_note = "A more detailed version of these can also be found here: http://humandevelopment.doc.ic.ac.uk/papers/Self-initiated_humorous_protocols-f.pdf"
@@ -134,3 +134,4 @@ cont_laugh_off_ask = "So do you think you could try laughing this off?"
 cont_make_sense_ask = "So does that make sense?"
 #TODO ADDED
 cont_reason_incongruity_ask = "So do you think the root of this negative feeling be an incongruity or an inconsistency?"
+cont_try_exercise_ask = "So would you like to give it a go?"

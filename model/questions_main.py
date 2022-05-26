@@ -317,8 +317,8 @@ def get_main_questions(decision_maker):
             },
         },
 
-            "ending_neg_haha": {
-            "model_prompt":lambda user_id, db_session, curr_session, app: get_model_prompt_pos_protocols_encourage_end(decision_maker, user_id),
+        "ending_neg_haha": {
+            "model_prompt":lambda user_id, db_session, curr_session, app: get_model_prompt_neg_protocols_encourage_end(decision_maker, user_id),
             "choices": {
                 "Haha": "funny_ending",
                 "That wasn't funny": "not_funny_ending"
@@ -330,7 +330,7 @@ def get_main_questions(decision_maker):
         },
 
         "ending_neg_no_haha": {
-            "model_prompt":lambda user_id, db_session, curr_session, app: get_model_prompt_pos_protocols_encourage_end(decision_maker, user_id),
+            "model_prompt":lambda user_id, db_session, curr_session, app: get_model_prompt_neg_protocols_encourage_end(decision_maker, user_id),
             "choices": {
                 "Goodbye": "ending_message",
                 "I'd like to have another session": "another_session",
@@ -748,6 +748,23 @@ def get_model_prompt_pos_protocols_encourage_end(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column1 = data[pos_respond].dropna()
+    column2 = data[practice_protocols_encourage_end].dropna()
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    question = "*".join([my_string1, my_string2]).format().split("*")
+    return question
+
+def get_model_prompt_neg_protocols_encourage_end(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column1 = data[neg_respond].dropna()
     column2 = data[practice_protocols_encourage_end].dropna()
     my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
     my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
