@@ -58,7 +58,7 @@ def get_reused_questions(decision_maker):
         },
 
         "continue_pos_pre_protocol_haha": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_pos_respond(decision_maker, user_id), 
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_pos_respond_joke(decision_maker, user_id), 
             "choices": {
                 "Haha": "funny_pos_pre_protocol",
                 "That wasn't funny": "not_funny_pos_pre_protocol",
@@ -333,7 +333,7 @@ def get_model_prompt_more_exercises_ask(decision_maker, user_id):
         decision_maker.recent_questions[user_id].append(my_string)
     question = my_string.format(name).split("*")
     return question
-
+#pos_pre_exercise_respond
 def get_model_prompt_pos_respond_more_exercises(decision_maker, user_id):
     name = decision_maker.users_names[user_id]
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
@@ -356,6 +356,19 @@ def get_model_prompt_pos_respond(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[pos_respond].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_pos_respond_joke(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[pos_pre_exercise_respond_joke].dropna()
     my_string = decision_maker.get_best_sentence_new(column, prev_qs)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)

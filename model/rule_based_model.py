@@ -1060,6 +1060,8 @@ class ModelDecisionMaker:
                 and current_choice != "encourage_laughter_setback_haha"
                 and current_choice != "encourage_laughter_hardship_haha"
                 and current_choice != "ask_playful_mode_haha"
+                and current_choice != "recommend_review"
+                and current_choice != "remind_review"
             ):
                 user_choice = user_choice.lower()
                 # TODO: remove this annd all print statements

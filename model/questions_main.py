@@ -33,10 +33,14 @@ def get_main_questions(decision_maker):
         "remind_review": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_review_protocols(decision_maker, user_id),
             "choices": {
-                "continue": "constant_practice_haha",
+                "Continue": "constant_practice_haha",
+                "I'm on my phone": "recommend_review_more_details",
+                "I'd like to know more":"recommend_review_more_details",
             },
             "protocols": {
-                "continue": []
+                "Continue": [],
+                "I'm on my phone": [],
+                "I'd like to know more": [],
             },
         }, 
 
@@ -64,6 +68,21 @@ def get_main_questions(decision_maker):
 
         "recommend_review": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_protocols_recommend(decision_maker, user_id),
+            "choices": {
+                # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
+                "Continue": "constant_practice_haha",
+                "I'm on my phone": "recommend_review_more_details",
+                "I'd like to know more":"recommend_review_more_details",
+            },
+            "protocols": {
+                "Continue": [],
+                "I'm on my phone": [],
+                "I'd like to know more": [],
+            },
+        }, 
+
+        "recommend_review_more_details": {
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_detailed_protocols_note(decision_maker, user_id),
             "choices": {
                 # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
                 "continue": "constant_practice_haha",
@@ -424,7 +443,25 @@ def get_model_prompt_practice_protocols(decision_maker, user_id):
 def get_model_prompt_protocols_recommend(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
-    column = data[protocols_recommend].dropna()
+    column1 = data[protocols_recommend].dropna()
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    column2 = data[protocols_note].dropna()
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    my_string = "*".join([my_string1, my_string2])
+    question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_detailed_protocols_note(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[detailed_protocols_note].dropna()
     my_string = decision_maker.get_best_sentence_new(column, prev_qs)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)

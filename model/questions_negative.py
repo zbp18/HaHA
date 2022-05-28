@@ -415,8 +415,6 @@ def get_model_prompt_reason_incongruity_ask(decision_maker, user_id):
     return question
 
 def get_model_prompt_reason_error_ask(decision_maker, user_id):
-    # TODO add rewritings (for now just base)
-    return reason_error_ask
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[reason_incongruity_ask].dropna()
@@ -445,7 +443,6 @@ def get_model_prompt_incongruity_inform(decision_maker, user_id):
 
 
 def get_model_prompt_cont_reason_incongruity_ask(decision_maker, user_id):
-    return cont_reason_incongruity_ask
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[cont_reason_incongruity_ask].dropna()
