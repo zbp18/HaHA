@@ -1,5 +1,8 @@
 from model.utterances import *
 from model.questions_main import *
+from model.questions_mini_session import *
+from model.questions_negative import *
+from model.questions_reused import *
 
 def get_positive_questions(decision_maker):
 
@@ -15,7 +18,7 @@ def get_positive_questions(decision_maker):
         "ask_incongruity_and_cv": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_incongruity_ask(decision_maker, user_id),
             "choices": {
-                "Yes": "ask_laughter_incongruity_no_haha",
+                "Yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_laughter_incongruity_haha", "ask_laughter_incongruity_no_haha"),
                 "No": "no_incongruity_cv_no_haha",
                 "Not sure": "reminder_incongruity",
             },

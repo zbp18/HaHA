@@ -3,6 +3,10 @@ import pandas as pd
 import numpy as np
 from model.utterances import *
 from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_new, empathy_score, get_humour_scores
+from model.questions_mini_session import *
+from model.questions_negative import *
+from model.questions_positive import *
+from model.questions_reused import *
 
 def get_main_questions(decision_maker):
 
@@ -33,7 +37,7 @@ def get_main_questions(decision_maker):
         "remind_review": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_review_protocols(decision_maker, user_id),
             "choices": {
-                "Continue": "constant_practice_haha",
+                "Continue": decision_maker.determine_next_prompt_haha("constant_practice_haha", "constant_practice_no_haha"),
                 "I'm on my phone": "recommend_review_more_details",
                 "I'd like to know more":"recommend_review_more_details",
             },
@@ -70,7 +74,7 @@ def get_main_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_protocols_recommend(decision_maker, user_id),
             "choices": {
                 # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
-                "Continue": "constant_practice_haha",
+                "Continue": decision_maker.determine_next_prompt_haha("constant_practice_haha", "constant_practice_no_haha"),
                 "I'm on my phone": "recommend_review_more_details",
                 "I'd like to know more":"recommend_review_more_details",
             },
@@ -85,7 +89,7 @@ def get_main_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_detailed_protocols_note(decision_maker, user_id),
             "choices": {
                 # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
-                "continue": "constant_practice_haha",
+                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("constant_practice_haha", "constant_practice_no_haha"),
             },
             "protocols": {
                 "continue": []
@@ -115,7 +119,7 @@ def get_main_questions(decision_maker):
         "get_started": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_humour_jargon_note(decision_maker, user_id),
             "choices": {
-                "Let's start": "ask_emotion_haha",
+                "Let's start": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_emotion_haha", "ask_emotion_no_haha"),
             },
             "protocols": {
                 "Let's start": []
@@ -133,7 +137,7 @@ def get_main_questions(decision_maker):
                 "That wasn't funny": []
             },
         },
-
+        #TODO check determine_next_prompt_start_session function nand use
         "funny_emotion": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_respond_cont_feeling_ask(decision_maker, user_id),
             "choices": {
@@ -151,7 +155,7 @@ def get_main_questions(decision_maker):
         },
 
         "ask_emotion_no_haha": {
-            "model_prompt": feeling_ask, 
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feeling_ask(decision_maker, user_id), 
             "choices": {
                 "open_text": lambda user_id, db_session, curr_session, app: determine_next_prompt_start_session(decision_maker, user_id, False)
             },
@@ -196,7 +200,7 @@ def get_main_questions(decision_maker):
         "after_classification_positive": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_start_exploring(decision_maker, user_id),
             "choices": {
-                "continue": lambda user_id, db_session, curr_session, app: determine_first_positive_session(),
+                "continue": lambda user_id, db_session, curr_session, app: determine_first_positive_session(decision_maker),
             },
             "protocols": {
                 "continue": [], 
@@ -248,8 +252,8 @@ def get_main_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_select_protocol(decision_maker, user_id),
             "choices": {
                 # TODO - check haha count
-                "Playful mode": "ask_playful_mode_no_haha",
-                "Self-glory": "ask_self_glory_haha",
+                "Playful mode": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_playful_mode_haha", "ask_playful_mode_no_haha"),
+                "Self-glory": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_self_glory_haha", "ask_self_glory_not_haha"),
                 "Incongruity (self and or world)": "ask_incongruity",
                 "Contrasting views": "ask_feel_pre_cv",
                 "Our own laughter brand": "ask_laughter_brand",
@@ -277,9 +281,9 @@ def get_main_questions(decision_maker):
             #TODO: only use variable once so don't need
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_conclusion_ask_feeling(decision_maker, user_id),
             "choices": {
-                "Better": "ending_better_haha",
-                "No change": "ending_neg_haha",
-                "Worse": "ending_neg_haha",
+                "Better": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ending_better_haha", "ending_better_no_haha"),
+                "No change": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ending_neg_haha", "ending_neg_no_haha"),
+                "Worse": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ending_neg_haha", "ending_neg_no_haha"),
             },
             "protocols": {
                 "Better": [],
@@ -679,10 +683,11 @@ def get_model_prompt_start_exploring(decision_maker, user_id):
     question = "*".join([my_string1, my_string2]).format().split("*")
     return question
 
-def determine_first_positive_session():
+def determine_first_positive_session(decision_maker):
     # TODO decide if want to start with haha always?
     # positive mini sessions
-    positive_sessions = ["ask_playful_mode_haha", "ask_incongruity_and_cv", "ask_laughter_brand"]
+    playful_session = decision_maker.determine_next_prompt_haha("ask_playful_mode_haha", "ask_playful_mode_no_haha")
+    positive_sessions = [playful_session, "ask_incongruity_and_cv", "ask_laughter_brand"]
     chosen_session = np.random.choice(positive_sessions)
     return chosen_session
 

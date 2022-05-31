@@ -1,5 +1,8 @@
 from model.utterances import *
 from model.questions_main import *
+from model.questions_mini_session import *
+from model.questions_positive import *
+from model.questions_reused import *
 
 def get_negative_questions(decision_maker):
 
@@ -45,7 +48,7 @@ def get_negative_questions(decision_maker):
         "propose_laugh_off": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_can_laugh_off_low_ask_feeling_pre(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "try_pre_protocol_pos_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_pos_haha", "try_pre_protocol_pos_no_haha"),
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt(user_id)
             },
             "protocols": {
@@ -60,7 +63,7 @@ def get_negative_questions(decision_maker):
             # TODO: what response?
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_neg_respond_not_contempt_note(decision_maker, user_id), 
             "choices": {
-                "Sure": "try_pre_protocol_neg_no_haha", 
+                "Sure": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"), 
                 "How can I stop this?": "try_pre_protocol_neg_no_contempt",
             },
             "protocols": {
@@ -83,7 +86,7 @@ def get_negative_questions(decision_maker):
             # TODO: check
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id),
             "choices": {
-                "yes": "clarify_laughter_haha",
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("clarify_laughter_haha", "clarify_laughter_no_haha"),
                 "no": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre(user_id) 
             },
             "protocols": {
@@ -154,7 +157,7 @@ def get_negative_questions(decision_maker):
         "explore_trigger_yes": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_reason_incongruity_ask(decision_maker, user_id),
             "choices": {
-                "Yes": "ask_laughter_incongruity_no_haha",
+                "Yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_laughter_incongruity_haha", "ask_laughter_incongruity_no_haha"),
                 "No": "trigger_not_incongruity",
                 "Not sure": "trigger_unsure_incongruity"
             },
@@ -190,7 +193,7 @@ def get_negative_questions(decision_maker):
         "explore_trigger_yes_no_unsure": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_cont_reason_incongruity_ask(decision_maker, user_id),
             "choices": {
-                "yes": "ask_laughter_incongruity_no_haha", # trigger is incongruity -> SKIP TO MINI-SESSION
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_laughter_incongruity_haha", "ask_laughter_incongruity_no_haha"), # trigger is incongruity -> SKIP TO MINI-SESSION
                 "no": "trigger_not_incongruity",
             },
             "protocols": {
@@ -226,7 +229,7 @@ def get_negative_questions(decision_maker):
         "trigger_not_setback": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_reason_hardship_ask(decision_maker, user_id),
             "choices": {
-                "yes": "ask_accept_hardship_no_haha", 
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_accept_hardship_haha", "ask_accept_hardship_no_haha"), 
                 "no": "trigger_not_hardship_haha",
             },
             "protocols": {

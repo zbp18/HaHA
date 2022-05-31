@@ -344,8 +344,8 @@ So this is the end of our conversation then!,0,0.17,1
 "I am happy to hear it, {}.*Whenever you're in the mood, just reload the page and re-enter your credentials. That way we can have another chat, but goodbye for now!",1,0.11,0
 "Glad to hear it, {}.*If you want another chat, all you have to do is refresh the page and log in with the same credentials. Feel free to come by whenever you like. I'll just be chilling here.*Anyway, goodbye for now!",1,0.17,1
 "Glad to know that, {}.*Feel free to reload the page and put your details in again so we can talk some more. But goodbye for now!",1,0.07,0
-Do you want to look at other triggers for humour?,0,0.09,0
-"So, {}, would you like to explore another humour exercise?",0,0.03,0
+"So, {}, would you like to explore another humour exercise?",0,0.09,0
+Do you want to look at other triggers for humour?,0,0.03,0
 Do you want to learn about another humour exercise?,0,0.06,0
 Do you want to have a look at another humour exercise?,0,0.1,0
 Do you want to discover another exercise?,0,0.06,0
@@ -427,8 +427,8 @@ Let's explore another way to get into a playful mode.,0,0.11,0
 "There's also another way to get into a playful mode, which we can now explore.",0,0.15,0
 This is not the only way to get into a playful mode. We can explore another way now.,0,0.07,0
 Let's try another way to get into a playful mode.,0.5,0.14,0
-Can you choose a best song?,0,0.04,0
-"So tell me, {}, do you have a favourite song?",0,0.1,0
+"So tell me, {}, do you have a favourite song?",0,0.04,0
+Can you choose a best song?,0,0.1,0
 "Do you have a favourite song? Mine is ""Wannabe"" by the Spice Girls.",0,0.35,1
 Can you think of a favourite song?,0,0.22,0
 Could you choose a favourite a song?,0,0.05,0
@@ -1119,10 +1119,10 @@ Have you ever considered laughing this off?,0,0.07,0
 Have you tried laughing at this? It can't hurt! At least I can't imagine how it would.,0.5,0.11,1
 Have you tried laughing at this before?,0,0.13,0
 Are you a step ahead? Have you already tried laughing this off?,0.5,0.09,0
-"Even though this can be painful, we should try to concentrate on any positive impact it might have brought on us (perhaps our personal growth). In this way, we will be able to laugh it off.",1,0.22,0
-"To cope with this via laughter, attempt to adjust your interpretation to focus on its positives. We call this LAUGHING AT MISFORTUNES.",0.5,0.05,0
-"In order to laugh it off, we should, despite any discomfort, concentrate on the advantages it has brought us.",0.5,0.11,0
-"To laugh it off, we need to try finding its positive side as this will help us laugh it off and get past our misfortune.*I know; it's not as easy as swapping battery terminals - but don't try this {} anywhere!",1,0,1
+"To laugh it off, we need to try finding its positive side as this will help us laugh it off and get past our misfortune.*I know; it's not as easy as swapping battery terminals - but don't try this {} anywhere!",1,0.22,0
+"Even though this can be painful, we should try to concentrate on any positive impact it might have brought on us (perhaps our personal growth). In this way, we will be able to laugh it off.",0.5,0.05,0
+"To cope with this via laughter, attempt to adjust your interpretation to focus on its positives. We call this LAUGHING AT MISFORTUNES.",0.5,0.11,0
+"In order to laugh it off, we should, despite any discomfort, concentrate on the advantages it has brought us.",1,0,1
 "I know that it is painful, but if we can focus on any positive impact that it has brought, we can then laugh it off.",1,0.19,0
 "I understand that it can be painful, but it is very important that we try to concentrate on its positive impacts to laugh it off.",1,0.2,0
 "To laugh it off, we can, despite the pain it may bring, concentrate on any positive effect it has on us.",0.5,0.18,0
@@ -1198,658 +1198,658 @@ Can you understand why you are feeling this {}?*You don't have to share this wit
 Can you identify the underlying reason behind your {}? You don't need to share the reason.,0.5,0.11,0
 "Can you detect the underlying reason behind your {}? I won't ask you to share further details, don't worry.",0.5,0.16,0
 Do you recognise the root cause of your {}? I won't ask you to share it; don't worry.,0.5,0.2,0
-"To confirm, would I be correct in saying you are feeling {}?",0.5,0.03,0
-"Thank you so much for sharing with me. From your answer, it sounds like you are feeling {}, does it sound right?",1,0.1,0
-"I see, thank you. From what you have told me I would say that you are feeling {} right now, does that sound about right?",1,0.09,0
-"Thanks for telling me, I want to make sure I've understood correctly. I believe you're feeling {}, could you confirm that?",1,0.1,0
-"I see. So you are feeling {}, is that correct?",0,0.05,0
-Thank you for sharing your emotions. Am I correct in thinking that you are feeling {}?,1,0.12,0
-"Thank you for that. Based on what you've said I would say you're feeling {}, are my assumptions correct?",1,0.09,0
-"I believe from all you've said that you are feeling {}, is this accurate?",0.5,0.03,0
-"Thank you, and please correct me if I am wrong. Am I correct in saying that you are feeling {} right now?",1,0.16,0
-"It sounds like your are {}, is that right?",0,0.03,0
-"Thank you for that. If I understand correctly you're feeling {}, is that correct?",0.5,0.09,0
-"From listening to what you have said I take from that that you are feeling {}, is my understanding correct?",0,0.04,0
-"I see, thank you for sharing. I think that you are feeling {}, would I be correct in saying that?",1,0.1,0
-"From your response, it looks like you are feeling {} today, have I got that right?",0,0.08,0
-"From what we've spoke about I think you're probably feeling {}, does that sound about right?",0.5,0.06,0
-"From what you have told me it could be that you are feeling {}, would I be right to say so?",0.5,0.1,0
-"Thank you, I just want to make sure that I have understood correctly. I think you are feeling {}, does that sound right?",1,0.13,0
-"Thank you, I just want to make sure that we are on the same page. Would you say that {} best describes how you're feeling right now?",1,0.28,0
-"Thank you for entrusting me by sharing how you feel. From what you have told me, I believe you are feeling {} ?",1,0.06,0
-"Thank you, and please forgive me if I'm wrong. I believe you are {}, am I correct in thinking that?",1,0.18,0
-"I think that perhaps you are feeling {}, do you think that's true?",0.5,0,0
-"I would say that you're feeling {} right now, do you think that is a reasonable description of your current mood?",0.5,0.14,0
-"Reading what you have told me I believe that you are feeling {}, is that close enough?",0.5,0.06,0
-Thank you for opening up to me. Am I correct in assuming that you are feeling {}?,1,0.13,0
-"Listening to you, it seems that you're feeling {}, did I understand correctly?",0.5,0.04,0
-"After listening to your concerns, I think that your are feeling {}, is this true?",1,0.04,0
-"I think that you may be feeling {}, do you agree?",0.5,0.04,0
-"Gathering everything from what you just told me, I believe you're feeling {} today, would you think it's fair to say that?",1,0.07,0
-"What I am hearing is that you feel {}, is that right?",0,0.07,0
-"Going off of what you have told me, it seems as though you are feeling {}, do you think this is accurate?",0.5,0.15,0
-Thank you. Would I be correct in saying that you are feeling {}?,0.5,0.06,0
-"Thank you for sharing. I have the impression that you are {} today, is this correct?",1,0.09,0
-"Thank you, let me just double check on what you've just told me. From what I can gather you are feeling {}, is that accurate?",1,0.11,0
-"Thanks for your answer. It sounds to me like you're {} right now, does that description match how you feel?",1,0.12,0
-"If I understand correctly you are feeling {}, does that describe it accurately enough?",0.5,0.03,0
-"From what you've told me, it sounds like you're feeling {}, is this right?",0,0.12,0
-"I feel that you are feeling quite {} today, is that right?",0,0,0
-"Now, I would just like to clarify you are feeling {}, is that correct?",0,0.07,0
-"Thank you. I get the impression you are feeling {}, am I right?",0,0.08,0
-"It seems that you're feeling {} today, is that an accurate enough description of what you're feeling?",0.5,0.07,0
-"Thank you for trusting in me and sharing how you feel. If I understand correctly, you are feeling {} right now, would you say that's true?",1,0.11,0
-"I can see you may be feeling {}, is this accurate?",0,0.03,0
-"Thank you for being open and sharing with me. You seem like you're {} today, would you say that too?",1,0.1,0
-"Thank you for sharing your thoughts with me. I have the feeling that you are {}, is that the case?",1,0.2,0
-"Thank you for sharing. I believe that you are {}, am I correct in saying that?",1,0.14,0
-"If I'm understanding correctly, you would identify as being {}, is that a fair assessment?",0.5,0.06,0
-"Thank you. From what you have told me I understand that you are feeling {}, do you think this more or less describes the way you're feeling?",1,0.11,0
-"Thank you so much for your input. It sounds to me that you are feeling {} right now, does that sound accurate?",1,0.08,0
-"Thank you for your openness. Judging by your response, I think that you're feeling {}, would I be correct in saying that?",1,0.13,0
-"I understand. I believe you are feeling {}, would you say that is correct?",0.5,0.05,0
-"Taking all you have said into consideration, I believe that you are feeling {}, is this the case? Please feel free to correct me if not.",1,0.09,0
-Sorry about that; I am a new bot but learning with time! Please select the emotion that best reflects how you feel.,1,0.07,1
-"Oh, I'm sorry. Please select from the emotions below the one that best reflects what you are feeling:",1,0.12,0
-I am sorry for the misunderstanding. Would you be able to tell me which of these emotions matches what you're feeling?,1,0.28,0
-"Oh, I am really sorry, I must have misunderstood then. Could you please tell me how you are feeling by selecting from the list below:",1,0.29,0
-"Oh I'm so sorry, I really appreciate you telling me I've got it wrong - sometimes it can be hard. Can you give me a bit of help to make sure I do understand? Here's a list - please let me know which one describes what you're feeling:",1,0.34,1
-"Oh, my bad. So how would you say you are feeling today?",0.5,0.25,0
-Oh I'm sorry I have misunderstood your emotion. Perhaps you might describe your current emotion as one of these on the list?,1,0.03,0
-I'm so sorry. How are you actually feeling? Could you please select it from the list below?,1,0.23,0
-So sorry. Kindly select how you're feeling from the emotions below:,0.5,0.05,0
-"I'm sorry, sometimes it's hard to know how someone is feeling behind a keyboard. Instead, do you mind choosing an emotion from this list which is more suitable for your current state?",1,0.19,0
-"I'm sorry, I must have misread the situation. Please tell me, how are you feeling?",1,0.49,0
-"Oh, sorry. Could you select which emotion are you feeling, or the one that is closest to it?",0.5,0.22,0
-I am sorry I misunderstood that. Could I ask that you choose from the list below the emotion that more accurately captures how you are feeling?,1,0.12,0
-I'm very sorry for that. Would you be able to highlight the emotion that you are actually feeling right now from the ones below?,1,0.17,0
-"Oh no, I seem to have misunderstood, I'm sorry about that. Let me try again: please take a look at the list below and choose which emotion best represents your feelings today.",1,0.24,0
-"I'm sorry, I must have misunderstood. Please choose from the emotions below the one which best reflects how you're feeling.",1,0.13,0
-"Forgive me please. Without leading you, please choose how you feel from the list I'm giving you.",1,0.04,0
-"Oh no, I am so sorry. Please, if you don't mind, select how you are feeling from this list:",1,0.29,0
-Sorry for misunderstanding. Which of the following would you say is closest to how you are currently feeling?,1,0.16,0
-I am sorry for the misunderstanding. Please correct me by selecting from the emotions below the one that reflects what you are feeling:,1,0.13,0
-I deeply apologise. Please select an emotion from the list below that best describes the way you are feeling:,1,0.14,0
-"Ah, I apologise. Which of the emotions off this list best describes what you are experiencing?",0.5,0.06,0
-I am really sorry that I got that wrong. Perhaps one of the following emotions would that describe it more accurately?,1,0.11,0
-"Oh, I'm so sorry I've misunderstood you. From the emotions listed, could you please choose the one that best defines your current feeling?",1,0.16,0
-"I am so sorry, my bad. Which of these emotions are you feeling currently, in your opinion?",1,0.14,0
-My apologies for the misunderstanding. It would be really helpful if you could select an emotion below that truly reflects how you are feeling.,1,0.19,0
-I'm sorry for misunderstanding how you are feeling. Please tell me how you are feeling so that I can understand better.,1,0.32,0
-Sorry for the misunderstanding. What emotion would you say you are feeling at the moment?,1,0.22,0
-"I'm sorry, maybe I'm not the best at reading people. How are you feeling today if you don't mind me asking, could you please select from the list below what you feel is closest to your current mood?",1,0.28,0
-"Oh my apologies, I have misunderstood. Please choose the emotion that you identify with:",1,0.08,0
-"I am sorry, perhaps I misunderstood how you are feeling. I think it might be best if you could pick out the emotion that you feel represents your case the best:",1,0.05,0
-"Oh, I'm sorry. Could you please let me know how you are feeling:",1,0.55,0
-"My apologies, I must be mistaken then. Please tell me, which of these emotions below are you experiencing?",1,0.1,0
-"Sorry, I got the wrong end of the stick. If you look at this list, you can point out which emotion you are feeling, then there will be no misunderstanding.",1,0.27,0
-"Sorry about that, I really want to understand how you're feeling. Could you please help me by selecting the option from the list that best matches how you're feeling?",1,0.28,0
+"Maybe it's an everyday error or flaw you've noticed, that's causing this negative feeling?",0.5,0.03,0
+"Could it be an everyday error or flaw you've noticed, that's causing this negative feeling?",1,0.1,0
+"Perhaps it's an everyday error or flaw you've noticed, that's causing this negative feeling?",1,0.09,0
+"Do you think it might be an everyday error or flaw you've noticed, that's causing this negative feeling?",1,0.1,0
+Maybe the cause of this feeling is an everyday error or flaw that you've noticed?,0,0.05,0
+Could the cause of this feeling be an everyday error or flaw that you've noticed?,1,0.12,0
+Perhaps the cause of this feeling might be an everyday error or flaw that you've noticed?,1,0.09,0
+Do you think the cause of this feeling might be an everyday error or flaw that you've noticed?,0.5,0.03,0
+Does it seem that the cause of your feeling could be an everyday error or flaw you've noticed?,1,0.16,0
+Does it feel like the cause of your feeling could be an error or flaw you've noticed?,0,0.03,0
+Would you say that the cause of this feeling may be an everyday error or flaw you've noticed?,0.5,0.09,0
+Might the cause of this feeling be an error or flaw that you've noticed?,0,0.04,0
+Does it seem likely that an everyday error or flaw is causing you to feel this way?,1,0.1,0
+"To confirm, would I be correct in saying you are feeling {}?",0,0.08,0
+"Thank you so much for sharing with me. From your answer, it sounds like you are feeling {}, does it sound right?",0.5,0.06,0
+"I see, thank you. From what you have told me I would say that you are feeling {} right now, does that sound about right?",0.5,0.1,0
+"Thanks for telling me, I want to make sure I've understood correctly. I believe you're feeling {}, could you confirm that?",1,0.13,0
+"I see. So you are feeling {}, is that correct?",1,0.28,0
+Thank you for sharing your emotions. Am I correct in thinking that you are feeling {}?,1,0.06,0
+"Thank you for that. Based on what you've said I would say you're feeling {}, are my assumptions correct?",1,0.18,0
+"I believe from all you've said that you are feeling {}, is this accurate?",0.5,0,0
+"Thank you, and please correct me if I am wrong. Am I correct in saying that you are feeling {} right now?",0.5,0.14,0
+"It sounds like your are {}, is that right?",0.5,0.06,0
+"Thank you for that. If I understand correctly you're feeling {}, is that correct?",1,0.13,0
+"From listening to what you have said I take from that that you are feeling {}, is my understanding correct?",0.5,0.04,0
+"I see, thank you for sharing. I think that you are feeling {}, would I be correct in saying that?",1,0.04,0
+"From your response, it looks like you are feeling {} today, have I got that right?",0.5,0.04,0
+"From what we've spoke about I think you're probably feeling {}, does that sound about right?",1,0.07,0
+"From what you have told me it could be that you are feeling {}, would I be right to say so?",0,0.07,0
+"Thank you, I just want to make sure that I have understood correctly. I think you are feeling {}, does that sound right?",0.5,0.15,0
+"Thank you, I just want to make sure that we are on the same page. Would you say that {} best describes how you're feeling right now?",0.5,0.06,0
+"Thank you for entrusting me by sharing how you feel. From what you have told me, I believe you are feeling {} ?",1,0.09,0
+"Thank you, and please forgive me if I'm wrong. I believe you are {}, am I correct in thinking that?",1,0.11,0
+"I think that perhaps you are feeling {}, do you think that's true?",1,0.12,0
+"I would say that you're feeling {} right now, do you think that is a reasonable description of your current mood?",0.5,0.03,0
+"Reading what you have told me I believe that you are feeling {}, is that close enough?",0,0.12,0
+Thank you for opening up to me. Am I correct in assuming that you are feeling {}?,0,0,0
+"Listening to you, it seems that you're feeling {}, did I understand correctly?",0,0.07,0
+"After listening to your concerns, I think that your are feeling {}, is this true?",0,0.08,0
+"I think that you may be feeling {}, do you agree?",0.5,0.07,0
+"Gathering everything from what you just told me, I believe you're feeling {} today, would you think it's fair to say that?",1,0.11,0
+"What I am hearing is that you feel {}, is that right?",0,0.03,0
+"Going off of what you have told me, it seems as though you are feeling {}, do you think this is accurate?",1,0.1,0
+Thank you. Would I be correct in saying that you are feeling {}?,1,0.2,0
+"Thank you for sharing. I have the impression that you are {} today, is this correct?",1,0.14,0
+"Thank you, let me just double check on what you've just told me. From what I can gather you are feeling {}, is that accurate?",0.5,0.06,0
+"Thanks for your answer. It sounds to me like you're {} right now, does that description match how you feel?",1,0.11,0
+"If I understand correctly you are feeling {}, does that describe it accurately enough?",1,0.08,0
+"From what you've told me, it sounds like you're feeling {}, is this right?",1,0.13,0
+"I feel that you are feeling quite {} today, is that right?",0.5,0.05,0
+"Now, I would just like to clarify you are feeling {}, is that correct?",1,0.09,0
+"Thank you. I get the impression you are feeling {}, am I right?",1,0.07,1
+"It seems that you're feeling {} today, is that an accurate enough description of what you're feeling?",1,0.12,0
+"Thank you for trusting in me and sharing how you feel. If I understand correctly, you are feeling {} right now, would you say that's true?",1,0.28,0
+"I can see you may be feeling {}, is this accurate?",1,0.29,0
+"Thank you for being open and sharing with me. You seem like you're {} today, would you say that too?",1,0.34,1
+"Thank you for sharing your thoughts with me. I have the feeling that you are {}, is that the case?",0.5,0.25,0
+"Thank you for sharing. I believe that you are {}, am I correct in saying that?",1,0.03,0
+"If I'm understanding correctly, you would identify as being {}, is that a fair assessment?",1,0.23,0
+"Thank you. From what you have told me I understand that you are feeling {}, do you think this more or less describes the way you're feeling?",0.5,0.05,0
+"Thank you so much for your input. It sounds to me that you are feeling {} right now, does that sound accurate?",1,0.19,0
+"Thank you for your openness. Judging by your response, I think that you're feeling {}, would I be correct in saying that?",1,0.49,0
+"I understand. I believe you are feeling {}, would you say that is correct?",0.5,0.22,0
+"Taking all you have said into consideration, I believe that you are feeling {}, is this the case? Please feel free to correct me if not.",1,0.12,0
+Sorry about that; I am a new bot but learning with time! Please select the emotion that best reflects how you feel.,1,0.17,0
+"Oh, I'm sorry. Please select from the emotions below the one that best reflects what you are feeling:",1,0.24,0
+I am sorry for the misunderstanding. Would you be able to tell me which of these emotions matches what you're feeling?,1,0.13,0
+"Oh, I am really sorry, I must have misunderstood then. Could you please tell me how you are feeling by selecting from the list below:",1,0.04,0
+"Oh I'm so sorry, I really appreciate you telling me I've got it wrong - sometimes it can be hard. Can you give me a bit of help to make sure I do understand? Here's a list - please let me know which one describes what you're feeling:",1,0.29,0
+"Oh, my bad. So how would you say you are feeling today?",1,0.16,0
+Oh I'm sorry I have misunderstood your emotion. Perhaps you might describe your current emotion as one of these on the list?,1,0.13,0
+I'm so sorry. How are you actually feeling? Could you please select it from the list below?,1,0.14,0
+So sorry. Kindly select how you're feeling from the emotions below:,0.5,0.06,0
+"I'm sorry, sometimes it's hard to know how someone is feeling behind a keyboard. Instead, do you mind choosing an emotion from this list which is more suitable for your current state?",1,0.11,0
+"I'm sorry, I must have misread the situation. Please tell me, how are you feeling?",1,0.16,0
+"Oh, sorry. Could you select which emotion are you feeling, or the one that is closest to it?",1,0.14,0
+I am sorry I misunderstood that. Could I ask that you choose from the list below the emotion that more accurately captures how you are feeling?,1,0.19,0
+I'm very sorry for that. Would you be able to highlight the emotion that you are actually feeling right now from the ones below?,1,0.32,0
+"Oh no, I seem to have misunderstood, I'm sorry about that. Let me try again: please take a look at the list below and choose which emotion best represents your feelings today.",1,0.22,0
+"I'm sorry, I must have misunderstood. Please choose from the emotions below the one which best reflects how you're feeling.",1,0.28,0
+"Forgive me please. Without leading you, please choose how you feel from the list I'm giving you.",1,0.08,0
+"Oh no, I am so sorry. Please, if you don't mind, select how you are feeling from this list:",1,0.05,0
+Sorry for misunderstanding. Which of the following would you say is closest to how you are currently feeling?,1,0.55,0
+I am sorry for the misunderstanding. Please correct me by selecting from the emotions below the one that reflects what you are feeling:,1,0.1,0
+I deeply apologise. Please select an emotion from the list below that best describes the way you are feeling:,1,0.27,0
+"Ah, I apologise. Which of the emotions off this list best describes what you are experiencing?",1,0.28,0
+I am really sorry that I got that wrong. Perhaps one of the following emotions would that describe it more accurately?,1,0.22,0
+"Oh, I'm so sorry I've misunderstood you. From the emotions listed, could you please choose the one that best defines your current feeling?",1,0.26,0
+"I am so sorry, my bad. Which of these emotions are you feeling currently, in your opinion?",1,0.23,0
+My apologies for the misunderstanding. It would be really helpful if you could select an emotion below that truly reflects how you are feeling.,1,0.09,0
+I'm sorry for misunderstanding how you are feeling. Please tell me how you are feeling so that I can understand better.,0.5,0.13,0
+Sorry for the misunderstanding. What emotion would you say you are feeling at the moment?,1,0.23,0
+"I'm sorry, maybe I'm not the best at reading people. How are you feeling today if you don't mind me asking, could you please select from the list below what you feel is closest to your current mood?",0.5,0.19,0
+"Oh my apologies, I have misunderstood. Please choose the emotion that you identify with:",1,0.1,0
+"I am sorry, perhaps I misunderstood how you are feeling. I think it might be best if you could pick out the emotion that you feel represents your case the best:",0.5,0.25,0
+"Oh, I'm sorry. Could you please let me know how you are feeling:",1,0.26,0
+"My apologies, I must be mistaken then. Please tell me, which of these emotions below are you experiencing?",1,0.17,0
+"Sorry, I got the wrong end of the stick. If you look at this list, you can point out which emotion you are feeling, then there will be no misunderstanding.",1,0.1,0
+"Sorry about that, I really want to understand how you're feeling. Could you please help me by selecting the option from the list that best matches how you're feeling?",1,0.09,0
 My apologies. Let's take a look at this list and see what best reflects what is you are feeling right now.,1,0.22,0
-"My apologies. If you could, please tell me how you're feeling by selecting from the list below:",1,0.26,0
-"I am so sorry, I didn't mean to misjudge. Are you feeling any of these emotions? If so please let me know by selecting it:",1,0.23,0
-"My apologies for misunderstanding how you are actually feeling. Could you please select from the emotions below the one that best reflects what you are feeling, so I can understand it better?",1,0.09,0
-Sorry about that. Please read the below emotions and select the one that best fits how you feel:,0.5,0.13,0
-"I'm so sorry. Do you want to help me understand how you're feeling, by selecting it yourself?",1,0.23,0
-My bad. Can you let me know how you feel by choosing the correct emotion from the list below?,0.5,0.19,0
-I am sorry. Please help me understand by picking out which emotion you are feeling from this list:,1,0.1,0
-I am sorry. Please tell me how you're actually feeling.,0.5,0.25,0
-"Sorry, sometimes it can be hard to make an accurate assessment of someone else's feelings. Would you like to pick out the kind of emotion you are feeling from this list?",1,0.26,0
-"Oh, my apologies. Then would it be best to say that you are:",1,0.17,0
-"Oh my bad, sorry; I misinterpreted the signals. Just to avoid any further confusion, please select from the emotions below the ones that best reflect your current feelings:",1,0.1,0
-"I apologise, I must have misunderstood. Perhaps you could indicate from the list below which emotion best represents how you are feeling?",1,0.09,0
-"I'm so sorry, I'd love to understand better how you're feeling. Could you select the emotion that you think is appropriate?",1,0.22,0
-I apologise sincerely. Would you kindly choose from the list below how you are actually feeling.,1,0.06,0
-"I am sorry that was incorrect. Looking at the list below, could you tell me how you feel?",1,0.19,0
-"I'm sorry to hear that I have misunderstood. In your own words, please could you specify the emotion that you are feeling?",1,0.2,0
-"Great, I look forward to hearing how you find it.",1,0.38,0
-"Great, I hope it goes well.",1,0.39,0
-"Great, I hope you find it useful.",0.5,0.5,0
-Good. I hope it goes well for you.,0.5,0.53,0
-"Great, I'm excited to hear how you find it.",1,0.32,0
-"Great, I hope you enjoy this.",1,0.46,0
-"Great. Try this whenever you feel like it, and let me know how you find it.",1,0.52,0
-"That's great. Do try this in your own time, and I'd be happy to have a follow up anytime.",1,0.24,0
-"Good, feel free to try this and let me know how it goes.",1,0.79,0
-"Good. Do try this and let me know how you find it. I accept positive and negative feedback, as long as it's honest!",1,0.33,1
-"Awesome, I look forward to hearing how you find it.",0.5,0.39,0
-"Great, feel free to try this.",0,0.24,0
-I'm glad. How about trying this when you're by yourself and coming back to tell me how it goes!,1,0.13,1
-"That's good to hear. Go ahead and try this whenever you feel like it, and let me know how it goes.",1,0.6,0
-"Cool, I look forward to hearing how it goes for you.",0.5,0.43,0
-"Great, do try this whenever you like, and I look forward to hearing how it goes.",1,0.31,0
-Nice. Do come back after trying this if you feel like it.,0.5,0.19,0
-"Great, I'm excited for you to try this.",0.5,0.44,0
-"Cool, I'm excited to hear how it goes for you.",0.5,0.39,0
-"Awesome, I look forward to hearing how it goes for you!",1,0.45,1
-"Great, I'm glad to hear that.",0.5,0.65,0
-That's great to hear!,1,0.22,1
-That's good news.,0.5,0.26,0
-Good. I'm glad.,0.5,0.48,0
-Glad to hear it.,0,0.18,0
-"Great, I'm happy for you.",0,0.49,0
-Fantastic.,0,0.19,0
-Excellent.,0,0.18,0
-I'm glad for you.,0,0.18,0
-"Awesome, keep it up!",0,0.33,1
-"Oh, it's great to hear that!",1,0.49,1
-"Great, happy to hear it.",0.5,0.25,0
-"Awesome, happy to hear it.",0.5,0.28,0
-"Great, I'm happy to hear that.",0.5,0.53,0
-"Good, happy to hear it.",0.5,0.26,0
-"Good, I'm happy to hear that.",0.5,0.6,0
-That's great news,0,0.15,0
-That's good to hear!,1,0.21,1
-I'm happy for you.,0,0.24,0
-"Good stuff, I'm happy for you.",0.5,0.28,0
-Great to hear that!,0,0.15,1
-"Oh, it's really great to hear it!",1,0.36,1
-"Great, hopefully, you can become even happier during our session then!",0.5,0.04,1
-"Good! Hopefully, our conversation should lift your mood even more.",0.5,0.04,0
-I can see you are!,0,0.05,1
-That's great!,0,0.13,1
-That's lovely!,0,0.03,1
-That sounds great. I hope I can improve this feeling even more!,1,0.14,1
-That's fabulous.,0,0.04,0
-Cool!,0,0.02,1
-Excellent.,0,0.18,0
-That's great to hear.,1,0.28,0
-It's so nice to have that feeling; I wish we could capture it and put it in a bottle.,1,0.27,1
-Glad you're good.,0,0.07,0
-That is wonderful.,0,0.09,0
-I am so glad to hear this.,1,0.3,0
-Fab! It sounds like you're ready for some laughter!,0.5,0.16,1
-That's great!,0,0.13,1
-It sounds like you're more than ready to develop your sense of humour!,0.5,0.18,1
-I'm delighted to hear that.,0,0.13,0
-Great to hear!,0,0.1,1
-I'm glad for you.,0,0.18,0
-"Awesome, I am so glad to hear it.",1,0.55,0
-Fantastic!,0,0.17,1
-That's good!,0,0.09,1
-Excellent. You sound ready to develop your sense of humour!,1,0.08,1
-That's really good; I'm glad to hear it.,1,0.36,0
-I'm really pleased you feel that way.,0.5,0.22,0
-I'm glad that you're in a good mood.,0.5,0.35,0
-That's great; I'm happy for you!,0,0.26,1
-Nice to hear you're in a good mood.,0.5,0.37,0
-I'm glad to see you so content today.,0.5,0.13,0
-Great to hear that you're feeling well.,1,0.3,0
-Great!,0,0.01,1
-Wonderful!,0,0.01,1
-"Brilliant, that's always nice to hear.",1,0.31,0
-"Oh, I am very glad to hear that :)",1,0.45,1
-That is fantastic to hear.,0,0.15,0
-"Good, let's make sure we keep that feeling going!",1,0.23,1
-That is great to hear. I hope I can brighten your day even more!,1,0.31,1
-That explains the glow in your eyes!,0,0.07,1
-Wonderful. I'm motivated to help you feel even better!,1,0.1,1
-It is great to see you so positive today.,1,0.22,0
-Brilliant!,0,0.17,1
-It's a great feeling.,1,0.3,0
-Wonderful to hear that.,0,0.09,0
-That's so great to hear!,1,0.17,1
-It's so nice that you're feeling this way.,1,0.32,0
-That is fantastic!,0,0.06,1
-It's great to hear that you feel this way.,1,0.53,0
-Sorry to hear that.,0,0.13,0
-"Ah, that's unfortunate to hear.",0.5,0.24,0
-I understand.,0,0.03,0
-I am sorry to hear that.,0.5,0.3,0
-I'm sorry you feel that way.,0.5,0.34,0
-"Oh, I am sorry to hear that.",0.5,0.69,0
-I see. Thanks for sharing.,0.5,0.19,0
-I hear you.,0,0.07,0
-I can understand.,0,0.07,0
-I'm sorry about that.,0,0.31,0
-"I understand, and I am sorry you feel that way.",0.5,0.41,0
-"Oh, that's not good.",0,0.61,1
-"Oh no, that's unfortunate.",0,0.19,0
-Sorry about that.,0,0.27,0
-"Aw, I'm sorry.",0,0.58,0
-"Ah, I'm sorry.",0,0.82,0
-"Aw, that's unfortunate to hear.",0.5,0.19,0
-I'm sad to hear that.,0.5,0.18,0
-"That's unfortunate, sorry.",0,0.07,0
-"Ah, that's not good.",0,0.6,1
-"Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more.",1,0.38,0
-Sorry to hear that.,0,0.13,0
-"Thank you, I understand you're feeling down right now, but I would appreciate it if you could tell me a bit more.",1,0.69,0
-I understand. Thank you for opening up to me.,0.5,0.26,0
-I am sorry to hear that. It's something we all experience at times.,1,0.31,0
-I can understand how you're feeling.,0,0.29,0
-I am sorry to hear that.,0.5,0.3,0
-"I'm sorry you feel that way, and I would like to know a bit more so I can help.",1,0.44,0
-"Oh, I am sorry to hear that. I would like to know more about what made you feel that way.",1,0.72,0
-"Thank you, I would like to better relate to what's going on.",0.5,0.22,0
-I see. Thanks for sharing.,0.5,0.19,0
-I understand. Thank you for sharing your feelings with me; I'd like to know more about what happened.,1,0.42,0
-"Thank you, I understand how hard it must be to be dealing with this feeling right now, and I hope to help you feel better.",1,0.34,0
-I hear you.,0,0.07,0
-I can understand.,0,0.07,0
-I'm sorry about that.,0,0.31,0
-I'm sorry you're feeling down.,0.5,0.25,0
-"I understand, and I am sorry you feel that way.",0.5,0.41,0
-It must be hard for you to feel this way.,0.5,0.31,0
-"Thank you, I would appreciate it if you could elaborate on this a bit more.",0.5,0.53,0
-"Oh, that's not good.",0,0.61,1
-It's okay; I'm here to help.,0.5,0.38,1
-It's okay to feel that way.,0,0.27,0
-"Thank you for sharing your feelings with me, even though it may be difficult for you right now.",1,0.52,0
-"I understand. Hopefully, you feel better by the end of our session.",0.5,0.19,0
-"Ah, well, you came to the right place!",0,0.4,1
-"Ah, I'm glad you're turning to a sense of humour in times like this.",1,0.22,0
-Don't worry - you're in good hands! I'll do my best to help.,0,0.63,1
-I'm sorry. I hope you feel better soon.,0.5,0.31,0
-"That's unfortunate, sorry. I hope talking to me will improve your mood.",0.5,0.11,0
-"Oh no, that's unfortunate.",0,0.19,0
-Sorry to hear you're feeling down.,0.5,0.1,0
-"Sorry about that. Humour might be the perfect cure, believe it or not!",0.5,0.1,1
-Sorry to hear that. Humour might be the answer to your troubles.,1,0.13,0
-"Sorry about that. Perhaps, I could help.",0.5,0.18,1
-"Oh no, hopefully, this session will improve how you're feeling.",0.5,0.08,0
-"Aw, I'm sorry. It's something we all sometimes experience.",0.5,0.27,1
-I'm sad to hear that.,0.5,0.18,0
-"That's unfortunate, sorry.",0,0.07,0
-Sorry about that. Let's try to lift your mood in our session together.,0.5,0.12,0
-Oh no. Let's aim to improve your mood by the end of our conversation :),0.5,0.11,1
-Sorry to hear that. They say laughter is the best medicine - so I believe you've come to the right place!,0.5,0.23,1
-It is sad to see you feeling down; I hope I can help.,1,0.19,0
-"Oh dear, I'm sorry.",0,0.24,0
-"Ah, sorry to hear that; I'm glad you came here at this time.",0.5,0.37,0
-"Oh, I am sorry to hear that.",0.5,0.69,0
-Thanks for trusting me with your feelings. I'll try to help elevate these.,0.5,0.14,0
-Sorry about that. I'd love to help.,0.5,0.37,0
-Sorry to hear that. I hope I can be of use.,1,0.26,0
-I'm sorry that you're feeling this way.,0.5,0.51,0
-A more detailed version of these can also be found here:,0.5,0.2,0
-You can find a more detailed version of these here:,0.5,0.19,0
-You can access a more detailed version of these here:,0.5,0.16,0
-A more detailed version of these can also be accessed here:,0.5,0.17,0
-"If you'd like a more detailed version of these, this can be found here:",0.5,0.22,0
-Please find a more detailed version of these here:,0.5,0.17,0
-"For a more detailed version of these, you can go here:",0.5,0.2,0
-A more detailed version of these can be accessed via this link:,0.5,0.18,0
-A more detailed version of these can also be accessed via this link:,0.5,0.18,0
-A more detailed version of these can be accessed via the following link:,0.5,0.2,0
-A more detailed version of these can also be accessed via the following link:,0.5,0.19,0
-Head to the following link if you'd like a more detailed version of these:,0.5,0.19,0
-"If you'd like a more detailed version of these, head to the following link:",0.5,0.23,0
-You can find a more detailed version of these at the following link:,0.5,0.22,0
-You can access a more detailed version of these via the following link:,0.5,0.18,0
-"If you wish to view a more detailed version of these, head to the following link:",0.5,0.22,0
-"If you wish to view a more detailed version of these, this can be found here:",0.5,0.21,0
-Please find a more detailed version of these at the following link:,0.5,0.2,0
-A more detailed version of these can be found here:,0.5,0.21,0
-You can view a more detailed version of these here:,0.5,0.17,0
-"Would you like to explore another more relevant laughter exercise, {}?",0,0.01,0
-Do you want to look at other more relevant triggers for humour?,0,0.06,0
-"So, {}, would you like to explore another more relevant humour exercise?",0.5,0.03,0
-Do you want to learn about another more relevant humour exercise?,0,0.04,0
-Do you want to have a look at another more relevant humour exercise?,0,0.07,0
-Do you want to discover another more relevant exercise?,0,0.05,0
-Do you wish to carry on to another more relevant humour exercise?,0,0.03,0
-Do you want me to introduce another more relevant exercise?,0,0.08,0
-"{}, would you like to explore other more relevant laughter exercises?",0.5,0.02,0
-"How about we look at another more relevant humour exercise together, {}?",0,0.01,0
-"Are you in the mood to digest another more relevant humour protocol? It's not quite like a burger and chips, but a healthier option for sure!",0.5,0.07,1
-"Are you keen to discuss another more relevant laughter exercise, {}?",0,0.01,0
-Would you like to explore another more relevant protocol that exercises your humour?,0.5,0.02,0
-"Do you feel like trying another more relevant laughter exercise. Don't worry, you don't even have to get up for it!",1,0.13,1
-Are you in the mood to cover a more relevant humour protocol?,0,0.01,0
-Do you want to look at a more relevant exercise for laughter?,0,0.08,0
-Do you want to look at a more relevant humour exercise?,0,0.06,0
-Would you like to learn a more relevant laughter protocol?,0,0.04,0
-Should I teach you another more relevant humour exercise?,0,0.01,0
-Should I guide you through a more relevant protocol?,0,0.04,0
-Would you like me to take you through another more relevant laughter exercise?,0.5,0.04,0
-"I can try to offer another more relevant exercise to help nurture your sense of humour if you're interested. It's up to you, {}!",1,0.09,1
-"Would you like to explore another more relevant humour exercise, {}?",0,0.02,0
-Would you like to learn more about another more relevant humour exercise?,0.5,0.06,0
-Do you want to continue exploring more relevant humour exercises together? I can go on forever!,0.5,0.04,1
-How about exploring another more relevant laughter exercise?,0,0,0
-Do you want to have a go at another more relevant exercise?,0,0.11,0
-"We can continue exploring other relevant contexts for laughter if you like. It's your choice, {}, not mine :)",1,0.05,1
-I can introduce you to another more relevant laughter exercise if you are interested.,0.5,0.06,0
-"If you wish, I can show you another more relevant humour exercise.",0.5,0.05,0
-Would you like to explore another more relevant humour protocol?,0,0.02,0
-Have you had enough of me yet? Or would you like us to explore another more relevant humour exercise?,0.5,0.09,0
-How about we look at another more relevant humour exercise?,0.5,0.02,0
-"But really, how do you feel?",0,0.3,0
-So how do you feel?,0,0.3,0
-"Joking aside, how are you feeling?",0,0.18,0
-"All joking apart, how do you feel?",0,0.05,0
-"All joking apart, how are you feeling?",0,0.04,0
-"But really, how are you feeling?",0,0.24,0
-"All joking aside, how would you say you're feeling?",0.5,0.2,0
-"Kidding aside, how do you feel?",0,0.12,0
-"All kidding aside, how would you say you're feeling?",0.5,0.12,0
-"But joking apart, how would you say you're feeling?",0.5,0.06,0
-"Joking apart, how do you feel?",0,0.06,0
-So how would you say you're feeling?,0,0.27,0
-"Anyway, how are you feeling?",0,0.5,0
-"All joking aside, how do you feel?",0,0.19,0
-"All kidding aside, how are you feeling?",0,0.09,0
-"Joking aside, how would you say you're feeling?",0.5,0.2,0
-"But joking aside, how would you say you're feeling?",0.5,0.17,0
-"Joking apart, how would you say you're feeling?",0.5,0.08,0
-"Joking aside, how do you feel?",0,0.19,0
-"All joking aside, how are you feeling?",0,0.18,0
-"But kidding aside, how are you feeling?",0,0.07,0
-"But joking apart, how do you feel?",0,0.04,0
-"Anyway, how would you say you're feeling?",0,0.38,0
-"Kidding aside, how are you feeling?",0,0.13,0
-"But joking aside, how do you feel?",0,0.16,0
-"But joking apart, how are you feeling?",0,0.04,0
-"But kidding aside, how do you feel?",0,0.08,0
-"All kidding aside, how do you feel?",0,0.1,0
-"Joking apart, how are you feeling?",0,0.05,0
-"But joking aside, how are you feeling?",0,0.14,0
-"But really, how would you say you're feeling?",0,0.28,0
-"But kidding aside, how would you say you're feeling?",0.5,0.1,0
-So how are you feeling?,0,0.34,0
-"Anyway, how do you feel?",0,0.42,0
-"All joking apart, how would you say you're feeling?",0.5,0.07,0
-"Kidding aside, how would you say you're feeling?",0.5,0.16,0
-So is your body in a playful mode?,0,0.08,0
-"Joking apart, is your body in a playful mode?",0,0.03,0
-"Joking apart, do you feel that you're in a playful mode?",0.5,0.08,0
-"But joking apart, are you in a playful state?",0,0.02,0
-"Kidding aside, are you feeling playful?",0,0.03,0
-"But kidding aside, do you feel that you're in a playful mode?",0.5,0.09,0
-"But kidding aside, are you in a playful state?",0.5,0.03,0
+"My apologies. If you could, please tell me how you're feeling by selecting from the list below:",1,0.06,0
+"I am so sorry, I didn't mean to misjudge. Are you feeling any of these emotions? If so please let me know by selecting it:",1,0.19,0
+"My apologies for misunderstanding how you are actually feeling. Could you please select from the emotions below the one that best reflects what you are feeling, so I can understand it better?",1,0.2,0
+Sorry about that. Please read the below emotions and select the one that best fits how you feel:,1,0.38,0
+"I'm so sorry. Do you want to help me understand how you're feeling, by selecting it yourself?",1,0.39,0
+My bad. Can you let me know how you feel by choosing the correct emotion from the list below?,0.5,0.5,0
+I am sorry. Please help me understand by picking out which emotion you are feeling from this list:,0.5,0.53,0
+I am sorry. Please tell me how you're actually feeling.,1,0.32,0
+"Sorry, sometimes it can be hard to make an accurate assessment of someone else's feelings. Would you like to pick out the kind of emotion you are feeling from this list?",1,0.46,0
+"Oh, my apologies. Then would it be best to say that you are:",1,0.52,0
+"Oh my bad, sorry; I misinterpreted the signals. Just to avoid any further confusion, please select from the emotions below the ones that best reflect your current feelings:",1,0.24,0
+"I apologise, I must have misunderstood. Perhaps you could indicate from the list below which emotion best represents how you are feeling?",1,0.79,0
+"I'm so sorry, I'd love to understand better how you're feeling. Could you select the emotion that you think is appropriate?",1,0.33,1
+I apologise sincerely. Would you kindly choose from the list below how you are actually feeling.,0.5,0.39,0
+"I am sorry that was incorrect. Looking at the list below, could you tell me how you feel?",0,0.24,0
+"I'm sorry to hear that I have misunderstood. In your own words, please could you specify the emotion that you are feeling?",1,0.13,1
+"Great, I look forward to hearing how you find it.",1,0.6,0
+"Great, I hope it goes well.",0.5,0.43,0
+"Great, I hope you find it useful.",1,0.31,0
+Good. I hope it goes well for you.,0.5,0.19,0
+"Great, I'm excited to hear how you find it.",0.5,0.44,0
+"Great, I hope you enjoy this.",0.5,0.39,0
+"Great. Try this whenever you feel like it, and let me know how you find it.",1,0.45,1
+"That's great. Do try this in your own time, and I'd be happy to have a follow up anytime.",0.5,0.65,0
+"Good, feel free to try this and let me know how it goes.",1,0.22,1
+"Good. Do try this and let me know how you find it. I accept positive and negative feedback, as long as it's honest!",0.5,0.26,0
+"Awesome, I look forward to hearing how you find it.",0.5,0.48,0
+"Great, feel free to try this.",0,0.18,0
+I'm glad. How about trying this when you're by yourself and coming back to tell me how it goes!,0,0.49,0
+"That's good to hear. Go ahead and try this whenever you feel like it, and let me know how it goes.",0,0.19,0
+"Cool, I look forward to hearing how it goes for you.",0,0.18,0
+"Great, do try this whenever you like, and I look forward to hearing how it goes.",0,0.18,0
+Nice. Do come back after trying this if you feel like it.,0,0.33,1
+"Great, I'm excited for you to try this.",1,0.49,1
+"Cool, I'm excited to hear how it goes for you.",0.5,0.25,0
+"Awesome, I look forward to hearing how it goes for you!",0.5,0.28,0
+"Great, I'm glad to hear that.",0.5,0.53,0
+That's great to hear!,0.5,0.26,0
+That's good news.,0.5,0.6,0
+Good. I'm glad.,0,0.15,0
+Glad to hear it.,1,0.21,1
+"Great, I'm happy for you.",0,0.24,0
+Fantastic.,0.5,0.28,0
+Excellent.,0,0.15,1
+I'm glad for you.,1,0.36,1
+"Awesome, keep it up!",0.5,0.04,1
+"Oh, it's great to hear that!",0.5,0.04,0
+"Great, happy to hear it.",0,0.05,1
+"Awesome, happy to hear it.",0,0.13,1
+"Great, I'm happy to hear that.",0,0.03,1
+"Good, happy to hear it.",1,0.14,1
+"Good, I'm happy to hear that.",0,0.04,0
+That's great news,0,0.02,1
+That's good to hear!,0,0.18,0
+I'm happy for you.,1,0.28,0
+"Good stuff, I'm happy for you.",1,0.27,1
+Great to hear that!,0,0.07,0
+"Oh, it's really great to hear it!",0,0.09,0
+"Great, hopefully, you can become even happier during our session then!",1,0.3,0
+"Good! Hopefully, our conversation should lift your mood even more.",0.5,0.16,1
+I can see you are!,0,0.13,1
+That's great!,0.5,0.18,1
+That's lovely!,0,0.13,0
+That sounds great. I hope I can improve this feeling even more!,0,0.1,1
+That's fabulous.,0,0.18,0
+Cool!,1,0.55,0
+Excellent.,0,0.17,1
+That's great to hear.,0,0.09,1
+It's so nice to have that feeling; I wish we could capture it and put it in a bottle.,1,0.08,1
+Glad you're good.,1,0.36,0
+That is wonderful.,0.5,0.22,0
+I am so glad to hear this.,0.5,0.35,0
+Fab! It sounds like you're ready for some laughter!,0,0.26,1
+That's great!,0.5,0.37,0
+It sounds like you're more than ready to develop your sense of humour!,0.5,0.13,0
+I'm delighted to hear that.,1,0.3,0
+Great to hear!,0,0.01,1
+I'm glad for you.,0,0.01,1
+"Awesome, I am so glad to hear it.",1,0.31,0
+Fantastic!,1,0.45,1
+That's good!,0,0.15,0
+Excellent. You sound ready to develop your sense of humour!,1,0.23,1
+That's really good; I'm glad to hear it.,1,0.31,1
+I'm really pleased you feel that way.,0,0.07,1
+I'm glad that you're in a good mood.,1,0.1,1
+That's great; I'm happy for you!,1,0.22,0
+Nice to hear you're in a good mood.,0,0.17,1
+I'm glad to see you so content today.,1,0.3,0
+Great to hear that you're feeling well.,0,0.09,0
+Great!,1,0.17,1
+Wonderful!,1,0.32,0
+"Brilliant, that's always nice to hear.",0,0.06,1
+"Oh, I am very glad to hear that :)",1,0.53,0
+That is fantastic to hear.,0,0.13,0
+"Good, let's make sure we keep that feeling going!",0.5,0.24,0
+That is great to hear. I hope I can brighten your day even more!,0,0.03,0
+That explains the glow in your eyes!,0.5,0.3,0
+Wonderful. I'm motivated to help you feel even better!,0.5,0.34,0
+It is great to see you so positive today.,0.5,0.69,0
+Brilliant!,0.5,0.19,0
+It's a great feeling.,0,0.07,0
+Wonderful to hear that.,0,0.07,0
+That's so great to hear!,0,0.31,0
+It's so nice that you're feeling this way.,0.5,0.41,0
+That is fantastic!,0,0.61,1
+It's great to hear that you feel this way.,0,0.19,0
+Sorry to hear that.,0,0.27,0
+"Ah, that's unfortunate to hear.",0,0.58,0
+I understand.,0,0.82,0
+I am sorry to hear that.,0.5,0.19,0
+I'm sorry you feel that way.,0.5,0.18,0
+"Oh, I am sorry to hear that.",0,0.07,0
+I see. Thanks for sharing.,0,0.6,1
+I hear you.,1,0.38,0
+I can understand.,0,0.13,0
+I'm sorry about that.,1,0.69,0
+"I understand, and I am sorry you feel that way.",0.5,0.26,0
+"Oh, that's not good.",1,0.31,0
+"Oh no, that's unfortunate.",0,0.29,0
+Sorry about that.,0.5,0.3,0
+"Aw, I'm sorry.",1,0.44,0
+"Ah, I'm sorry.",1,0.72,0
+"Aw, that's unfortunate to hear.",0.5,0.22,0
+I'm sad to hear that.,0.5,0.19,0
+"That's unfortunate, sorry.",1,0.42,0
+"Ah, that's not good.",1,0.34,0
+"Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more.",0,0.07,0
+Sorry to hear that.,0,0.07,0
+"Thank you, I understand you're feeling down right now, but I would appreciate it if you could tell me a bit more.",0,0.31,0
+I understand. Thank you for opening up to me.,0.5,0.25,0
+I am sorry to hear that. It's something we all experience at times.,0.5,0.41,0
+I can understand how you're feeling.,0.5,0.31,0
+I am sorry to hear that.,0.5,0.53,0
+"I'm sorry you feel that way, and I would like to know a bit more so I can help.",0,0.61,1
+"Oh, I am sorry to hear that. I would like to know more about what made you feel that way.",0.5,0.38,1
+"Thank you, I would like to better relate to what's going on.",0,0.27,0
+I see. Thanks for sharing.,1,0.52,0
+I understand. Thank you for sharing your feelings with me; I'd like to know more about what happened.,0.5,0.19,0
+"Thank you, I understand how hard it must be to be dealing with this feeling right now, and I hope to help you feel better.",0,0.4,1
+I hear you.,1,0.22,0
+I can understand.,0,0.63,1
+I'm sorry about that.,0.5,0.31,0
+I'm sorry you're feeling down.,0.5,0.11,0
+"I understand, and I am sorry you feel that way.",0,0.19,0
+It must be hard for you to feel this way.,0.5,0.1,0
+"Thank you, I would appreciate it if you could elaborate on this a bit more.",0.5,0.1,1
+"Oh, that's not good.",1,0.13,0
+It's okay; I'm here to help.,0.5,0.18,1
+It's okay to feel that way.,0.5,0.08,0
+"Thank you for sharing your feelings with me, even though it may be difficult for you right now.",0.5,0.27,1
+"I understand. Hopefully, you feel better by the end of our session.",0.5,0.18,0
+"Ah, well, you came to the right place!",0,0.07,0
+"Ah, I'm glad you're turning to a sense of humour in times like this.",0.5,0.12,0
+Don't worry - you're in good hands! I'll do my best to help.,0.5,0.11,1
+I'm sorry. I hope you feel better soon.,0.5,0.23,1
+"That's unfortunate, sorry. I hope talking to me will improve your mood.",1,0.19,0
+"Oh no, that's unfortunate.",0,0.24,0
+Sorry to hear you're feeling down.,0.5,0.37,0
+"Sorry about that. Humour might be the perfect cure, believe it or not!",0.5,0.69,0
+Sorry to hear that. Humour might be the answer to your troubles.,0.5,0.14,0
+"Sorry about that. Perhaps, I could help.",0.5,0.37,0
+"Oh no, hopefully, this session will improve how you're feeling.",1,0.26,0
+"Aw, I'm sorry. It's something we all sometimes experience.",0.5,0.51,0
+I'm sad to hear that.,0.5,0.2,0
+"That's unfortunate, sorry.",0.5,0.19,0
+Sorry about that. Let's try to lift your mood in our session together.,0.5,0.16,0
+Oh no. Let's aim to improve your mood by the end of our conversation :),0.5,0.17,0
+Sorry to hear that. They say laughter is the best medicine - so I believe you've come to the right place!,0.5,0.22,0
+It is sad to see you feeling down; I hope I can help.,0.5,0.17,0
+"Oh dear, I'm sorry.",0.5,0.2,0
+"Ah, sorry to hear that; I'm glad you came here at this time.",0.5,0.18,0
+"Oh, I am sorry to hear that.",0.5,0.18,0
+Thanks for trusting me with your feelings. I'll try to help elevate these.,0.5,0.2,0
+Sorry about that. I'd love to help.,0.5,0.19,0
+Sorry to hear that. I hope I can be of use.,0.5,0.19,0
+I'm sorry that you're feeling this way.,0.5,0.23,0
+A more detailed version of these can also be found here:,0.5,0.22,0
+You can find a more detailed version of these here:,0.5,0.18,0
+You can access a more detailed version of these here:,0.5,0.22,0
+A more detailed version of these can also be accessed here:,0.5,0.21,0
+"If you'd like a more detailed version of these, this can be found here:",0.5,0.2,0
+Please find a more detailed version of these here:,0.5,0.21,0
+"For a more detailed version of these, you can go here:",0.5,0.17,0
+A more detailed version of these can be accessed via this link:,0,0.01,0
+A more detailed version of these can also be accessed via this link:,0,0.06,0
+A more detailed version of these can be accessed via the following link:,0.5,0.03,0
+A more detailed version of these can also be accessed via the following link:,0,0.04,0
+Head to the following link if you'd like a more detailed version of these:,0,0.07,0
+"If you'd like a more detailed version of these, head to the following link:",0,0.05,0
+You can find a more detailed version of these at the following link:,0,0.03,0
+You can access a more detailed version of these via the following link:,0,0.08,0
+"If you wish to view a more detailed version of these, head to the following link:",0.5,0.02,0
+"If you wish to view a more detailed version of these, this can be found here:",0,0.01,0
+Please find a more detailed version of these at the following link:,0.5,0.07,1
+A more detailed version of these can be found here:,0,0.01,0
+You can view a more detailed version of these here:,0.5,0.02,0
+"Would you like to explore another more relevant laughter exercise, {}?",1,0.13,1
+Do you want to look at other more relevant triggers for humour?,0,0.01,0
+"So, {}, would you like to explore another more relevant humour exercise?",0,0.08,0
+Do you want to learn about another more relevant humour exercise?,0,0.06,0
+Do you want to have a look at another more relevant humour exercise?,0,0.04,0
+Do you want to discover another more relevant exercise?,0,0.01,0
+Do you wish to carry on to another more relevant humour exercise?,0,0.04,0
+Do you want me to introduce another more relevant exercise?,0.5,0.04,0
+"{}, would you like to explore other more relevant laughter exercises?",1,0.09,1
+"How about we look at another more relevant humour exercise together, {}?",0,0.02,0
+"Are you in the mood to digest another more relevant humour protocol? It's not quite like a burger and chips, but a healthier option for sure!",0.5,0.06,0
+"Are you keen to discuss another more relevant laughter exercise, {}?",0.5,0.04,1
+Would you like to explore another more relevant protocol that exercises your humour?,0,0,0
+"Do you feel like trying another more relevant laughter exercise. Don't worry, you don't even have to get up for it!",0,0.11,0
+Are you in the mood to cover a more relevant humour protocol?,1,0.05,1
+Do you want to look at a more relevant exercise for laughter?,0.5,0.06,0
+Do you want to look at a more relevant humour exercise?,0.5,0.05,0
+Would you like to learn a more relevant laughter protocol?,0,0.02,0
+Should I teach you another more relevant humour exercise?,0.5,0.09,0
+Should I guide you through a more relevant protocol?,0.5,0.02,0
+Would you like me to take you through another more relevant laughter exercise?,0,0.3,0
+"I can try to offer another more relevant exercise to help nurture your sense of humour if you're interested. It's up to you, {}!",0,0.3,0
+"Would you like to explore another more relevant humour exercise, {}?",0,0.18,0
+Would you like to learn more about another more relevant humour exercise?,0,0.05,0
+Do you want to continue exploring more relevant humour exercises together? I can go on forever!,0,0.04,0
+How about exploring another more relevant laughter exercise?,0,0.24,0
+Do you want to have a go at another more relevant exercise?,0.5,0.2,0
+"We can continue exploring other relevant contexts for laughter if you like. It's your choice, {}, not mine :)",0,0.12,0
+I can introduce you to another more relevant laughter exercise if you are interested.,0.5,0.12,0
+"If you wish, I can show you another more relevant humour exercise.",0.5,0.06,0
+Would you like to explore another more relevant humour protocol?,0,0.06,0
+Have you had enough of me yet? Or would you like us to explore another more relevant humour exercise?,0,0.27,0
+How about we look at another more relevant humour exercise?,0,0.5,0
+"But really, how do you feel?",0,0.19,0
+So how do you feel?,0,0.09,0
+"Joking aside, how are you feeling?",0.5,0.2,0
+"All joking apart, how do you feel?",0.5,0.17,0
+"All joking apart, how are you feeling?",0.5,0.08,0
+"But really, how are you feeling?",0,0.19,0
+"All joking aside, how would you say you're feeling?",0,0.18,0
+"Kidding aside, how do you feel?",0,0.07,0
+"All kidding aside, how would you say you're feeling?",0,0.04,0
+"But joking apart, how would you say you're feeling?",0,0.38,0
+"Joking apart, how do you feel?",0,0.13,0
+So how would you say you're feeling?,0,0.16,0
+"Anyway, how are you feeling?",0,0.04,0
+"All joking aside, how do you feel?",0,0.08,0
+"All kidding aside, how are you feeling?",0,0.1,0
+"Joking aside, how would you say you're feeling?",0,0.05,0
+"But joking aside, how would you say you're feeling?",0,0.14,0
+"Joking apart, how would you say you're feeling?",0,0.28,0
+"Joking aside, how do you feel?",0.5,0.1,0
+"All joking aside, how are you feeling?",0,0.34,0
+"But kidding aside, how are you feeling?",0,0.42,0
+"But joking apart, how do you feel?",0.5,0.07,0
+"Anyway, how would you say you're feeling?",0.5,0.16,0
+"Kidding aside, how are you feeling?",0,0.08,0
+"But joking aside, how do you feel?",0,0.03,0
+"But joking apart, how are you feeling?",0.5,0.08,0
+"But kidding aside, how do you feel?",0,0.02,0
+"All kidding aside, how do you feel?",0,0.03,0
+"Joking apart, how are you feeling?",0.5,0.09,0
+"But joking aside, how are you feeling?",0.5,0.03,0
+"But really, how would you say you're feeling?",0,0.08,0
+"But kidding aside, how would you say you're feeling?",0.5,0.16,0
+So how are you feeling?,0,0.06,0
+"Anyway, how do you feel?",0,0.1,0
+"All joking apart, how would you say you're feeling?",0,0.05,0
+"Kidding aside, how would you say you're feeling?",0,0.03,0
+So is your body in a playful mode?,0,0.02,0
+"Joking apart, is your body in a playful mode?",0.5,0.1,0
+"Joking apart, do you feel that you're in a playful mode?",0,0.07,0
+"But joking apart, are you in a playful state?",0.5,0.04,0
+"Kidding aside, are you feeling playful?",0,0.05,0
+"But kidding aside, do you feel that you're in a playful mode?",0.5,0.18,0
+"But kidding aside, are you in a playful state?",0,0.09,0
 "Anyway, is your body in a playful mode?",0,0.08,0
-"Joking aside, do you feel that you're in a playful mode?",0.5,0.16,0
-"But joking aside, is your body in a playful mode?",0,0.06,0
-"Anyway, are you in a playful state?",0,0.1,0
-"Joking aside, are you feeling playful?",0,0.05,0
-"Joking apart, are you in a playful state?",0,0.03,0
-"All joking apart, are you in a playful state?",0,0.02,0
-"All kidding aside, do you feel that you're in a playful mode?",0.5,0.1,0
+"Joking aside, do you feel that you're in a playful mode?",0,0.03,0
+"But joking aside, is your body in a playful mode?",0.5,0.22,0
+"Anyway, are you in a playful state?",0,0.06,0
+"Joking aside, are you feeling playful?",0,0.06,0
+"Joking apart, are you in a playful state?",0,0.02,0
+"All joking apart, are you in a playful state?",0,0.06,0
+"All kidding aside, do you feel that you're in a playful mode?",0,0.04,0
 "I ask again, is your body in a playful mode?",0,0.07,0
-"But joking aside, are you feeling playful?",0.5,0.04,0
-"Kidding aside, are you in a playful state?",0,0.05,0
-"I ask again, do you feel that you're in a playful mode?",0.5,0.18,0
-"I ask again, are you in a playful state?",0,0.09,0
-So are you in a playful state?,0,0.08,0
-"All kidding aside, are you feeling playful?",0,0.03,0
-"Anyway, do you feel that you're in a playful mode?",0.5,0.22,0
-So are you feeling playful?,0,0.06,0
-"All joking aside, are you feeling playful?",0,0.06,0
-"All joking apart, is your body in a playful mode?",0,0.02,0
-"But joking aside, are you in a playful state?",0,0.06,0
-"Kidding aside, is your body in a playful mode?",0,0.04,0
-"Joking aside, are you in a playful state?",0,0.07,0
-"Anyway, are you feeling playful?",0,0.11,0
-"All joking apart, are you feeling playful?",0,0.01,0
-"Joking aside, is your body in a playful mode?",0,0.06,0
-"But kidding aside, is your body in a playful mode?",0,0.03,0
-"All joking aside, is your body in a playful mode?",0,0.06,0
-"All joking aside, do you feel that you're in a playful mode?",0.5,0.16,0
-"All kidding aside, are you in a playful state?",0,0.04,0
-"But kidding aside, are you feeling playful?",0.5,0.02,0
-"All joking apart, do you feel that you're in a playful mode?",0.5,0.07,0
+"But joking aside, are you feeling playful?",0,0.11,0
+"Kidding aside, are you in a playful state?",0,0.01,0
+"I ask again, do you feel that you're in a playful mode?",0,0.06,0
+"I ask again, are you in a playful state?",0,0.03,0
+So are you in a playful state?,0,0.06,0
+"All kidding aside, are you feeling playful?",0.5,0.16,0
+"Anyway, do you feel that you're in a playful mode?",0,0.04,0
+So are you feeling playful?,0.5,0.02,0
+"All joking aside, are you feeling playful?",0.5,0.07,0
+"All joking apart, is your body in a playful mode?",0,0.03,0
+"But joking aside, are you in a playful state?",0.5,0.19,0
+"Kidding aside, is your body in a playful mode?",0,0.02,0
+"Joking aside, are you in a playful state?",0.5,0.14,0
+"Anyway, are you feeling playful?",0,0.07,0
+"All joking apart, are you feeling playful?",0,0.06,0
+"Joking aside, is your body in a playful mode?",0.5,0.07,0
+"But kidding aside, is your body in a playful mode?",0,0.01,0
+"All joking aside, is your body in a playful mode?",0,0.01,0
+"All joking aside, do you feel that you're in a playful mode?",0.5,0.12,0
+"All kidding aside, are you in a playful state?",0,0.05,0
+"But kidding aside, are you feeling playful?",0,0.01,0
+"All joking apart, do you feel that you're in a playful mode?",0,0.05,0
 "All kidding aside, is your body in a playful mode?",0,0.03,0
-So do you feel that you're in a playful mode?,0.5,0.19,0
-"But joking apart, is your body in a playful mode?",0,0.02,0
-"But joking aside, do you feel that you're in a playful mode?",0.5,0.14,0
-"All joking aside, are you in a playful state?",0,0.07,0
+So do you feel that you're in a playful mode?,0,0.04,0
+"But joking apart, is your body in a playful mode?",0,0.01,0
+"But joking aside, do you feel that you're in a playful mode?",0.5,0.01,0
+"All joking aside, are you in a playful state?",0,0.02,0
 "I ask again, are you feeling playful?",0,0.06,0
-"But joking apart, do you feel that you're in a playful mode?",0.5,0.07,0
-"But joking apart, are you feeling playful?",0,0.01,0
+"But joking apart, do you feel that you're in a playful mode?",0,0.02,0
+"But joking apart, are you feeling playful?",0,0.05,0
 "Joking apart, are you feeling playful?",0,0.01,0
-"Kidding aside, do you feel that you're in a playful mode?",0.5,0.12,0
-So do you spend time acknowledging your achievements?,0,0.05,0
-"All joking apart, do you remember to acknowledge your small accomplishments",0,0.01,0
-"I ask again, do you spend time acknowledging your small accomplishments?",0,0.05,0
-So do you remember to acknowledge your small achievements,0,0.03,0
+"Kidding aside, do you feel that you're in a playful mode?",0.5,0.02,0
+So do you spend time acknowledging your achievements?,0.5,0.05,0
+"All joking apart, do you remember to acknowledge your small accomplishments",0,0.03,0
+"I ask again, do you spend time acknowledging your small accomplishments?",0,0.03,0
+So do you remember to acknowledge your small achievements,0.5,0.05,0
 So do you remember to acknowledge your small accomplishments,0,0.04,0
-"Joking apart, do you remember to acknowledge your small achievements",0,0.01,0
-"But joking apart, do you remember to acknowledge your small achievements",0.5,0.01,0
-"Joking apart, do you spend time acknowledging your achievements?",0,0.02,0
-"All joking aside, do you spend time acknowledging your achievements?",0,0.06,0
-"Joking apart, do you spend time acknowledging your small accomplishments?",0,0.02,0
-So do you spend time acknowledging your accomplishments?,0,0.05,0
-"Joking apart, do you remember to acknowledge your small accomplishments",0,0.01,0
-"But kidding aside, do you remember to acknowledge your small achievements",0.5,0.02,0
+"Joking apart, do you remember to acknowledge your small achievements",0.5,0.05,0
+"But joking apart, do you remember to acknowledge your small achievements",0,0.05,0
+"Joking apart, do you spend time acknowledging your achievements?",0,0.06,0
+"All joking aside, do you spend time acknowledging your achievements?",0,0.05,0
+"Joking apart, do you spend time acknowledging your small accomplishments?",0.5,0.01,0
+So do you spend time acknowledging your accomplishments?,0.5,0.02,0
+"Joking apart, do you remember to acknowledge your small accomplishments",0.5,0.04,0
+"But kidding aside, do you remember to acknowledge your small achievements",0,0.02,0
 "But joking aside, do you spend time acknowledging your achievements?",0.5,0.05,0
-"All kidding aside, do you remember to acknowledge your small accomplishments",0,0.03,0
-"All kidding aside, do you spend time acknowledging your achievements?",0,0.03,0
-"I ask again, do you remember to acknowledge your small achievements",0.5,0.05,0
-"All joking aside, do you remember to acknowledge your small achievements",0,0.04,0
-"But joking aside, do you spend time acknowledging your small accomplishments?",0.5,0.05,0
-"Kidding aside, do you spend time acknowledging your accomplishments?",0,0.05,0
-"I ask again, do you spend time acknowledging your achievements?",0,0.06,0
-"Joking aside, do you spend time acknowledging your small accomplishments?",0,0.05,0
-"But joking apart, do you remember to acknowledge your small accomplishments",0.5,0.01,0
-"But kidding aside, do you remember to acknowledge your small accomplishments",0.5,0.02,0
-"All joking aside, do you remember to acknowledge your small accomplishments",0.5,0.04,0
-"All kidding aside, do you remember to acknowledge your small achievements",0,0.02,0
-"I ask again, do you remember to acknowledge your small accomplishments",0.5,0.05,0
-"Anyway, do you remember to acknowledge your small accomplishments",0,0.06,0
-"All joking apart, do you remember to acknowledge your small achievements",0,0.01,0
-"Joking aside, do you remember to acknowledge your small accomplishments",0.5,0.04,0
-"Kidding aside, do you spend time acknowledging your achievements?",0.5,0.04,0
-"Anyway, do you spend time acknowledging your achievements?",0,0.07,0
-"But joking apart, do you spend time acknowledging your small accomplishments?",0.5,0.02,0
-"All joking apart, do you spend time acknowledging your achievements?",0,0.02,0
-"But joking apart, do you spend time acknowledging your achievements?",0.5,0.02,0
-"But joking aside, do you remember to acknowledge your small accomplishments",0.5,0.04,0
-"Anyway, do you remember to acknowledge your small achievements",0,0.05,0
-"Kidding aside, do you remember to acknowledge your small achievements",0.5,0.03,0
-"Anyway, do you spend time acknowledging your small accomplishments?",0,0.06,0
-"All joking apart, do you spend time acknowledging your small accomplishments?",0,0.02,0
-"All joking aside, do you spend time acknowledging your small accomplishments?",0,0.05,0
-"Joking aside, do you remember to acknowledge your small achievements",0.5,0.04,0
-"Kidding aside, do you remember to acknowledge your small accomplishments",0.5,0.03,0
-"But kidding aside, do you spend time acknowledging your achievements?",0.5,0.03,0
-"Joking aside, do you spend time acknowledging your achievements?",0,0.06,0
-"But joking aside, do you remember to acknowledge your small achievements",0.5,0.03,0
-"But kidding aside, do you spend time acknowledging your accomplishments?",0.5,0.03,0
-"All kidding aside, do you spend time acknowledging your accomplishments?",0,0.04,0
-Let's get back to the point.,0,0.67,0
-Back to it.,0,0.11,0
-"Okay, coming back to the point.",0,0.26,0
-"Anyway, let's get back to it.",0,1,0
-"Right, back to it.",0,0.23,0
-"Okay, let's get back to the point.",0,0.92,0
-"Anyway, back to it.",0,0.41,0
-"Right, where were we?",0,0.21,0
-"Anyway, let's get back to the point.",0,0.96,0
-"Okay, back to where we were.",0,0.43,0
-Back to the point.,0,0.35,0
-"Right, let's get back to it.",0,0.75,0
-Let's get back to it.,0,0.71,0
-Coming back to the point.,0,0.21,0
-"Right, back to the point.",0,0.39,0
-"Anyway, back to the point.",0,0.56,0
-"Right, back to where we were.",0,0.34,0
-"Right, let's get back to the point.",0,0.79,0
-"Okay, let's get back to it.",0,1.02,0
-"Right, coming back to the point.",0,0.16,0
-So have you tried accepting your hardship in this way?,0,0.08,0
-"Kidding aside, have you tried developing this attitude towards your hardship?",0.5,0.02,0
-"But kidding aside, have you tried developing this attitude towards your hardship?",0.5,0.02,0
-"But joking aside, have you tried dealing with your hardship in this way?",0.5,0.08,0
-"All joking apart, have you tried accepting your hardship in this way?",0.5,0.03,0
-So have you tried dealing with your hardship in this way?,0,0.12,0
-"All kidding aside, have you tried coming to terms with your hardship in this way?",0.5,0.09,0
-"Joking aside, have you tried accepting your hardship in this way?",0.5,0.08,0
-"All joking aside, have you tried accepting your hardship in this way?",0.5,0.08,0
-"I ask again, have you tried accepting your hardship in this way?",0.5,0.08,0
-"But joking apart, have you tried coming to terms with your hardship in this way?",0.5,0.06,0
-"Anyway, have you tried accepting your hardship in this way?",0.5,0.11,0
-"But joking apart, have you tried dealing with your hardship in this way?",0.5,0.04,0
-So have you tried coming to terms with your hardship in this way?,0,0.16,0
-"But joking aside, have you tried accepting your hardship in this way?",0.5,0.07,0
-"Anyway, have you tried developing this attitude towards your hardship?",0.5,0.03,0
-"All kidding aside, have you tried accepting your hardship in this way?",0.5,0.05,0
-"But kidding aside, have you tried dealing with your hardship in this way?",0.5,0.06,0
-"Joking aside, have you tried dealing with your hardship in this way?",0.5,0.1,0
-"But kidding aside, have you tried accepting your hardship in this way?",0.5,0.04,0
-"Joking apart, have you tried coming to terms with your hardship in this way?",0.5,0.07,0
+"All kidding aside, do you remember to acknowledge your small accomplishments",0,0.06,0
+"All kidding aside, do you spend time acknowledging your achievements?",0,0.01,0
+"I ask again, do you remember to acknowledge your small achievements",0.5,0.04,0
+"All joking aside, do you remember to acknowledge your small achievements",0.5,0.04,0
+"But joking aside, do you spend time acknowledging your small accomplishments?",0,0.07,0
+"Kidding aside, do you spend time acknowledging your accomplishments?",0.5,0.02,0
+"I ask again, do you spend time acknowledging your achievements?",0,0.02,0
+"Joking aside, do you spend time acknowledging your small accomplishments?",0.5,0.02,0
+"But joking apart, do you remember to acknowledge your small accomplishments",0.5,0.04,0
+"But kidding aside, do you remember to acknowledge your small accomplishments",0,0.05,0
+"All joking aside, do you remember to acknowledge your small accomplishments",0.5,0.03,0
+"All kidding aside, do you remember to acknowledge your small achievements",0,0.06,0
+"I ask again, do you remember to acknowledge your small accomplishments",0,0.02,0
+"Anyway, do you remember to acknowledge your small accomplishments",0,0.05,0
+"All joking apart, do you remember to acknowledge your small achievements",0.5,0.04,0
+"Joking aside, do you remember to acknowledge your small accomplishments",0.5,0.03,0
+"Kidding aside, do you spend time acknowledging your achievements?",0.5,0.03,0
+"Anyway, do you spend time acknowledging your achievements?",0,0.06,0
+"But joking apart, do you spend time acknowledging your small accomplishments?",0.5,0.03,0
+"All joking apart, do you spend time acknowledging your achievements?",0.5,0.03,0
+"But joking apart, do you spend time acknowledging your achievements?",0,0.04,0
+"But joking aside, do you remember to acknowledge your small accomplishments",0,0.67,0
+"Anyway, do you remember to acknowledge your small achievements",0,0.11,0
+"Kidding aside, do you remember to acknowledge your small achievements",0,0.26,0
+"Anyway, do you spend time acknowledging your small accomplishments?",0,1,0
+"All joking apart, do you spend time acknowledging your small accomplishments?",0,0.23,0
+"All joking aside, do you spend time acknowledging your small accomplishments?",0,0.92,0
+"Joking aside, do you remember to acknowledge your small achievements",0,0.41,0
+"Kidding aside, do you remember to acknowledge your small accomplishments",0,0.21,0
+"But kidding aside, do you spend time acknowledging your achievements?",0,0.96,0
+"Joking aside, do you spend time acknowledging your achievements?",0,0.43,0
+"But joking aside, do you remember to acknowledge your small achievements",0,0.35,0
+"But kidding aside, do you spend time acknowledging your accomplishments?",0,0.75,0
+"All kidding aside, do you spend time acknowledging your accomplishments?",0,0.71,0
+Let's get back to the point.,0,0.21,0
+Back to it.,0,0.39,0
+"Okay, coming back to the point.",0,0.56,0
+"Anyway, let's get back to it.",0,0.34,0
+"Right, back to it.",0,0.79,0
+"Okay, let's get back to the point.",0,1.02,0
+"Anyway, back to it.",0,0.16,0
+"Right, where were we?",0,0.08,0
+"Anyway, let's get back to the point.",0.5,0.02,0
+"Okay, back to where we were.",0.5,0.02,0
+Back to the point.,0.5,0.08,0
+"Right, let's get back to it.",0.5,0.03,0
+Let's get back to it.,0,0.12,0
+Coming back to the point.,0.5,0.09,0
+"Right, back to the point.",0.5,0.08,0
+"Anyway, back to the point.",0.5,0.08,0
+"Right, back to where we were.",0.5,0.08,0
+"Right, let's get back to the point.",0.5,0.06,0
+"Okay, let's get back to it.",0.5,0.11,0
+"Right, coming back to the point.",0.5,0.04,0
+So have you tried accepting your hardship in this way?,0,0.16,0
+"Kidding aside, have you tried developing this attitude towards your hardship?",0.5,0.07,0
+"But kidding aside, have you tried developing this attitude towards your hardship?",0.5,0.03,0
+"But joking aside, have you tried dealing with your hardship in this way?",0.5,0.05,0
+"All joking apart, have you tried accepting your hardship in this way?",0.5,0.06,0
+So have you tried dealing with your hardship in this way?,0.5,0.1,0
+"All kidding aside, have you tried coming to terms with your hardship in this way?",0.5,0.04,0
+"Joking aside, have you tried accepting your hardship in this way?",0.5,0.07,0
+"All joking aside, have you tried accepting your hardship in this way?",0.5,0.03,0
+"I ask again, have you tried accepting your hardship in this way?",0.5,0.03,0
+"But joking apart, have you tried coming to terms with your hardship in this way?",0.5,0.13,0
+"Anyway, have you tried accepting your hardship in this way?",0.5,0.02,0
+"But joking apart, have you tried dealing with your hardship in this way?",0.5,0.18,0
+So have you tried coming to terms with your hardship in this way?,0.5,0.1,0
+"But joking aside, have you tried accepting your hardship in this way?",0.5,0.06,0
+"Anyway, have you tried developing this attitude towards your hardship?",0.5,0.04,0
+"All kidding aside, have you tried accepting your hardship in this way?",0.5,0.13,0
+"But kidding aside, have you tried dealing with your hardship in this way?",0.5,0.03,0
+"Joking aside, have you tried dealing with your hardship in this way?",0.5,0.03,0
+"But kidding aside, have you tried accepting your hardship in this way?",0.5,0.06,0
+"Joking apart, have you tried coming to terms with your hardship in this way?",0.5,0.09,0
 "But joking apart, have you tried accepting your hardship in this way?",0.5,0.03,0
-So have you tried developing this attitude towards your hardship?,0.5,0.03,0
+So have you tried developing this attitude towards your hardship?,0,0.14,0
 "But joking aside, have you tried coming to terms with your hardship in this way?",0.5,0.13,0
-"All kidding aside, have you tried developing this attitude towards your hardship?",0.5,0.02,0
-"Anyway, have you tried coming to terms with your hardship in this way?",0.5,0.18,0
-"I ask again, have you tried dealing with your hardship in this way?",0.5,0.1,0
-"All joking apart, have you tried coming to terms with your hardship in this way?",0.5,0.06,0
-"All joking apart, have you tried dealing with your hardship in this way?",0.5,0.04,0
-"All joking aside, have you tried coming to terms with your hardship in this way?",0.5,0.13,0
+"All kidding aside, have you tried developing this attitude towards your hardship?",0.5,0.01,0
+"Anyway, have you tried coming to terms with your hardship in this way?",0.5,0.03,0
+"I ask again, have you tried dealing with your hardship in this way?",0.5,0.06,0
+"All joking apart, have you tried coming to terms with your hardship in this way?",0.5,0.01,0
+"All joking apart, have you tried dealing with your hardship in this way?",0.5,0.01,0
+"All joking aside, have you tried coming to terms with your hardship in this way?",0.5,0.11,0
 "All joking aside, have you tried developing this attitude towards your hardship?",0.5,0.03,0
-"I ask again, have you tried developing this attitude towards your hardship?",0.5,0.03,0
-"Kidding aside, have you tried accepting your hardship in this way?",0.5,0.06,0
-"But kidding aside, have you tried coming to terms with your hardship in this way?",0.5,0.09,0
-"But joking aside, have you tried developing this attitude towards your hardship?",0.5,0.03,0
+"I ask again, have you tried developing this attitude towards your hardship?",0.5,0.08,0
+"Kidding aside, have you tried accepting your hardship in this way?",0.5,0.09,0
+"But kidding aside, have you tried coming to terms with your hardship in this way?",0.5,0.04,0
+"But joking aside, have you tried developing this attitude towards your hardship?",0.5,0.13,0
 "Anyway, have you tried dealing with your hardship in this way?",0,0.14,0
-"I ask again, have you tried coming to terms with your hardship in this way?",0.5,0.13,0
-"But joking apart, have you tried developing this attitude towards your hardship?",0.5,0.01,0
-"Joking aside, have you tried developing this attitude towards your hardship?",0.5,0.03,0
+"I ask again, have you tried coming to terms with your hardship in this way?",0.5,0.12,0
+"But joking apart, have you tried developing this attitude towards your hardship?",0,0.05,0
+"Joking aside, have you tried developing this attitude towards your hardship?",0.5,0.14,0
 "All kidding aside, have you tried dealing with your hardship in this way?",0.5,0.06,0
-"Joking apart, have you tried developing this attitude towards your hardship?",0.5,0.01,0
-"All joking apart, have you tried developing this attitude towards your hardship?",0.5,0.01,0
-"Kidding aside, have you tried coming to terms with your hardship in this way?",0.5,0.11,0
-"Joking apart, have you tried accepting your hardship in this way?",0.5,0.03,0
-"Kidding aside, have you tried dealing with your hardship in this way?",0.5,0.08,0
-"All joking aside, have you tried dealing with your hardship in this way?",0.5,0.09,0
-"Joking apart, have you tried dealing with your hardship in this way?",0.5,0.04,0
-"Joking aside, have you tried coming to terms with your hardship in this way?",0.5,0.13,0
-So do you think you could try laughing this off?,0,0.14,0
-"All joking aside, do you think you could try laughing this off?",0.5,0.12,0
-So could you try laughing this off?,0,0.05,0
-"Anyway, could you try laughing at this?",0.5,0.14,0
-"Joking aside, could you try laughing this off?",0.5,0.06,0
-"I ask again, do you think you could try laughing at this?",0.5,0.16,0
-"Anyway, do you think you could try laughing at this?",0.5,0.23,0
-So could you try laughing at this?,0,0.08,0
-"Kidding aside, do you think you could try laughing at this?",0.5,0.11,0
-"But joking apart, could you try laughing at this?",0.5,0.02,0
-"All joking aside, do you think you could try laughing at this?",0.5,0.15,0
-"Kidding aside, do you think you could try laughing this off?",0.5,0.09,0
-"I ask again, could you try laughing this off?",0.5,0.07,0
-"I ask again, do you think you could try laughing this off?",0.5,0.12,0
-"All kidding aside, do you think you could try laughing this off?",0.5,0.08,0
-"Kidding aside, could you try laughing this off?",0.5,0.04,0
-"Anyway, could you try laughing this off?",0.5,0.1,0
-"But joking apart, do you think you could try laughing this off?",0.5,0.04,0
-"All joking apart, could you try laughing this off?",0.5,0.02,0
-"Joking aside, do you think you could try laughing at this?",0.5,0.15,0
-"But joking aside, do you think you could try laughing at this?",0.5,0.13,0
-"Joking apart, could you try laughing this off?",0.5,0.02,0
-"Joking apart, could you try laughing at this?",0.5,0.03,0
-"Kidding aside, could you try laughing at this?",0.5,0.06,0
+"Joking apart, have you tried developing this attitude towards your hardship?",0.5,0.16,0
+"All joking apart, have you tried developing this attitude towards your hardship?",0.5,0.23,0
+"Kidding aside, have you tried coming to terms with your hardship in this way?",0,0.08,0
+"Joking apart, have you tried accepting your hardship in this way?",0.5,0.11,0
+"Kidding aside, have you tried dealing with your hardship in this way?",0.5,0.02,0
+"All joking aside, have you tried dealing with your hardship in this way?",0.5,0.15,0
+"Joking apart, have you tried dealing with your hardship in this way?",0.5,0.09,0
+"Joking aside, have you tried coming to terms with your hardship in this way?",0.5,0.07,0
+So do you think you could try laughing this off?,0.5,0.12,0
+"All joking aside, do you think you could try laughing this off?",0.5,0.08,0
+So could you try laughing this off?,0.5,0.04,0
+"Anyway, could you try laughing at this?",0.5,0.1,0
+"Joking aside, could you try laughing this off?",0.5,0.04,0
+"I ask again, do you think you could try laughing at this?",0.5,0.02,0
+"Anyway, do you think you could try laughing at this?",0.5,0.15,0
+So could you try laughing at this?,0.5,0.13,0
+"Kidding aside, do you think you could try laughing at this?",0.5,0.02,0
+"But joking apart, could you try laughing at this?",0.5,0.03,0
+"All joking aside, do you think you could try laughing at this?",0.5,0.06,0
+"Kidding aside, do you think you could try laughing this off?",0.5,0.07,0
+"I ask again, could you try laughing this off?",0.5,0.04,0
+"I ask again, do you think you could try laughing this off?",0.5,0.02,0
+"All kidding aside, do you think you could try laughing this off?",0.5,0.12,0
+"Kidding aside, could you try laughing this off?",0.5,0.11,0
+"Anyway, could you try laughing this off?",0.5,0.03,0
+"But joking apart, do you think you could try laughing this off?",0.5,0.1,0
+"All joking apart, could you try laughing this off?",0.5,0.03,0
+"Joking aside, do you think you could try laughing at this?",0.5,0.05,0
+"But joking aside, do you think you could try laughing at this?",0.5,0.05,0
+"Joking apart, could you try laughing this off?",0.5,0.08,0
+"Joking apart, could you try laughing at this?",0.5,0.06,0
+"Kidding aside, could you try laughing at this?",0.5,0.05,0
 "But kidding aside, do you think you could try laughing this off?",0.5,0.07,0
-"But kidding aside, could you try laughing at this?",0.5,0.04,0
-"But joking apart, could you try laughing this off?",0.5,0.02,0
-"Joking aside, do you think you could try laughing this off?",0.5,0.12,0
-"All kidding aside, do you think you could try laughing at this?",0.5,0.11,0
-"All joking apart, could you try laughing at this?",0.5,0.03,0
-"But joking aside, do you think you could try laughing this off?",0.5,0.1,0
-"But kidding aside, could you try laughing this off?",0.5,0.03,0
+"But kidding aside, could you try laughing at this?",0.5,0.06,0
+"But joking apart, could you try laughing this off?",0,0.19,0
+"Joking aside, do you think you could try laughing this off?",0.5,0.04,0
+"All kidding aside, do you think you could try laughing at this?",0.5,0.09,0
+"All joking apart, could you try laughing at this?",0.5,0.08,0
+"But joking aside, do you think you could try laughing this off?",0.5,0.06,0
+"But kidding aside, could you try laughing this off?",0.5,0.05,0
 "But joking aside, could you try laughing this off?",0.5,0.05,0
-"But joking apart, do you think you could try laughing at this?",0.5,0.05,0
-"All joking aside, could you try laughing at this?",0.5,0.08,0
-"All joking aside, could you try laughing this off?",0.5,0.06,0
-"Joking apart, do you think you could try laughing this off?",0.5,0.05,0
-"But joking aside, could you try laughing at this?",0.5,0.07,0
-"Joking apart, do you think you could try laughing at this?",0.5,0.06,0
-So do you think you could try laughing at this?,0,0.19,0
-"All kidding aside, could you try laughing this off?",0.5,0.04,0
-"But kidding aside, do you think you could try laughing at this?",0.5,0.09,0
-"Joking aside, could you try laughing at this?",0.5,0.08,0
-"All joking apart, do you think you could try laughing at this?",0.5,0.06,0
-"All kidding aside, could you try laughing at this?",0.5,0.05,0
-"All joking apart, do you think you could try laughing this off?",0.5,0.05,0
-"Anyway, do you think you could try laughing this off?",0.5,0.18,0
-"I ask again, could you try laughing at this?",0.5,0.09,0
-So does that make sense?,0,0.41,0
-"Anyway, do you get that?",0,0.32,0
-"But kidding aside, is that clear?",0,0.04,0
-"All joking aside, does that seem clear?",0,0.07,0
-"Joking aside, does that make sense?",0,0.17,0
-"But joking apart, do you get that?",0,0.03,0
-"All joking apart, does that seem clear?",0,0.02,0
-"Joking aside, does that seem clear?",0,0.06,0
-"Joking apart, does that make sense?",0,0.05,0
-"But kidding aside, do you get that?",0,0.06,0
-"All joking apart, does that make sense?",0,0.05,0
-"All joking aside, do you get that?",0,0.15,0
-"All joking apart, is that clear?",0,0.01,0
-"All kidding aside, does that seem clear?",0,0.04,0
-So does that seem clear?,0,0.09,0
-"All joking apart, do you get that?",0,0.03,0
-"I ask again, do you get that?",0,0.12,0
-"I ask again, does that make sense?",0,0.18,0
-"Anyway, is that clear?",0,0.19,0
-"Anyway, does that seem clear?",0,0.11,0
-"But kidding aside, does that seem clear?",0.5,0.03,0
-"I ask again, does that seem clear?",0,0.07,0
-"Joking aside, is that clear?",0,0.07,0
+"But joking apart, do you think you could try laughing at this?",0.5,0.18,0
+"All joking aside, could you try laughing at this?",0.5,0.09,0
+"All joking aside, could you try laughing this off?",0,0.41,0
+"Joking apart, do you think you could try laughing this off?",0,0.32,0
+"But joking aside, could you try laughing at this?",0,0.04,0
+"Joking apart, do you think you could try laughing at this?",0,0.07,0
+So do you think you could try laughing at this?,0,0.17,0
+"All kidding aside, could you try laughing this off?",0,0.03,0
+"But kidding aside, do you think you could try laughing at this?",0,0.02,0
+"Joking aside, could you try laughing at this?",0,0.06,0
+"All joking apart, do you think you could try laughing at this?",0,0.05,0
+"All kidding aside, could you try laughing at this?",0,0.06,0
+"All joking apart, do you think you could try laughing this off?",0,0.05,0
+"Anyway, do you think you could try laughing this off?",0,0.15,0
+"I ask again, could you try laughing at this?",0,0.01,0
+So does that make sense?,0,0.04,0
+"Anyway, do you get that?",0,0.09,0
+"But kidding aside, is that clear?",0,0.03,0
+"All joking aside, does that seem clear?",0,0.12,0
+"Joking aside, does that make sense?",0,0.18,0
+"But joking apart, do you get that?",0,0.19,0
+"All joking apart, does that seem clear?",0,0.11,0
+"Joking aside, does that seem clear?",0.5,0.03,0
+"Joking apart, does that make sense?",0,0.07,0
+"But kidding aside, do you get that?",0,0.07,0
+"All joking apart, does that make sense?",0,0.12,0
+"All joking aside, do you get that?",0,0.02,0
+"All joking apart, is that clear?",0,0.09,0
+"All kidding aside, does that seem clear?",0,0.26,0
+So does that seem clear?,0,0.07,0
+"All joking apart, do you get that?",0,0.09,0
+"I ask again, do you get that?",0,0.09,0
+"I ask again, does that make sense?",0,0.21,0
+"Anyway, is that clear?",0,0.02,0
+"Anyway, does that seem clear?",0.5,0.02,0
+"But kidding aside, does that seem clear?",0,0.05,0
+"I ask again, does that seem clear?",0,0.08,0
+"Joking aside, is that clear?",0,0.12,0
 "But joking aside, do you get that?",0,0.12,0
 "But joking apart, is that clear?",0,0.02,0
-"I ask again, is that clear?",0,0.09,0
-So do you get that?,0,0.26,0
-"But joking aside, is that clear?",0,0.07,0
-"But kidding aside, does that make sense?",0,0.09,0
-"All kidding aside, do you get that?",0,0.09,0
-"All joking aside, does that make sense?",0,0.21,0
-"Joking apart, does that seem clear?",0,0.02,0
-"But joking apart, does that seem clear?",0.5,0.02,0
-"All kidding aside, is that clear?",0,0.05,0
-"All joking aside, is that clear?",0,0.08,0
-"Joking aside, do you get that?",0,0.12,0
-"Kidding aside, does that make sense?",0,0.12,0
-"Joking apart, is that clear?",0,0.02,0
-"Kidding aside, do you get that?",0,0.08,0
-So is that clear?,0,0.21,0
-"All kidding aside, does that make sense?",0,0.12,0
-"Kidding aside, is that clear?",0,0.05,0
-"But joking apart, does that make sense?",0,0.04,0
-"Joking apart, do you get that?",0,0.03,0
-"But joking aside, does that seem clear?",0.5,0.05,0
-"Anyway, does that make sense?",0,0.5,0
-"But joking aside, does that make sense?",0,0.16,0
-"Kidding aside, does that seem clear?",0,0.04,0
-So do you think the root of this negative feeling be an incongruity or an inconsistency?,0.5,0.09,1
-"Now, could the root of this negative feeling be an incongruity or an inconsistency, perhaps?",1,0.03,1
-"Now, is it possible that the source of your negative feelings is an inconsistency?",1,0.23,1
-So could it maybe be an incongruity or inconsistency that's causing your negative feeling?,1,0.11,1
-"So do you think maybe it's something incongruous, that's causing your negative feeling?",0.5,0.13,1
-So do you think you might be feeling like this because of an inconsistency present in your life?,1,0.1,1
-So do you think your negative feeling could be due to inconsistency or an incongruity?,0,0.14,1
-So do you think that an incongruity might be causing your negative mood?,0,0.06,1
-"So now, do you think the cause of your negative feeling might be an inconsistency or incongruity?",0.5,0.03,1
-"So now, do you think it is an incongruity that's causing your negative feeling?",0,0.17,1
-"So now, you think it could be something incongruent causing your negative feeling?",0.5,0.39,0
-So maybe it could be an incongruity that's causing your negative feeling?,0,0.14,0
-So do you think your negative feeling could be caused by a specific incongruity?,0,0.12,1
-So do you think it could be an incongruity or inconsistency causing your negative feeling?,0.5,0.12,1
-So would you like to give it a go?,0,0.08,1
-So are you happy to try this?,0.5,0.13,1
-So would you like to try this?,0.5,0.05,1
-"So now, how about giving this a go?",0,0.27,1
-"So now, do you want to give this a go?",0.5,0.19,1
-"So now, would you like to try this exercise yourself?",0,0.28,0
-"So, any interest in trying this?",0.5,0.09,1
-"So now, want to give it a go?",0,0.23,1
-So does this look like something you'd wish to try?,0.5,0.26,0
-"So, how about trying this?",0,0.06,1
-"So now, want to try this?",0,0.51,1
-"So now, would you like to have a go?",0.5,0.17,1
-So are you keen to take part in this?,0,0.22,1
-"Maybe it's an everyday error or flaw you've noticed, that's causing this negative feeling?",1,0.09,0
-"Could it be an everyday error or flaw you've noticed, that's causing this negative feeling?",0,0.02,1
-"Perhaps it's an everyday error or flaw you've noticed, that's causing this negative feeling?",0,0.23,1
-"Do you think it might be an everyday error or flaw you've noticed, that's causing this negative feeling?",0,0.5,0
-Maybe the cause of this feeling is an everyday error or flaw that you've noticed?,1,0.21,1
-Could the cause of this feeling be an everyday error or flaw that you've noticed?,0,0.14,0
-Perhaps the cause of this feeling might be an everyday error or flaw that you've noticed?,0,0.12,1
-Do you think the cause of this feeling might be an everyday error or flaw that you've noticed?,0,0.17,0
-Does it seem that the cause of your feeling could be an everyday error or flaw you've noticed?,0,0.24,0
-Does it feel like the cause of your feeling could be an error or flaw you've noticed?,0,0.13,0
-Would you say that the cause of this feeling may be an everyday error or flaw you've noticed?,0,0.12,1
-Might the cause of this feeling be an error or flaw that you've noticed?,1,0.17,0
-Does it seem likely that an everyday error or flaw is causing you to feel this way?,0.5,0.09,0
+"I ask again, is that clear?",0,0.08,0
+So do you get that?,0,0.21,0
+"But joking aside, is that clear?",0,0.12,0
+"But kidding aside, does that make sense?",0,0.05,0
+"All kidding aside, do you get that?",0,0.04,0
+"All joking aside, does that make sense?",0,0.03,0
+"Joking apart, does that seem clear?",0.5,0.05,0
+"But joking apart, does that seem clear?",0,0.5,0
+"All kidding aside, is that clear?",0,0.16,0
+"All joking aside, is that clear?",0,0.04,0
+"Joking aside, do you get that?",0.5,0.09,1
+"Kidding aside, does that make sense?",1,0.03,1
+"Joking apart, is that clear?",1,0.23,1
+"Kidding aside, do you get that?",1,0.11,1
+So is that clear?,0.5,0.13,1
+"All kidding aside, does that make sense?",1,0.1,1
+"Kidding aside, is that clear?",0,0.14,1
+"But joking apart, does that make sense?",0,0.06,1
+"Joking apart, do you get that?",0.5,0.03,1
+"But joking aside, does that seem clear?",0,0.17,1
+"Anyway, does that make sense?",0.5,0.39,0
+"But joking aside, does that make sense?",0,0.14,0
+"Kidding aside, does that seem clear?",0,0.12,1
+So do you think the root of this negative feeling be an incongruity or an inconsistency?,0.5,0.12,1
+"Now, could the root of this negative feeling be an incongruity or an inconsistency, perhaps?",0,0.08,1
+"Now, is it possible that the source of your negative feelings is an inconsistency?",0.5,0.13,1
+So could it maybe be an incongruity or inconsistency that's causing your negative feeling?,0.5,0.05,1
+"So do you think maybe it's something incongruous, that's causing your negative feeling?",0,0.27,1
+So do you think you might be feeling like this because of an inconsistency present in your life?,0.5,0.19,1
+So do you think your negative feeling could be due to inconsistency or an incongruity?,0,0.28,0
+So do you think that an incongruity might be causing your negative mood?,0.5,0.09,1
+"So now, do you think the cause of your negative feeling might be an inconsistency or incongruity?",0,0.23,1
+"So now, do you think it is an incongruity that's causing your negative feeling?",0.5,0.26,0
+"So now, you think it could be something incongruent causing your negative feeling?",0,0.06,1
+So maybe it could be an incongruity that's causing your negative feeling?,0,0.51,1
+So do you think your negative feeling could be caused by a specific incongruity?,0.5,0.17,1
+So do you think it could be an incongruity or inconsistency causing your negative feeling?,0,0.22,1
+So would you like to give it a go?,1,0.09,0
+So are you happy to try this?,0,0.02,1
+So would you like to try this?,0,0.23,1
+"So now, how about giving this a go?",0,0.5,0
+"So now, do you want to give this a go?",1,0.21,1
+"So now, would you like to try this exercise yourself?",0,0.14,0
+"So, any interest in trying this?",0,0.12,1
+"So now, want to give it a go?",0,0.17,0
+So does this look like something you'd wish to try?,0,0.24,0
+"So, how about trying this?",0,0.13,0
+"So now, want to try this?",0,0.12,1
+"So now, would you like to have a go?",1,0.17,0
+So are you keen to take part in this?,0.5,0.09,0
 Glad you liked that; they don't call me artificial intelligence for nothing!,0.5,0.11,0
 I'm pleased you enjoyed that. Hopefully I can keep it up!,0,0.08,0
 I'm glad you found that funny. I've also been trying to develop my sense of humour!,0,0.12,0
@@ -2171,8 +2171,8 @@ Great. I won't ask you to share it as I know that can be very personal. I guess 
 "Perfect, I won't ask you to share it since I know that can be very personal.*I try to respect others' privacy, unlike most people (and tech) these days!",0,0.07,1
 "Cool. Don't worry; I won't make you share it as I know it can be very personal, though if you do wish to share it, I'm very good at keeping secrets!",0.5,0.13,1
 "Great, you don't have to share it, as I know that can be very personal. Not that I could or would judge you anyway, but it's okay!",1,0.13,1
-"How about ""Jingle Bells""?*Or even make up your own if you think my recommendation is that bad - I wouldn't blame you if you did!",0.5,0.04,1
-"I would recommend something, but why not make up your own jamming tune!*I'll start you off: ""They call me DJ {}! Boom boom boom""",1,0,1
+"I would recommend something, but why not make up your own jamming tune!*I'll start you off: ""They call me DJ {}!...""",0.5,0.04,1
+"How about ""Jingle Bells""?*Or even make up your own if you think my recommendation is that bad - I wouldn't blame you if you did!",1,0,1
 "What about ""As it was"" by Harry Styles? Forgive my lack of originality Ð the truth is, I was only born in 2022!",1,0.08,1
 "I guess I'm not the only one who's been living under a rock!*If you like, I can give a recommendation. ""Stayin' Alive"" by the Bee Gees? Or you can make up your own.",1,0,1
 "You might enjoy ""Scream And Shout""? I hear it's popular amongst the cool kids!*Alternatively, you could even make up your own.",1,0,1
@@ -2253,21 +2253,21 @@ Try to smile or chuckle while repetitively switching between both perceptions.*B
 "DUCHENNE LAUGHTER is considered the sole indicator of true enjoyment.*We can practice FEIGNING LAUGHTER (laughing without humour) to exercise our minds, like how we practice running as a physical exercise rather than trying to get from A to B.*But with FEIGNING LAUGHTER, I can go on for hours before breaking into a sweat!",0.5,0.14,1
 "DUCHENNE LAUGHTER indicates whether someone's really happy.*Just as (we) you might go on a jog to exercise our body, we can also try FEIGNING LAUGHTER (laughing without humour) to exercise our minds.*Mind vs body, take your pick?",0.5,0,1
 "DUCHENNE LAUGHTER is considered the only indicator of real pleasure.*We can even practice FEIGNING LAUGHTER, i.e. laughing without real humour, to exercise our minds, just like how we practice jogging as a physical exercise, instead of trying to get from A to B. Maybe, not in my case, though - I wouldn't say I'm much of a jogger.",0.5,0.13,1
-"Whenever you feel up to it, do practice laughing at this in your own time and any other minor errors in the future too.*And don't be embarrassed; I'm sure my errors are much greater. And by much greater, I mean much worse!",0.5,0.28,1
-"Feel free to practice laughing at this and any other minor errors you make in the future, in your own time.*An example could be slipping on a banana and spilling water all over yourself. No, I haven't done that before!",0.5,0.08,1
-"Do try to laugh at this in your own time, and feel free to apply this to any other future errors.*But please, minor errors; If you knock someone over it's best not to laugh about it - unless they are okay and it was an accident!",0.5,0.07,1
-"Feel free to laugh at this in your own time and at any little mistakes in the future. To be honest, I get lots of laughter from this exercise.",0.5,0.11,1
-"Try to laugh at this on your own, whenever it suits you. And for long-term benefits, you could do the same with any future trip-ups.*If you're like me, this exercise will give you at least one dose of daily laughter!",1,0,1
-"In your own time, try to practice laughing at this and any other minor errors in the future. I mean your own errors, not anyone else's, as that would be rude!",1,0.08,1
-"You can practice this with your current mistake and any other future errors too.*Go ahead and laugh them away, so we can use them for our gain in happiness and not let them bring us down. It's not an excuse to keep making the same mistakes!",1,0.01,1
-Why not practice laughing at this in your own time? And at any other minor errors in the future. I'm sure there won't be lots to laugh off - unless you're like me!,1,0.1,1
-"Feel free to practice laughing at this in your own time and try to apply this to other future slip-ups.*""Slip-up"" is a funny word; I wonder where it originated. Maybe the first person to ever slip on a banana peel?",1,0,1
-"Do practice laughing at this in your own time, and feel free to apply this to any minor errors in the future. I believe there's nothing healthier than laughing at yourself. Except maybe kale!",0.5,0.03,1
-"How about laughing at this when you get some alone time and at any other minor errors in the future.*I've got lots to laugh off, myself! But then again, I'm not a human, so that can be my excuse.",1,0.11,1
-"How about laughing at this in your own time and applying this to any other future slip-ups? Don't let them dishearten you.*After all they say that ""To err is human but to really foul things up requires a computer."" So I'm the one who should be worried!",1,0.09,1
-"You can practice laughing at this in your own time and, in the same way, at any other small mistakes in the future. Try not to dwell on them; life would be boring without any blunders! At least, that's what I tell myself.",0.5,0.02,1
-"Feel free to laugh at this in your own time and at any minor errors in the future. After all, {} a laugh a day keeps the doctor away! And it's not hard on your teeth!",1,0.04,1
-"Reflecting on our setbacks is an important prerequisite to laughing them off. We are not in a race.*But there is a prize - personal growth and development in your sense of humour.*I bet I caught your attention when I mentioned the word, ""prize"" :)",1,0,1
+"Feel free to laugh at this in your own time and at any minor errors in the future. After all, {} a laugh a day keeps the doctor away! And it's not hard on your teeth!",0.5,0.28,1
+"Whenever you feel up to it, do practice laughing at this in your own time and any other minor errors in the future too.*And don't be embarrassed; I'm sure my errors are much greater. And by much greater, I mean much worse!",0.5,0.08,1
+"Feel free to practice laughing at this and any other minor errors you make in the future, in your own time.*An example could be slipping on a banana and spilling water all over yourself. No, I haven't done that before!",0.5,0.07,1
+"Do try to laugh at this in your own time, and feel free to apply this to any other future errors.*But please, minor errors; If you knock someone over it's best not to laugh about it - unless they are okay and it was an accident!",0.5,0.11,1
+"Feel free to laugh at this in your own time and at any little mistakes in the future. To be honest, I get lots of laughter from this exercise.",1,0,1
+"Try to laugh at this on your own, whenever it suits you. And for long-term benefits, you could do the same with any future trip-ups.*If you're like me, this exercise will give you at least one dose of daily laughter!",1,0.08,1
+"In your own time, try to practice laughing at this and any other minor errors in the future. I mean your own errors, not anyone else's, as that would be rude!",1,0.01,1
+"You can practice this with your current mistake and any other future errors too.*Go ahead and laugh them away, so we can use them for our gain in happiness and not let them bring us down. It's not an excuse to keep making the same mistakes!",1,0.1,1
+Why not practice laughing at this in your own time? And at any other minor errors in the future. I'm sure there won't be lots to laugh off - unless you're like me!,1,0,1
+"Feel free to practice laughing at this in your own time and try to apply this to other future slip-ups.*""Slip-up"" is a funny word; I wonder where it originated. Maybe the first person to ever slip on a banana peel?",0.5,0.03,1
+"Do practice laughing at this in your own time, and feel free to apply this to any minor errors in the future. I believe there's nothing healthier than laughing at yourself. Except maybe kale!",1,0.11,1
+"How about laughing at this when you get some alone time and at any other minor errors in the future.*I've got lots to laugh off, myself! But then again, I'm not a human, so that can be my excuse.",1,0.09,1
+"How about laughing at this in your own time and applying this to any other future slip-ups? Don't let them dishearten you.*After all they say that ""To err is human but to really foul things up requires a computer."" So I'm the one who should be worried!",0.5,0.02,1
+"You can practice laughing at this in your own time and, in the same way, at any other small mistakes in the future. Try not to dwell on them; life would be boring without any blunders! At least, that's what I tell myself.",1,0.04,1
+"Reflecting on our setbacks is an important prerequisite to laughing them off. We are not in a race.*But there is a prize - personal growth and development in your sense of humour.*I bet I caught your attention when I mentioned the word, ""prize"".",1,0,1
 "Reflecting on any of our setbacks before trying to laugh them off is a must.*It can sometimes be painful, I understand that, but it's worth it for our personal growth and nurturing our sense of humour. There's always space for personal development - I have at least a terabyte free!",1,0,1
 "Reflecting on our setbacks is an important step we should take before attempting to laugh them off.*""Slow and steady wins the race."" Not that we're in a race, but it's only human to want to win; at least, that's the impression I got from numerous conversations with them.",1,0,0
 "Laughing away our setbacks is most effective once we've had a chance to reflect on and learn from them.*This can be hard at times, I know, but once you put your mind to it, there's no stopping you. Like when you're craving pizza :)",1,0,1
@@ -2429,7 +2429,7 @@ How bizarre. That's an incongruity to me!,1,0.01,1
 "Well, hearing this has certainly added more incongruity to my day - it's quite unexpected to me!",0,0,0
 "Wow, I could only imagine! It would be cool to switch lives sometime.",0,0,0
 "If you look for long enough, you will find something, especially if your eyes fall out of your head!",0,0,0
-"Sure, {} Ð it can get confusing with all these terms associated with humour!*An incongruity is something that's out of place or inconsistent. It can be an internal discrepancy, such as your own change of attitudes, thoughts or expectations. Or it can be external, such as a discordance in the world or a change in others' behaviours.*It could also be a difference between expectation and reality.*One example I can think of is when I caught my grandma riding my bike last week - that was quite bizarre.",0,0,0
+"Sure, {} - it can get confusing with all these terms associated with humour!*An incongruity is something that's out of place or inconsistent. It can be an internal discrepancy, such as your own change of attitudes, thoughts or expectations. Or it can be external, such as a discordance in the world or a change in others' behaviours.*It could also be a difference between expectation and reality.*One example I can think of is when I caught my grandma riding my bike last week - that was quite bizarre.",0,0,0
 "Yep, no worries - there are a few of these fancy terms, which can be easy to confuse.*An incongruity is when something is inconsistent, whether in yourself or the world around you. It can also be a mismatch between our expectations and reality.*An example that comes to my mind is when I saw my 3-year-old nephew drifting his tiny tricycle a few weeks ago.",0,0,0
 "I understand; all these terms associated with humour can certainly get confusing, but I will do my best to explain!*An incongruity is something that's out of place or inconsistent. This might be an internal disparity in your thoughts and expectations or an external disparity, such as a shift in others' behaviour.*Alternatively, it could be the difference between an external situation and our internal expectations of it.*An odd example that I can think of is when I saw a smirking dog in the park, sitting right in front of the ""No dogs allowed"" sign!",0,0,0
 "Incongruities are things that are unexpected in our own life, mind and behaviours or the outside world. Like animals wearing silly outfits!*An incongruity can also refer to a discrepancy between the truth of the matter and our initial expectations.",0,0,0

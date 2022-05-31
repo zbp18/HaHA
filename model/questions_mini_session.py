@@ -1,6 +1,7 @@
 from model.utterances import *
 from model.questions_main import *
 from model.questions_negative import *
+from model.questions_positive import *
 from model.questions_reused import *
 
 def get_mini_sessions_questions(decision_maker):
@@ -97,7 +98,7 @@ def get_mini_sessions_questions(decision_maker):
             # TODO: should we add a delay
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_any_song_ask(decision_maker, user_id),
             "choices": {
-                "yes": "response_to_song_haha",
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("response_to_song_haha", "response_to_song_no_haha"),
                 "no": "recommend_song_haha"
             },
             "protocols": {
@@ -139,7 +140,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
 
-        "response_to_song_not_haha": {
+        "response_to_song_no_haha": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_has_song_respond(decision_maker, user_id),
             "choices": {
                 "continue": "recommend_playful_protocol",
@@ -152,7 +153,7 @@ def get_mini_sessions_questions(decision_maker):
         "recommend_playful_protocol": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_playful_face_ask_feeling_pre(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F641": "pre_playful_neg"
             },
             "protocols": {
@@ -241,7 +242,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_self_glory_ask_cont(decision_maker, user_id),
             "choices": {
                 "yes": "ask_congratulate_with_smile",
-                "no": "propose_congratulate_with_smile_no_haha"
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("propose_congratulate_with_smile_haha", "propose_congratulate_with_smile_no_haha")
             },
             "protocols": {
                 "yes": [decision_maker.PROTOCOL_TITLES[3]],
@@ -253,7 +254,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_self_glory_ask_cont(decision_maker, user_id),
             "choices": {
                 "yes": "ask_congratulate_with_smile",
-                "no": "propose_congratulate_with_smile_no_haha"
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("propose_congratulate_with_smile_haha", "propose_congratulate_with_smile_no_haha")
             },
             "protocols": {
                 "yes": [decision_maker.PROTOCOL_TITLES[3]],
@@ -266,7 +267,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_acknowledge_achievements_ask(decision_maker, user_id),
             "choices": {
                 "yes": "ask_congratulate_with_smile",
-                "no": "propose_congratulate_with_smile_haha"
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("propose_congratulate_with_smile_haha", "propose_congratulate_with_smile_no_haha")
             },
             "protocols": {
                 "yes": [decision_maker.PROTOCOL_TITLES[3]],
@@ -304,7 +305,7 @@ def get_mini_sessions_questions(decision_maker):
         "propose_sg_and_eg": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_try_self_glory_ask(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha", 
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"), 
                 "\U0001F641": "pre_sg_neg"
             },
             "protocols": {
@@ -383,7 +384,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_incongruity": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_incongruity_ask(decision_maker, user_id),
             "choices": {
-                "Yes": "ask_laughter_incongruity_haha",
+                "Yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_laughter_incongruity_haha", "ask_laughter_incongruity_no_haha"),
                 "No": "no_incongruity",
                 "Not sure": "reminder_incongruity",
             },
@@ -478,7 +479,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_feel_pre_incongruity": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feeling_pre_exercise_ask(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F610": "continue_curr_not_willing",
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre(user_id),
 
@@ -515,7 +516,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_incongruity_no_unsure": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_incongruity_ask(decision_maker, user_id),
             "choices": {
-                "yes": "ask_laughter_incongruity_no_haha",
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_laughter_incongruity_haha", "ask_laughter_incongruity_no_haha"),
                 "no": "continue_curr_can't_do",
             },
             "protocols": {
@@ -555,7 +556,7 @@ def get_mini_sessions_questions(decision_maker):
             #TODO: should we perform a search?
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_contrasting_views_inform1(decision_maker, user_id), # extension - wiki search if user would like to know more
             "choices": {
-                "staring...": "continue_cv_haha",
+                "staring...": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_cv_haha", "continue_cv_no_haha"),
             },
             "protocols": {
                 "staring...": [],
@@ -598,7 +599,7 @@ def get_mini_sessions_questions(decision_maker):
         "confirm_understand_cv": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feeling_pre_exercise_ask(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "try_pre_protocol_neg_haha", 
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"), 
                 "\U0001F641": "explain_cv"
             },
             "protocols": {
@@ -607,11 +608,11 @@ def get_mini_sessions_questions(decision_maker):
             }
         },
 
-        "continue_cv_not_haha": {
+        "continue_cv_no_haha": {
             #TODO: should we perform a search?
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_contrasting_views_inform2(decision_maker, user_id), # extension - wiki search if user would like to know more
             "choices": {
-                "Sounds interesting": "try_pre_protocol_neg_haha",
+                "Sounds interesting": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"),
                 "What?": "explain_cv",
             },
             "protocols": {
@@ -636,7 +637,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id),
             "choices": {
                 "yes": "further_clarify_cv",
-                "no": "try_pre_protocol_neg_haha",
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"),
             },
             "protocols": {
                 "yes": [],
@@ -697,7 +698,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_feigning_laughter": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feigning_laughter_intro_ask_feeling_pre(decision_maker, user_id),#[feigning_laughter_introduce, feeling_pre_exercise_ask],
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F641": "pre_fl_neg",
             },
             "protocols": {
@@ -710,7 +711,7 @@ def get_mini_sessions_questions(decision_maker):
             # TODO: wording change? Perhaps some further clarification might help?
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_neg_respond_further_clarification_ask(decision_maker, user_id),
             "choices": {
-                "yes": "further_clarify_fl_haha",
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_fl_haha", "further_clarify_fl_no_haha"),
                 "no": "continue_curr_not_willing"
             },
             "protocols": {
@@ -796,7 +797,7 @@ def get_mini_sessions_questions(decision_maker):
         "continue_explaining_lb": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_make_sense_ask(decision_maker, user_id),
             "choices": {
-                "yes": "try_pre_lb_no_haha",
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_lb_haha", "try_pre_lb_no_haha"),
                 "no": "further_clarify_lb"
             },
             "protocols": {
@@ -887,7 +888,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_error_ask(decision_maker, user_id),
             "choices": {
                 "yes": "ask_laugher_error", 
-                "no": "no_error_haha",
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("no_error_haha", "no_error_no_haha"),
             },
             "protocols": {
                 "yes": [],
@@ -899,7 +900,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_laughed_off_ask(decision_maker, user_id),
             "choices": {
                 "yes": "ask_feel_post_error", 
-                "no": "encourage_laughter_error_haha",
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("encourage_laughter_error_haha", "encourage_laughter_error_no_haha"),
             },
             "protocols": {
                 "yes": [],
@@ -936,7 +937,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_fc_post_error": { 
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id),
             "choices": {
-                "yes": "further_clarify_post_error_haha", 
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_post_error_haha", "further_clarify_post_error_no_haha"), 
                 "no": "try_post_protocol_neg"
             }, 
             "protocols": {
@@ -1002,7 +1003,7 @@ def get_mini_sessions_questions(decision_maker):
         "how_not_contempt_post_error":{
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_no_contempt_inform_further_clarification_ask(decision_maker, user_id),
             "choices": {
-                "yes": "further_clarify_post_error_no_haha", 
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_post_error_haha", "further_clarify_post_error_no_haha"), 
                 "no": "try_post_protocol_neg" 
             }, 
             "protocols": {
@@ -1014,7 +1015,7 @@ def get_mini_sessions_questions(decision_maker):
         "post_error_neg": { 
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_neg_respond_further_clarification_ask(decision_maker, user_id),
             "choices": {
-                "yes": "further_clarify_post_error_no_haha", 
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_post_error_haha", "further_clarify_post_error_no_haha"), 
                 "no": "try_post_protocol_neg"
             }, 
             "protocols": {
@@ -1069,7 +1070,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_feel_pre_error": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feeling_pre_exercise_ask(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F610": "explain_laughter_error",
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre_error(user_id),
             },
@@ -1095,8 +1096,8 @@ def get_mini_sessions_questions(decision_maker):
         "ask_fc_pre_error": { 
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id),
             "choices": {
-                "yes": "further_clarify_pre_error_no_haha",
-                "no": "try_pre_protocol_neg_no_haha"
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_pre_error_haha", "further_clarify_pre_error_no_haha"),
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha")
             },
             "protocols": {
                 "yes": [],
@@ -1107,8 +1108,8 @@ def get_mini_sessions_questions(decision_maker):
         "how_not_contempt_pre_error":{
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_no_contempt_inform_further_clarification_ask(decision_maker, user_id), 
             "choices": {
-                "yes": "further_clarify_pre_error_no_haha", 
-                "no": "try_pre_protocol_neg_no_haha" 
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_pre_error_haha", "further_clarify_pre_error_no_haha"),
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha")
             }, 
             "protocols": {
                 "yes": [],
@@ -1119,8 +1120,8 @@ def get_mini_sessions_questions(decision_maker):
         "pre_error_neg": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_neg_respond_further_clarification_ask(decision_maker, user_id), 
             "choices": {
-                "yes": "further_clarify_pre_error_no_haha",
-                "no": "try_pre_protocol_neg_no_haha"
+                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("further_clarify_pre_error_haha", "further_clarify_pre_error_no_haha"),
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha")
             },
             "protocols": {
                 "yes": [],
@@ -1163,7 +1164,7 @@ def get_mini_sessions_questions(decision_maker):
         "fc_pre_error": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_laughter_inform_eg_protocols_remind(decision_maker, user_id), 
             "choices": {
-                "continue": "try_pre_protocol_neg_no_haha",
+                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"),
             },
             "protocols": {
                 "continue": [],
@@ -1173,7 +1174,7 @@ def get_mini_sessions_questions(decision_maker):
         "further_clarify_pre_error_no_haha": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_error_clarify_eg_protocols_remind(decision_maker, user_id), 
             "choices": {
-                "continue": "try_pre_protocol_neg_no_haha",
+                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"),
             },
             "protocols": {
                 "continue": [],
@@ -1193,7 +1194,7 @@ def get_mini_sessions_questions(decision_maker):
         "continue_explaining_laughter_error": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_error_inform_ask_feeling_pre(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre_error(user_id)
             },
             "protocols": {
@@ -1263,7 +1264,7 @@ def get_mini_sessions_questions(decision_maker):
         "continue_exploring_error": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_error_encourage_ask_feeling_pre(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre_error(user_id)
             },
             "protocols": {
@@ -1388,7 +1389,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_setback_distant_ask(decision_maker, user_id),
             "choices": {
                 "yes": "remind_objectives_setback",
-                "no": "propose_reflect_setback_haha",
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("propose_reflect_setback_haha", "propose_reflect_setback_no_haha"),
             },
             "protocols": {
                 "yes": [],
@@ -1422,7 +1423,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_complete_quote_show_setbacks(decision_maker, user_id),
             #TODO: check order!
             "choices": {
-                "Done": "encourage_laughter_setback_haha", 
+                "Done": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("encourage_laughter_setback_haha", "encourage_laughter_setback_no_haha"), 
             },
             "protocols": {
                 "Done": [],
@@ -1466,7 +1467,7 @@ def get_mini_sessions_questions(decision_maker):
             #TODO check encourage_setback_practice
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feeling_pre_exercise_ask(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha",
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"),
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre_setback(user_id)#"pre_setback_neg"
             },
             "protocols": {
@@ -1501,7 +1502,7 @@ def get_mini_sessions_questions(decision_maker):
         "review_and_return_setback": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_needs_clarification_respond(decision_maker, user_id),
             "choices": {
-                "continue": "encourage_laughter_setback_no_haha"
+                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("encourage_laughter_setback_haha", "encourage_laughter_setback_no_haha")
             },
             "protocols": {
                 "continue": [],
@@ -1512,7 +1513,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id),
             "choices": {
                 "yes": "further_clarify_pre_setback",
-                "no":  "try_pre_protocol_neg_no_haha"# or "continue_curr_not_willing"
+                "no":  lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha")# or "continue_curr_not_willing"
             },
             "protocols": {
                 "yes": [],
@@ -1534,7 +1535,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_no_contempt_inform_further_clarification_ask(decision_maker, user_id), 
             "choices": {
                 "yes": "further_clarify_pre_setback", 
-                "no": "try_pre_protocol_neg_no_haha" 
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha") 
             }, 
             "protocols": {
                 "yes": [],
@@ -1601,7 +1602,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_hardship": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_hardship_ask(decision_maker, user_id),
             "choices": {
-                "Yes": "ask_accept_hardship_haha",
+                "Yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_accept_hardship_haha", "ask_accept_hardship_no_haha"),
                 "No": "empathetic_continue_curr_can't_do", 
                 "Rather not say": "empathetic_response_hardship"
             },
@@ -1738,7 +1739,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_hardship_past_ask(decision_maker, user_id),
             "choices": {
                 "yes": "remind_objectives_hardship",
-                "no": "propose_reflect_hardship_haha",
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("propose_reflect_hardship_haha", "propose_reflect_hardship_no_haha"),
             },
             "protocols": {
                 "yes": [],
@@ -1772,7 +1773,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_complete_quote_show_hardships(decision_maker, user_id),
             #TODO: check order!
             "choices": {
-                "Done": "encourage_laughter_hardship_no_haha", 
+                "Done": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("encourage_laughter_hardship_haha", "encourage_laughter_hardship_no_haha"), 
             },
             "protocols": {
                 "Done": [],
@@ -1782,7 +1783,7 @@ def get_mini_sessions_questions(decision_maker):
         "review_and_return_hardship": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_needs_clarification_respond(decision_maker, user_id),
             "choices": {
-                "continue": "encourage_laughter_hardship_no_haha"
+                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("encourage_laughter_hardship_haha", "encourage_laughter_hardship_no_haha")
             },
             "protocols": {
                 "continue": [],
@@ -1835,7 +1836,7 @@ def get_mini_sessions_questions(decision_maker):
         "ask_pre_hardship_practice": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feeling_pre_exercise_ask(decision_maker, user_id),
             "choices": {
-                "\U0001F600": "continue_pos_pre_protocol_no_haha", 
+                "\U0001F600": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("continue_pos_pre_protocol_haha", "continue_pos_pre_protocol_no_haha"), 
                 "\U0001F610": "pre_hardship_neg",
                 "\U0001F641": lambda user_id, db_session, curr_session, app: decision_maker.check_contempt_pre_hardship(user_id), 
             },
@@ -1862,7 +1863,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id),
             "choices": {
                 "yes": "further_clarify_pre_hardship",
-                "no": "try_pre_protocol_neg_no_haha" # or "continue_curr_not_willing",
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha") # or "continue_curr_not_willing",
             },
             "protocols": {
                 "yes": [],
@@ -1874,7 +1875,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_no_contempt_inform_further_clarification_ask(decision_maker, user_id), 
             "choices": {
                 "yes": "further_clarify_pre_hardship", 
-                "no": "try_pre_protocol_neg_no_haha" 
+                "no": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha") 
             }, 
             "protocols": {
                 "yes": [],
@@ -1886,7 +1887,7 @@ def get_mini_sessions_questions(decision_maker):
             #TODO check this
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_laugh_hardship_inform_protocols(decision_maker, user_id),#[laugh_hardship_inform, protocols_remind],
             "choices": {
-                "continue": "try_pre_protocol_neg_no_haha",
+                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"),
             },
             "protocols": {
                 "continue": [],

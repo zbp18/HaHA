@@ -220,7 +220,7 @@ class ModelDecisionMaker:
         if ('3: Self-glory',) in self.user_covered_sessions[user_id]: 
             return "continue_curr_can't_do" 
         # TODO
-        return "ask_self_glory_haha"
+        return self.determine_next_prompt_haha("ask_self_glory_haha", "ask_self_glory_not_haha")
 
     def check_contempt(self, user_id):
         if self.contempt_message[user_id] == False: 
@@ -340,6 +340,9 @@ class ModelDecisionMaker:
         else:
             restart_prompt = ["Please tell me again, " + self.users_names[user_id] + ", how are you feeling today?"]
         return restart_prompt
+    
+    def determine_next_prompt_haha(self, question1, question2):
+        return np.random.choice([question1, question2], 1, p=[0.35, 0.65])[0]
     
     # TODO added (right place)
     #def choose_mini_session(self, user_id): 
@@ -1011,7 +1014,7 @@ class ModelDecisionMaker:
                 #and current_choice != "further_clarify_cv_haha"
                 #TODO and current_choice != "further_clarify_cv"
                 and current_choice != "continue_cv_haha"
-                and current_choice != "continue_cv_not_haha"
+                and current_choice != "continue_cv_no_haha"
                 and current_choice != "remind_contempt_post_error"
                 and current_choice != "remind_contempt_pre_error"
                 and current_choice != "remind_contempt_post_setback"

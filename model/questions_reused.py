@@ -1,5 +1,8 @@
 from model.utterances import *
 from model.questions_main import *
+from model.questions_mini_session import *
+from model.questions_negative import *
+from model.questions_positive import *
 
 def get_reused_questions(decision_maker):
     
@@ -79,7 +82,7 @@ def get_reused_questions(decision_maker):
         },
 
         "not_funny_pos_pre_protocol": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_respond(decision_maker, user_id),
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_respond(decision_maker, user_id),
             "choices": {
                 "continue": "continue_curr_willing"
             },
