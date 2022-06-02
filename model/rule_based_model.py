@@ -10,7 +10,7 @@ import datetime
 import time
 
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
-from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_new, empathy_score, get_humour_scores
+from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_pos, get_sentence_score_neg, empathy_score, get_humour_scores
 from model.utterances import *
 from model.questions_main import *
 from model.questions_reused import *
@@ -159,6 +159,10 @@ class ModelDecisionMaker:
         self.QUESTIONS = {**self.QUESTIONS_MAIN , **self.QUESTIONS_REUSED, **self.QUESTIONS_MINI_SESSIONS, **self.QUESTIONS_POSITIVE, **self.QUESTIONS_NEGATIVE}
         self.QUESTION_KEYS = list(self.QUESTIONS.keys())
 
+    #TODO initialise user state to positive or negative
+    def initialise_user_states_initial(self, user_id):
+        self.user_states_initial[user_id] = "Positive"
+    
     def initialise_prev_questions(self, user_id):
         self.recent_questions[user_id] = []
         self.recent_statements[user_id] = []
@@ -295,6 +299,29 @@ class ModelDecisionMaker:
                         suggestions.append(self.PROTOCOL_TITLES[p])
                         self.suggestions[user_id].extend([self.PROTOCOL_TITLES[p]])
         return suggestions
+
+    # testing the retrieval function
+    def test_retrieval_function(self):
+        df = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1') # changed path
+        previous_questions = pd.DataFrame(columns=['sentences']) # start with an empty dataframe which is gradually filled with the retrieved utterances
+        print('testing retrieval function...')
+        for i in range(30): # we retrieve 20 utterances here
+
+            maxscore = 0
+            chosen = ''
+            for row in df['Do you think that exploring the possible cause of your current feeling could benefit you?'].dropna(): # select a column/base utterance we want to retrieve the variations of
+
+                if pd.notna(row):
+                
+                    fitscore = get_sentence_score_neg(row, previous_questions)
+                
+                    if fitscore > maxscore:
+                        maxscore = fitscore
+                        chosen = row
+            print(chosen)
+            previous_questions = previous_questions.append({'sentences':chosen}, ignore_index=True)
+            #wrong previous_questions = pd.concat(previous_questions, {'sentences':chosen}, ignore_index=True )
+        print('done with testing retrieval function!')
 
     def clear_suggestions(self, user_id):
         self.suggestions[user_id] = []
@@ -454,13 +481,16 @@ class ModelDecisionMaker:
         else:
             return random.choice(column.dropna().sample(n=5).to_list()) #was 25    
 
-    def get_best_sentence_new(self, column, prev_qs):
+    def get_best_sentence_new(self, column, prev_qs, user_id):
         #return random.choice(column.dropna().sample(n=15).to_list()) #using random choice instead of machine learning
         maxscore = 0
         chosen = ''
         if not greeting in column.unique():
             for row in column.dropna().sample(n=10): #was 25 #TODO CHANGE - 12?
-                fitscore = get_sentence_score_new(row, prev_qs)
+                if self.user_states_initial[user_id] == "Positive":
+                    fitscore = get_sentence_score_pos(row, prev_qs)
+                else:
+                    fitscore = get_sentence_score_neg(row, prev_qs)
                 if fitscore > maxscore:
                     maxscore = fitscore
                     chosen = row

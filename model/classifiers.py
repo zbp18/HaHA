@@ -237,18 +237,32 @@ def get_sentence_score(sentence, dataframe):
 
 
 #TODO new arg - another dataframe - prev qs
-def get_sentence_score_new(sentence, dataframe):
+def get_sentence_score_pos(sentence, dataframe):
   '''
   Calculates how fit a sentence is based on its weighted humour, empathy, fluency
   and novelty values
   '''
-  print('sentence: ', sentence)
+  #print('sentence: ', sentence)
+  data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+  fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
+  novelty = novelty_score(sentence, dataframe)
+  score = 0.75*fluency + 2*novelty
+  
+  #print('score: ', score)
+  return score
+
+def get_sentence_score_neg(sentence, dataframe):
+  '''
+  Calculates how fit a sentence is based on its weighted humour, empathy, fluency
+  and novelty values
+  '''
+  #print('sentence: ', sentence)
   data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
   humour = data.loc[data.index[data['sentences']==sentence].tolist(),'humour'].tolist()[0]
   empathy = data.loc[data.index[data['sentences']==sentence].tolist(),'empathy'].tolist()[0]
   fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
   novelty = novelty_score(sentence, dataframe)
-  score = humour + empathy + 0.75*fluency + 2*novelty
+  score = humour + empathy + 0.75*fluency + 4*novelty
   
-  print('score: ', score)
+  #print('score: ', score)
   return score
