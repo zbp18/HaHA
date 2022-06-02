@@ -2,11 +2,7 @@ import string
 import pandas as pd
 import numpy as np
 from model.utterances import *
-from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_new, empathy_score, get_humour_scores
-from model.questions_mini_session import *
-from model.questions_negative import *
-from model.questions_positive import *
-from model.questions_reused import *
+from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_neg, get_sentence_score_pos, empathy_score, get_humour_scores
 
 def get_main_questions(decision_maker):
 
@@ -401,6 +397,13 @@ def save_name(decision_maker, user_id):
     #decision_maker.datasets[user_id] = decision_maker.kai
     return "opening_prompt"
 
+#TODO: random choice amongst all intro prompts!!!!!
+def get_introduction_prompt(decision_maker, user_id):
+    data = decision_maker.dataset
+    column = data[introduction].dropna()
+    question = np.random.choice(column).split("*")
+    return question
+
 # add check for whether user is familiar with the humorous protocols
 def get_opening_prompt(decision_maker, user_id):
     name = decision_maker.users_names[user_id] 
@@ -408,7 +411,7 @@ def get_opening_prompt(decision_maker, user_id):
     print("prev qs are: ", prev_qs)
     data = decision_maker.dataset
     column = data[greeting].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -422,7 +425,7 @@ def get_model_prompt_review_protocols(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[protocols_note_pos].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -435,7 +438,7 @@ def get_model_prompt_practice_protocols(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[practice_protocols_encourage_start].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -448,9 +451,9 @@ def get_model_prompt_protocols_recommend(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column1 = data[protocols_recommend].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
     column2 = data[protocols_note].dropna()
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -466,7 +469,7 @@ def get_model_prompt_detailed_protocols_note(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[detailed_protocols_note].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -479,7 +482,7 @@ def get_model_prompt_funny_respond(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[funny_respond].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -492,7 +495,7 @@ def get_model_prompt_not_funny_respond(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[not_funny_respond].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -505,7 +508,7 @@ def get_model_prompt_humour_jargon_note(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[humour_jargon_note].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -518,7 +521,7 @@ def get_model_prompt_feeling_ask(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[feeling_ask].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -531,9 +534,9 @@ def get_model_prompt_funny_respond_cont_feeling_ask(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column1 = data[funny_respond].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
     column2 = data[cont_feeling_ask].dropna()
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -549,9 +552,9 @@ def get_model_prompt_not_funny_respond_cont_feeling_ask(decision_maker, user_id)
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column1 = data[not_funny_respond].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
     column2 = data[cont_feeling_ask].dropna()
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -671,8 +674,8 @@ def get_model_prompt_start_exploring(decision_maker, user_id):
     data = decision_maker.dataset
     column1 = data[feeling_pos_respond].dropna()
     column2 = data[start_exploring].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -699,8 +702,8 @@ def get_opening_prompt_negative(decision_maker, user_id):
     data = decision_maker.dataset
     column1 = data[feeling_neg_respond].dropna()
     column2 = data[identified_reason_ask].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -726,7 +729,7 @@ def get_model_prompt_review_any_pos(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[review_any_pos].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -739,7 +742,7 @@ def get_model_prompt_review_any(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[review_any].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -759,7 +762,7 @@ def get_model_prompt_select_protocol(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[select_protocol].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -774,8 +777,8 @@ def get_model_prompt_conclusion_ask_feeling(decision_maker, user_id):
     data = decision_maker.dataset
     column1 = data[conclusion_note].dropna()
     column2 = data[current_feeling_ask].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -791,8 +794,8 @@ def get_model_prompt_pos_protocols_encourage_end(decision_maker, user_id):
     data = decision_maker.dataset
     column1 = data[pos_respond].dropna()
     column2 = data[practice_protocols_encourage_end].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -808,8 +811,8 @@ def get_model_prompt_neg_protocols_encourage_end(decision_maker, user_id):
     data = decision_maker.dataset
     column1 = data[neg_respond].dropna()
     column2 = data[practice_protocols_encourage_end].dropna()
-    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs)
-    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs)
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -824,7 +827,7 @@ def get_model_prompt_practice_protocols_encourage_end(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[practice_protocols_encourage_end].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -838,7 +841,7 @@ def get_model_prompt_goodbye(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[goodbye].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -852,7 +855,7 @@ def get_model_prompt_restart_note(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[restart_note].dropna()
-    my_string = decision_maker.get_best_sentence_new(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
