@@ -1,8 +1,6 @@
+import pandas as pd
 from model.utterances import *
 from model.questions_main import get_model_prompt_funny_respond, get_model_prompt_not_funny_respond
-from model.questions_mini_session import *
-from model.questions_negative import *
-from model.questions_reused import *
 
 def get_positive_questions(decision_maker):
 

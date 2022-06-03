@@ -1,8 +1,8 @@
+import pandas as pd
 from model.utterances import *
 from model.questions_main import get_model_prompt_funny_respond, get_model_prompt_not_funny_respond
-from model.questions_negative import *
-from model.questions_positive import *
-from model.questions_reused import get_model_prompt_pos_respond
+from model.questions_negative import get_model_prompt_incongruity_inform, get_model_prompt_further_clarification_ask, get_model_prompt_neg_respond_not_contempt_note
+from model.questions_reused import get_model_prompt_pos_respond, get_model_prompt_not_contempt_note
 
 def get_mini_sessions_questions(decision_maker):
 
@@ -276,7 +276,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "ask_congratulate_with_smile": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_glory_encourage(decision_maker, user_id),
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_glory_ask(decision_maker, user_id),
             "choices": {
                 "yes": "ask_feel_post_sg",
                 "no": "propose_sg_and_eg"
@@ -408,7 +408,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "funny_ask_laugh_incong": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_ask_cont_laugh_off(decision_maker, user_id)[funny_respond, cont_laugh_off_ask],
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_ask_cont_laugh_off(decision_maker, user_id),
             "choices": {
                 "yes": "try_laughter_pre_protocol_pos", 
                 "no": "pre_incongruity_neg"
@@ -420,7 +420,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "not_funny_ask_laugh_incong": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_ask_cont_laugh_off(decision_maker, user_id)[not_funny_respond, cont_laugh_off_ask],
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_ask_cont_laugh_off(decision_maker, user_id),
             "choices": {
                 "yes": "try_laughter_pre_protocol_pos", 
                 "no": "pre_incongruity_neg"
@@ -457,7 +457,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "further_clarify_incongruity": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_incongruity_remind_protocols(decision_maker, user_id)[incongruity_remind, protocols_remind],
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_incongruity_remind_protocols(decision_maker, user_id),
             "choices": {
                 "continue": "try_laughter_incongruity",
             },
@@ -492,7 +492,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "no_incongruity": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_no_incongruity_more_exercises(decision_maker, user_id)[no_incongruity_respond, more_exercises_ask],
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_no_incongruity_more_exercises(decision_maker, user_id),
             "choices": {
                 "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_mini_session(user_id, "can't_do"), # function that returns next prompt (random based on user's choice, emotion and current level)
                 "no": "review_any_session"
@@ -720,7 +720,7 @@ def get_mini_sessions_questions(decision_maker):
             },
         },
 
-        "further_clarify_fl_haha": {
+        "s": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feigning_laughter_inform(decision_maker, user_id),
             "choices": {
                 "Haha": "funny_fl",
@@ -743,7 +743,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "not_funny_fl": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_protocols_remind(decision_maker, user_id)[not_funny_respond, protocols_remind],
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_protocols_remind(decision_maker, user_id),
             "choices": {
                 "continue": "continue_curr_not_willing",
             },
@@ -753,7 +753,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "further_clarify_fl_no_haha": {
-            "model_prompt": feigning_laughter_inform,
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feigning_laughter_inform(decision_maker, user_id),
             "choices": {
                 "continue": "look_sheet_fl",
             },
@@ -763,7 +763,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "look_sheet_fl": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_further_clarification_ask(decision_maker, user_id)[protocols_remind, more_exercises_ask],
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_protocols_remind_more_exercises(decision_maker, user_id),#[protocols_remind, more_exercises_ask],
             "choices": {
                 "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_mini_session(user_id, "not_willing"), # function that returns next prompt (random based on user's choice, emotion and current level)
                 "no": "review_any_session"
@@ -2143,6 +2143,19 @@ def get_model_prompt_acknowledge_achievements_ask(decision_maker, user_id):
     question = my_string.format().split("*")
     return question
 
+def get_model_prompt_self_glory_ask(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[self_glory_ask].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format().split("*")
+    return question
+
 def get_model_prompt_funny_self_glory_ask_cont(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
@@ -2513,6 +2526,24 @@ def get_model_prompt_feigning_laughter_inform(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string)
     question = my_string.format().split("*")
+    return question
+
+def get_model_prompt_protocols_remind_more_exercises(decision_maker, user_id):
+    name = decision_maker.users_names[user_id]
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column1 = data[protocols_remind].dropna()
+    column2 = data[more_exercises_ask].dropna()
+    my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
+    my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string1)
+        decision_maker.recent_questions[user_id].append(my_string2)
+    question = "*".join([my_string1, my_string2]).format(name).split("*")
     return question
 
 def get_model_prompt_funny_protocols_remind(decision_maker, user_id):

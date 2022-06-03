@@ -196,7 +196,7 @@ def get_main_questions(decision_maker):
         "after_classification_positive": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_start_exploring(decision_maker, user_id),
             "choices": {
-                "continue": lambda user_id, db_session, curr_session, app: determine_first_positive_session(decision_maker),
+                "continue": lambda user_id, db_session, curr_session, app: determine_first_positive_session(decision_maker, user_id),
             },
             "protocols": {
                 "continue": [], 
@@ -686,12 +686,30 @@ def get_model_prompt_start_exploring(decision_maker, user_id):
     question = "*".join([my_string1, my_string2]).format().split("*")
     return question
 
-def determine_first_positive_session(decision_maker):
+#TODO NOW - ADD TO PREVIOUS SESSIONS
+def determine_first_positive_session(decision_maker, user_id):
     # TODO decide if want to start with haha always?
     # positive mini sessions
     playful_session = decision_maker.determine_next_prompt_haha("ask_playful_mode_haha", "ask_playful_mode_no_haha")
     positive_sessions = [playful_session, "ask_incongruity_and_cv", "ask_laughter_brand"]
     chosen_session = np.random.choice(positive_sessions)
+    if chosen_session in decision_maker.MINI_SESSION_QUESTIONS:
+        print("current_choice in self.MINI_SESSION_QUESTIONS")
+        current_mini_session_title = decision_maker.QUESTION_TO_MINI_SESSION[chosen_session]
+        decision_maker.user_mini_sessions[user_id] = current_mini_session_title
+        if len(decision_maker.user_covered_sessions[user_id]) == 0:
+            decision_maker.user_covered_sessions[user_id] = [current_mini_session_title]
+        else:
+            decision_maker.user_covered_sessions[user_id].append(current_mini_session_title) 
+        print("THE COVERED SESSIONS ARE!!!!!: ", decision_maker.user_covered_sessions)
+    else:
+        current_mini_session_title = decision_maker.QUESTION_TO_MINI_SESSION["ask_incongruity"]
+        decision_maker.user_mini_sessions[user_id] = current_mini_session_title
+        if len(decision_maker.user_covered_sessions[user_id]) == 0:
+            decision_maker.user_covered_sessions[user_id] = [current_mini_session_title]
+        else:
+            decision_maker.user_covered_sessions[user_id].append(current_mini_session_title) 
+
     return chosen_session
 
 def get_opening_prompt_negative(decision_maker, user_id):
