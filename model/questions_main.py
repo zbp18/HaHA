@@ -475,7 +475,7 @@ def get_model_prompt_detailed_protocols_note(decision_maker, user_id):
     else:
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format().split("*")
+    question = my_string.format("http://humandevelopment.doc.ic.ac.uk/papers/Self-initiated_humorous_protocols-f.pdf").split("*")
     return question
 
 def get_model_prompt_funny_respond(decision_maker, user_id):
