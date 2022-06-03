@@ -12,11 +12,11 @@ import time
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
 from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_pos, get_sentence_score_neg, empathy_score, get_humour_scores
 from model.utterances import *
-from model.questions_main import *
-from model.questions_reused import *
-from model.questions_negative import *
-from model.questions_positive import *
-from model.questions_mini_session import *
+from model.questions_main import get_main_questions
+from model.questions_reused import get_reused_questions
+from model.questions_negative import get_negative_questions
+from model.questions_positive import get_positive_questions
+from model.questions_mini_session import get_mini_sessions_questions
 
 nltk.download("wordnet")
 from nltk.corpus import wordnet  # noqa
@@ -27,6 +27,7 @@ class ModelDecisionMaker:
         # removed personas
         self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
         self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1') # changed path
+        self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv', encoding='ISO-8859-1')
 
         self.PROTOCOL_TITLES = [
             "0: None",
@@ -54,7 +55,9 @@ class ModelDecisionMaker:
 
         self.MINI_SESSION_TITLES = [
             ("1: Playful mind", "2: Playful face"), 
-            ("3: Self-glory",), 
+            ("1: Playful mind", "2: Playful face"),
+            ("3: Self-glory",),
+            ("3: Self-glory",),  
             ("4: Incongruous world", "5: Incongruous self", "6: Self/world incongruity"), 
             ("7: Contrasting views",), 
             ("8: Our own laughter brand", "9: Feigning laughter"), 
@@ -63,11 +66,11 @@ class ModelDecisionMaker:
             ("12: Laughing at long-term suffering",)
         ]
 
-        self.MINI_SESSION_TITLE_TO_LEVEL = dict(zip(self.MINI_SESSION_TITLES, [0, 0, 1, 1, 1, 2, 3, 3]))
+        self.MINI_SESSION_TITLE_TO_LEVEL = dict(zip(self.MINI_SESSION_TITLES, [0, 0, 0, 0, 1, 1, 1, 2, 3, 3]))
 
         #TODO add not_haha? - change random choice to 1/16 - not haha and 1/16 - haha
-        self.MINI_SESSION_QUESTIONS = ["ask_playful_mode_no_haha", "ask_self_glory_not_haha", "ask_incongruity", "ask_feel_pre_cv", "ask_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
-
+        #self.MINI_SESSION_QUESTIONS = ["ask_playful_mode_no_haha", "ask_self_glory_not_haha", "ask_incongruity", "ask_feel_pre_cv", "ask_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
+        self.MINI_SESSION_QUESTIONS = ["ask_playful_mode_no_haha", "ask_playful_mode_haha", "ask_self_glory_not_haha", "ask_self_glory_haha", "ask_incongruity", "ask_feel_pre_cv", "ask_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
         self.MINI_SESSION_TO_QUESTION = dict(zip(self.MINI_SESSION_TITLES, self.MINI_SESSION_QUESTIONS))
         self.QUESTION_TO_MINI_SESSION = dict(zip(self.MINI_SESSION_QUESTIONS, self.MINI_SESSION_TITLES))
 
@@ -177,7 +180,8 @@ class ModelDecisionMaker:
         self.datasets[user_id] = pd.DataFrame(columns=['sentences'])
     
     def pre_compute_empathy_scores(self):
-        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        data = self.scored_statements
         empathy_scores = []
         if 'empathy' not in data.columns:
             for row in data['sentences'].dropna():
@@ -185,10 +189,12 @@ class ModelDecisionMaker:
                 print('score is: ', score)
                 empathy_scores.append(score)
             data['empathy'] = empathy_scores
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            #data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv')
 
     def pre_compute_fluency_scores(self):
-        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        data = self.scored_statements
         fluency_scores = []
         if 'fluency' not in data.columns:
             for row in data['sentences'].dropna():
@@ -196,14 +202,17 @@ class ModelDecisionMaker:
                 print('score is: ', score)
                 fluency_scores.append(score)
             data['fluency'] = fluency_scores
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            #data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv')
 
     def pre_compute_humour_scores(self):
-        data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        data = self.scored_statements
         if 'humour' not in data.columns:
             humour_scores = get_humour_scores(data)
             data['humour'] = pd.Series(humour_scores)
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            #data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv')
         else:
             print('humour scores calculated!')
 
@@ -377,7 +386,7 @@ class ModelDecisionMaker:
     # state can be "Positive" (Better), "Negative" (Worse) or "Neutral" (Same) 
     def determine_next_mini_session(self, user_id, state):
         sessions_left = list(set(self.MINI_SESSION_TITLES) - set(self.user_covered_sessions[user_id]))
-        print("self.user_covered_sessions: ", self.user_covered_sessions)
+        print("DA COVERED SESSIONS AREEE: ", self.user_covered_sessions)
         print("sessions_left: ", sessions_left)
         next_session_options = set() #random non recent if no options or if user's finnished all - suggest they chooose
 
