@@ -318,6 +318,7 @@ class ModelDecisionMaker:
 
             maxscore = 0
             chosen = ''
+            #for row in df['Do you think that exploring the possible cause of your current feeling could benefit you?'].dropna(): # select a column/base utterance we want to retrieve the variations of
             for row in df['Do you think that exploring the possible cause of your current feeling could benefit you?'].dropna(): # select a column/base utterance we want to retrieve the variations of
 
                 if pd.notna(row):
@@ -432,7 +433,7 @@ class ModelDecisionMaker:
                             next_session_options.add(session)
         else:
             # covered all mini sessions
-            if self.covered_all_message:
+            if self.covered_all_message == True:
                 return "review_any_session"
             else:
                 self.covered_all_message = True
