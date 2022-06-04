@@ -720,7 +720,7 @@ def get_mini_sessions_questions(decision_maker):
             },
         },
 
-        "s": {
+        "further_clarify_fl_haha": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_feigning_laughter_inform(decision_maker, user_id),
             "choices": {
                 "Haha": "funny_fl",
