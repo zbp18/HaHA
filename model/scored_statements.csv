@@ -144,9 +144,9 @@ You can find them on the right of the screen in my browser view if you'd like to
 "Just to let you know, our conversation may include some funny terms. Both literally - ""funny-humorous"" and figuratively - ""funny-strange""! But don't worry, I will be keeping this in CAPITALS and can give you clarification if needed! You can also refer to the documentation for more details.*But enough of this formality - we can start whenever you're ready!",1,1,0.04
 "I want to give a light pre-warning that our conversation will probably include some humour-related technical terms. But don't let this worry you; I will identify this with CAPITALS and provide clarification if needed. Also, the documentation is here (or at the previous link) for you if you'd like further explanation.*Anyway, that's all for the intros - let's begin whenever you're ready!",1,1,0.06
 "I want to let you know that we will probably use some technical humour words or phrases. However, you might have already realised that I will let you differentiate them by showing them in CAPITALS, and I can clarify their meaning if needed. If you would like more information, you can also review the documentation.*Phew, that's the intro done - let's begin whenever you want!",1,1,0
-Our chat may involve some humour jargon from my side. But don't worry; I will identify this with CAPITALS and can give clarification when needed. You can also refer to the humour protocols document for further explanation.*I think that's more than enough for an intro - we can start whenever you're ready!,0,1,0.02
+Our chat may involve some humour jargon from my side. But don't worry; I will identify this with CAPITALS and can give clarification when needed. You can also refer to the humour protocols document for further explanation.*I think that's more than enough for an intro - we can start whenever you're ready!,1,1,0.02
 "Our conversation may include some humour jargon, which I will write in CAPITALS and give clarification on if needed. You can also re-read the protocols for more explanation.*Anyway, that's enough rambling from me - we can start whenever you like!",1,1,0.07
-"This conversation might include some unknown language - directly related to humour and the exercises. Not to worry though. I can identify this with CAPITALS and give further information if required. The protocol sheet is also your friend.*Anyway, I am happy to start whenever you are!",0,1,0.05
+"This conversation might include some unknown language - directly related to humour and the exercises. Not to worry though. I can identify this with CAPITALS and give further information if required. The protocol sheet is also your friend.*Anyway, I am happy to start whenever you are!",1,1,0.05
 "Also, just to let you know, some of what I say might sound fairly odd to you - this is a probably technical term related to the humour theories or protocols. I will put this in capitals, so you're aware and don't dwell on it! I can clarify, and you also have the protocols document for further details as well.*Okay, I'm finally done with my intro; ready whenever you are!",1,1,0
 "During our conversation, I may use humour jargon. But don't worry; as you may have already seen, I will identify this with CAPITALS and will explain this if needed. You can also check the documentation for further details.*Anyway, it's time to get started whenever you're ready!",0,1,0.08
 "In our conversation, I will probably use some humour jargon. Don't worry though; as you may have already noticed, I mark this in CAPITALS and will explain this if needed. You can also check the documentation for further details.*With all of that out of the way, it's time to get started! I'm ready when you are!",1,1,0.22
@@ -317,8 +317,8 @@ So this is the end of our conversation then!,0,0,0.17
 "I'm really happy to hear it, {}. Reload the page, re-enter your credentials, and we are ready for another chat!*And bye for now!",0,1,0.08
 "Happy to hear it, {}. Feel free to reload the page and re-enter your credentials, and we can have another chat!*Goodbye for now then!",0,1,0.09
 "That's great to hear, {}.*Feel free to reload the page and we can have another conversation anytime. As long as I'm not sleeping!*But goodbye for now!",1,1,0.09
-"Love to hear it, {}.*If you want, you can reload the page and we can have another go at it, after you re-enter your credentials. But goodbye for now!",1,1,0.12
-"Yay - I'm glad to hear that, {}!*Feel free to have another chat by reloading the page and re-entering your credentials. But goodbye for now!",1,1,0.09
+"Love to hear it, {}.*If you want, you can reload the page and we can have another go at it, after you re-enter your credentials. But goodbye for now!",0,1,0.12
+"Yay - I'm glad to hear that, {}!*Feel free to have another chat by reloading the page and re-entering your credentials. But goodbye for now!",0,1,0.09
 "Great to hear that, {}.*For another talk, you can just reload and re-enter your username and password. I'll still be here!*Goodbye for now then!",1,1,0.08
 "Glad to hear that, {}.*When you feel like it, go on and reload the page and re-enter your credentials, so we can meet again and have another chat!*Goodbye for now then!",0,1,0.11
 "Really pleased to hear that, {}.*Whenever you feel like it, go ahead and reload the page and re-enter your credentials, and we can have another chat! But goodbye for now!",0,1,0.09
@@ -332,11 +332,11 @@ So this is the end of our conversation then!,0,0,0.17
 "Glad to hear it, {}, thanks. You can reload the page and re-enter your credentials, whenever you're ready to speak again. Goodbye for now then!",0,1,0.11
 "Aw, I'm very glad to hear it, {}.*If you want to chat again, feel free to reload this page and re-enter your credentials. Speak soon, hopefully!",0,1,0.12
 "Great to hear it, {}.*Whenever you are ready to speak again, give the current page a quick reload and log in with the same details.*But goodbye for now!",0,1,0.06
-"That's really great to hear, {}, thanks!*If you wish to have another conversation, please reload the page and re-enter your login details. But goodbye for now!",1,1,0.11
+"That's really great to hear, {}, thanks!*If you wish to have another conversation, please reload the page and re-enter your login details. But goodbye for now!",0,1,0.11
 "That's great, {}, I would too!*You can reload the page and enter your credentials again to start another session - I hope you haven't forgotten your username and password! Speak soon, hopefully!",1,1,0.01
 "Glad to hear it, {}.*Feel free to reload the page and re-enter your credentials, and we can have another chat! Speak soon, hopefully!",0,1,0.07
 "Good, I'm glad, {}.*Feel free to reload the page and re-enter your credentials, whenever you wish to start another chat. I hope my girlfriend doesn't get jealous!*Anyway, goodbye for now!",1,1,0.11
-"So would I, {}!*Feel free to reload the page and re-enter your credentials for another conversation. But goodbye for now!",1,0,0.05
+"So would I, {}!*Feel free to reload the page and re-enter your credentials for another conversation. But goodbye for now!",0,0,0.05
 "I would as well, {}!*Just reload the page and re-enter your credentials whenever you want to start another chat!*But goodbye for now and speak to you soon, hopefully!",1,0.5,0.06
 "Nice to hear it, {}.*You can reload the page and re-enter your credentials for another chat! It's better for me actually, it gets boring without someone to talk to.*Anyway, goodbye for now!",1,1,0.07
 "I'm really happy to hear this, {}.*Feel free to reload the page and re-enter your username and password - I hope you've kept these details safe - so we can have lots more sessions in the future!*Goodbye for now then!",1,1,0.13
@@ -436,10 +436,10 @@ Can you pick a favourite song?,0,0,0.18
 "Do you have a favourite song? Or even any song you like listening to - I know the word, ""favourite"" can sometimes be daunting!",1,1,0.07
 "Have you got a favourite song? Is there any song you particularly like? The word, ""favourite"" often throws people off!",1,0,0.09
 Could you think of a song?,0,0,0.16
-"Pick a song, any song!",0,0,0.02
+"Pick a song, any song!",1,0,0.02
 Is there any song that comes to your mind now?,0,0,0.19
 Could you think of a song you enjoy listening to?,0,0.5,0.27
-Think of any song of your choice!,0,0,0.04
+Think of any song of your choice!,1,0,0.04
 Please tell me if you have a favourite song?,0,0,0.23
 "Can you choose a song, any song, for the exercise we're about to discuss?",0,0,0.11
 The next exercise involves a song. How exciting! Feel free to choose any song that comes to mind.*Ready?,1,0,0.03
@@ -447,7 +447,7 @@ The next exercise involves a song. How exciting! Feel free to choose any song th
 Have you got a favourite song by any chance?,0,0,0.12
 Would you be able to think of any song? It helps if you like the song though.,0,0.5,0.11
 Could you think of a song? Any song works but it helps if you like it!,1,0.5,0.05
-"Do you have a favourite song, {}? I'm curious.",1,0,0.1
+"Do you have a favourite song, {}? I'm curious.",0,0,0.1
 "Do you have a favourite song, {}?",0,0,0.07
 Can you think of any song?,0,0,0.15
 Is there any song that you would say is your favourite? Or any song you enjoy singing.,0,0,0.17
@@ -485,7 +485,7 @@ Have you ever rewarded yourself on such achievements by giving yourself a smile 
 "Did you try to congratulate yourself on these achievements, for example, with a laugh or smile?",0,0.5,0.18
 Have you given yourself a laugh or smile to congratulate yourself on these accomplishments?,0,0,0.1
 Have you ever tried congratulating yourself on your achievements with a laugh or a smile?,0,0,0.35
-Have you tried congratulating yourself on these accomplishments. Maybe with a laugh or smile?,0,0.5,0.11
+Have you tried congratulating yourself on these accomplishments. Maybe with a laugh or smile?,1,0.5,0.11
 "Have you tried laughing or smiling to yourself, as a reward, after these achievements?",0,0,0.07
 You should try to congratulate yourself after small achievements with a laugh or a smile sometimes. It'll do you lots of good - trust me!*Or have you already tried this?,1,1,0.04
 Did you ever attempt to congratulate yourself with a laugh or smile on your small accomplishments?,0,0,0.1
@@ -535,7 +535,7 @@ What do you think about trying this out yourself in your everyday life over simp
 How would you feel about doing this yourself over simple things like cleaning your fridge?,0,0,0.12
 "If you feel comfortable, you can try laughing at this incongruity.",0,0.5,0.24
 "If you're feeling up to it, try laughing at this incongruity on your own. It can't bite!",1,0.5,0.21
-Try laughing at this incongruity in your own time whenever you're up for it!,0,0,0.14
+Try laughing at this incongruity in your own time whenever you're up for it!,1,0,0.14
 You can try laughing at this incongruity in your own time.,0,0,0.2
 "If you feel like it, try to laugh at this incongruity by yourself. Don't worry, it won't get offended!",1,1,0.27
 "Whenever you feel ready, try laughing at this incongruity on your own.",0,0,0.18
@@ -679,7 +679,7 @@ Feel free to also try laughing at your own mistakes by yourself.,0,0,0.07
 Now you can also try laughing at your mistakes or mishaps in the same way.,0,0,0.14
 "In the same way, you can try laughing at any of your mistakes on your own.",0,0.5,0.22
 You can try laughing at any of your errors on your own in the same way.,0,0,0.15
-"I see no reason why you would not be able to, in the same way, laugh at your own errors. Trust me; it's easier than it sounds, especially once you get started.",1,1,0.39
+"I see no reason why you would not be able to, in the same way, laugh at your own errors. Trust me; it's easier than it sounds, especially once you get started.",0,1,0.39
 Do try laughing at any of your errors by yourself in the same manner.,0,0,0.08
 You can try laughing at any of your mistakes by yourself in the same way.,0,0,0.13
 Try laughing at any of your errors on your own in the same way.,0,0,0.13
@@ -689,7 +689,7 @@ If at any time you make a mistake then be playful with it and laugh it away.,0,0
 "When you make mistakes, try to be playful towards them and laugh.",0,0,0.1
 "Whenever you find yourself making any minor errors, try to be playful towards them and laugh them off on your own.",0,0.5,0.16
 "If you do trip up any time (not literally!), be playful and laugh about it. No need to beat yourself up over sometime so small.",1,1,0.07
-If you do make any mistakes - remember it's only normal! Try to be playful towards them and laugh them off by yourself.,0,1,0.1
+If you do make any mistakes - remember it's only normal! Try to be playful towards them and laugh them off by yourself.,1,1,0.1
 "Try not to let any mistakes you make in the future tear you down, but be playful towards them and laugh at them by yourself.",0,0.5,0.14
 "If you do make any errors, try to have a playful attitude towards them and laugh at them by yourself. It's better for you to laugh at them instead of someone else!",1,1,0.17
 "Try to play with any errors you do find yourself making. I don't mean playing Monopoly with them, but being playful towards them!*Remember, it's inevitable to make errors and that there's no need to dwell on them.",1,1,0
@@ -761,7 +761,7 @@ Would you like to try laughing this off?,0,0,0.13
 Could you try laughing at this?,0,0.5,0.09
 Would you mind trying to laugh this off?,0,0.5,0.1
 Could you try laughing this off?,0,0.5,0.06
-"Could you try laughing this off? It's not as hard or strange as it sounds, trust me.",1,0.5,0.21
+"Could you try laughing this off? It's not as hard or strange as it sounds, trust me.",0,0.5,0.21
 Why not try laughing this off?,0,0,0.05
 "I'm pleased you could identify how to laugh it off, {}, well done.*It's important to be able to understand the context behind our laughter as this can allow us to nurture our sense of humour.",0,1,0.09
 "Great, you can recognise how you could laugh it off. That's a big step, even for tall people!",1,1,0.11
@@ -772,7 +772,7 @@ Great that you're able to identify how to laugh it off.,0,0.5,0.17
 "You've just made a big step in dealing with your negative feeling by recognising how to laugh off the underlying reason - well done, {}!",0,0.5,0.06
 "Good stuff, {}. I hope you feel at least a bit better, now that you've realised how you can laugh it off.",0,1,0.14
 "That's an achievement, {}! It's not easy for everyone to even identify the cause for their negative mood - let alone acknowledge how to laugh it off!",1,1,0.07
-"Being able to tell how to laugh at these reasons behind our feelings is a fantastic achievement, {}. Do keep it up, and feel free to brag about it!",1,1,0.03
+"Being able to tell how to laugh at these reasons behind our feelings is a fantastic achievement, {}. Do keep it up, and feel free to brag about it!",0,1,0.03
 It is a good thing that you can take such a situation lightly and humorously.,0,1,0.18
 It's wonderful that you have recognised the root cause for your low feeling and can see how you could laugh it off. That's a defining step in your journey of learning to laugh.,0,1,0.09
 It is good that you are able to recognise when and how you can laugh these things kind of things off.,0,1,0.06
@@ -789,7 +789,7 @@ It is really great that you are able to recognise how you could laugh it off.,0,
 It's great that you can see how you could laugh at this.,0,1,0.22
 "It's really great that you can already understand how to laugh it off, {}.",0,1,0.06
 It's great that you can now recognise how you'd laugh it off. That's good personal growth!,1,1,0.08
-"Well done for finding a way to laugh it off, {}. That's a big step!",0,1,0.08
+"Well done for finding a way to laugh it off, {}. That's a big step!",1,1,0.08
 "If I may, I would like to ask if you have already tried to make light of this setback and see it from a different perspective. Do you think there could be another side to this, perhaps a more positive, even funny, one?*We call this LAUGHING AT MISFORTUNES.",0,1,0.18
 Have you tried to laugh at this by focusing on the positive aspects of the setback (LAUGHING AT MISFORTUNES) and seeing it in a new light?*It really brightens up the mood!,1,0.5,0.07
 Did you ever attempt to laugh at the setback and at the same time change your interpretation of it? Can you see any positives to it?*We refer to this as LAUGHING AT MISFORTUNES.,0,0.5,0.05
@@ -807,7 +807,7 @@ Have you tried laughing at the setback while changing your interpretation of thi
 "Could I ask you if by now, this is an issue you are quite familiar with? Have you been struggling with it for a while?",0,0.5,0.39
 Have you experienced this setback a while back?,0,0,0.11
 Have you struggled with the setback for an extended period?,0,0,0.09
-Has this setback pestered you for a long time? Might I suggest peppermint oil?,0,0.5,0.08
+Has this setback pestered you for a long time? Might I suggest peppermint oil?,1,0.5,0.08
 "Have you experienced this problem a while ago? If so, have you struggled with it for a long time?",0,0.5,0.58
 "Is this setback from the past, and have you struggled for a long time with it?",0,0.5,0.17
 Have you had this misfortune in the past and struggled with it for some time?,0,0,0.31
@@ -840,7 +840,7 @@ This is it:*{}*Do let me know once you've read it. Please don't leave me hanging
 Here it is:*{}*Let me know once you have read this. Thanks!,0,0.5,0.12
 "Here is it:*{}*Once you have read this, let me know.",0,0,0.12
 Here it is:*{}*Please tell me when you have read this.,0,0,0.12
-Feel free to have a read:*{}*I'll wait here (believe it or not) while you read this.,0,0,0.05
+Feel free to have a read:*{}*I'll wait here (believe it or not) while you read this.,1,0,0.05
 This is the full paragraph:*{}*Let me know when you have finished reading it.,0,1,0.12
 Here is the full quote:*{}*Let me know once you have read it.,0,0,0.12
 This is the full paragraph:*{}*Let me know when you have read this.,0,1,0.1
@@ -972,7 +972,7 @@ Are you facing a long-term hardship that's causing this negative feeling?,0,0,0.
 "If while you laugh, you perceive that you are actually laughing out of contempt, please try to reflect on it and try NEUTRALISING THE CONTEMPT or changing it into non-hostile humour (by surprise and amusement - refer to the SELF-INITIATED HUMOROUS PROTOCOLS that use incongruities to trigger laughter).",0,1,0
 "If you feel contempt, in any way, while laughing, try to first think about this and attempt NEUTRALISING THE CONTEMPT and reforming it to positive humour.*This is achieved by surprise and amusement; refer to the SELF-INITIATED HUMOROUS PROTOCOLS that exploit incongruities for laughter if you need more information.",0,1,0.01
 "In the event that you encounter any contempt within your laughter, first, reflect on it and then try NEUTRALISING THE CONTEMPT or transforming it into light-hearted, positive humour (by surprise and amusement - refer to the SELF- INITIATED HUMOROUS PROTOCOLS, which use incongruities to initiate laughter).",0,0.5,0
-"If you notice that you're laughing with contempt towards yourself or others, first reflect on why you may be doing this and then try NEUTRALISING THE CONTEMPT or transforming it into positive humour.*You won't need any industrial equipment for the transformation - just surprise and amusement - refer to the SELF- INITIATED HUMOROUS PROTOCOLS that use incongruities to trigger laughter.",0,1,0
+"If you notice that you're laughing with contempt towards yourself or others, first reflect on why you may be doing this and then try NEUTRALISING THE CONTEMPT or transforming it into positive humour.*You won't need any industrial equipment for the transformation - just surprise and amusement - refer to the SELF- INITIATED HUMOROUS PROTOCOLS that use incongruities to trigger laughter.",1,1,0
 "While you are laughing, if you experience any contempt, try to reflect on this and either try NEUTRALISING THE CONTEMPT or converting it into pleasant humour.*This can be achieved with shock and amusement. I'd recommend you to look at the SELF-INITIATED HUMOROUS PROTOCOLS that use incongruities to trigger laughter in the document.",0,1,0
 "During your laughter, if you experience any contempt, first things first; reflect on this and then try NEUTRALISING THE CONTEMPT or transforming it into friendly humour with astonishment and amusement.*You can review the SELF-INITIATED HUMOROUS PROTOCOLS, which exploit incongruities as laughter triggers.",0,1,0
 "If, during your laughter, you experience any contempt, reflect on it and try NEUTRALISING THE CONTEMPT or turning it into humour using wonder and amusement.*For details on how to do this, you can use the SELF-INITIATED HUMOROUS PROTOCOLS, which exploit incongruities).",0,1,0
@@ -1119,10 +1119,10 @@ Have you ever considered laughing this off?,0,0,0.07
 Have you tried laughing at this? It can't hurt! At least I can't imagine how it would.,1,0.5,0.21
 Have you tried laughing at this before?,0,0,0.13
 Are you a step ahead? Have you already tried laughing this off?,0,0.5,0.09
-"Even though this can be painful, we should try to concentrate on any positive impact it might have brought on us (perhaps our personal growth). In this way, we will be able to laugh it off.",1,1,0
+"Even though this can be painful, we should try to concentrate on any positive impact it might have brought on us (perhaps our personal growth). In this way, we will be able to laugh it off.",0,1,0
 "To cope with this via laughter, attempt to adjust your interpretation to focus on its positives. We call this LAUGHING AT MISFORTUNES.",0,1,0.22
 "In order to laugh it off, we should, despite any discomfort, concentrate on the advantages it has brought us.",0,0.5,0.05
-"To laugh it off, we need to try finding its positive side as this will help us laugh it off and get past our misfortune.*I know; it's not as easy as swapping battery terminals - but don't try this {} anywhere!",0,0.5,0.11
+"To laugh it off, we need to try finding its positive side as this will help us laugh it off and get past our misfortune.*I know; it's not as easy as swapping battery terminals - but don't try this {} anywhere!",1,0.5,0.11
 "I know that it is painful, but if we can focus on any positive impact that it has brought, we can then laugh it off.",0,1,0.19
 "I understand that it can be painful, but it is very important that we try to concentrate on its positive impacts to laugh it off.",0,1,0.2
 "To laugh it off, we can, despite the pain it may bring, concentrate on any positive effect it has on us.",0,0.5,0.18
@@ -1178,12 +1178,12 @@ Let's begin our exploration of how to develop your sense of humour.,0,0.5,0.21
 "Ready to develop your sense of humour? First, we need to download a Python compiler - wait, wrong lesson, sorry!",1,0.5,0.07
 Let's start exploring how to develop your sense of humour.,0,0.5,0.15
 We will now be exploring ways to grow your sense of humour. Don't worry; you won't need magic beans for this!,1,1,0.19
-What time is it?*It's time to explore how to develop your sense of humour!,0,0,0.09
+What time is it?*It's time to explore how to develop your sense of humour!,1,0,0.09
 "Do you think you might be able to identify the reason behind your {}?*Don't worry, {}; you do not need to share the actual reason with me.",0,0.5,0.08
 "Can you understand why you are feeling {}?*You don't have to share this with me, {}; I'm just trying to see if you can identify why.",0,0.5,0.14
 Are you able to recognise the underlying reason behind your {}? Don't worry; you don't need to share the reason.,0,0,0.09
 "Can you identify the underlying reason behind your {}, {}?*You don't need to share the reason. I do my best to respect others' privacy; I understand that tech can be frightening for users in today's world!",1,1,0.02
-Are you able to identify the underlying reason behind your {}? You don't need to share this with me; don't worry!,1,0,0.18
+Are you able to identify the underlying reason behind your {}? You don't need to share this with me; don't worry!,0,0,0.18
 There is almost always a reason behind your {}; can you identify it? You don't need to share it.,0,1,0.12
 Can you realise the underlying reason behind your {}? You don't need to tell me.,0,0.5,0.1
 "Can you identify the reason behind your {}? You don't need to share it, but it's important to be aware of it.",0,0.5,0.31
@@ -1321,7 +1321,7 @@ Good. I hope it goes well for you.,0,0.5,0.53
 "Great, I'm excited to hear how you find it.",0,1,0.32
 "Great, I hope you enjoy this.",0,1,0.46
 "Great. Try this whenever you feel like it, and let me know how you find it.",0,1,0.52
-"That's great. Do try this in your own time, and I'd be happy to have a follow up anytime.",1,1,0.24
+"That's great. Do try this in your own time, and I'd be happy to have a follow up anytime.",0,1,0.24
 "Good, feel free to try this and let me know how it goes.",0,1,0.79
 "Good. Do try this and let me know how you find it. I accept positive and negative feedback, as long as it's honest!",1,1,0.33
 "Awesome, I look forward to hearing how you find it.",0,0.5,0.39
@@ -1372,7 +1372,7 @@ That is wonderful.,0,0,0.09
 I am so glad to hear this.,0,1,0.3
 Fab! It sounds like you're ready for some laughter!,1,0.5,0.16
 That's great!,0,0,0.13
-It sounds like you're more than ready to develop your sense of humour!,0,0.5,0.18
+It sounds like you're more than ready to develop your sense of humour!,1,0.5,0.18
 I'm delighted to hear that.,0,0,0.13
 Great to hear!,0,0,0.1
 I'm glad for you.,0,0,0.18
@@ -1393,7 +1393,7 @@ Wonderful!,0,0,0.01
 "Oh, I am very glad to hear that :)",0,0.5,0.24
 That is fantastic to hear.,0,0,0.15
 "Good, let's make sure we keep that feeling going!",0,1,0.23
-That is great to hear. I hope I can brighten your day even more!,0,1,0.31
+That is great to hear. I hope I can brighten your day even more!,1,1,0.31
 That explains the glow in your eyes!,0,0,0.07
 Wonderful. I'm motivated to help you feel even better!,0,1,0.1
 It is great to see you so positive today.,0,1,0.22
@@ -1415,7 +1415,7 @@ I hear you.,0,0,0.07
 I can understand.,0,0,0.07
 I'm sorry about that.,0,0,0.31
 "I understand, and I am sorry you feel that way.",0,0.5,0.41
-"Oh, that's not good.",1,0,0.61
+"Oh, that's not good.",0,0,0.61
 "Oh no, that's unfortunate.",0,0,0.19
 Sorry about that.,0,0,0.27
 "Aw, I'm sorry.",0,0,0.58
@@ -1423,7 +1423,7 @@ Sorry about that.,0,0,0.27
 "Aw, that's unfortunate to hear.",0,0.5,0.19
 I'm sad to hear that.,0,0.5,0.18
 "That's unfortunate, sorry.",0,0,0.07
-"Ah, that's not good.",1,0,0.6
+"Ah, that's not good.",0,0,0.6
 "Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more.",0,1,0.38
 Sorry to hear that.,0,0,0.13
 "Thank you, I understand you're feeling down right now, but I would appreciate it if you could tell me a bit more.",0,1,0.69
@@ -1444,14 +1444,14 @@ I'm sorry you're feeling down.,0,0.5,0.25
 "I understand, and I am sorry you feel that way.",0,0.5,0.41
 It must be hard for you to feel this way.,0,0.5,0.31
 "Thank you, I would appreciate it if you could elaborate on this a bit more.",0,0.5,0.53
-"Oh, that's not good.",1,0,0.61
+"Oh, that's not good.",0,0,0.61
 It's okay; I'm here to help.,0,0.5,0.38
 It's okay to feel that way.,0,0,0.27
 "Thank you for sharing your feelings with me, even though it may be difficult for you right now.",0,1,0.52
 "I understand. Hopefully, you feel better by the end of our session.",0,0.5,0.19
 "Ah, well, you came to the right place!",0,0,0.4
 "Ah, I'm glad you're turning to a sense of humour in times like this.",0,1,0.22
-Don't worry - you're in good hands! I'll do my best to help.,1,0,0.63
+Don't worry - you're in good hands! I'll do my best to help.,0,0,0.63
 I'm sorry. I hope you feel better soon.,0,0.5,0.31
 "That's unfortunate, sorry. I hope talking to me will improve your mood.",0,0.5,0.11
 "Oh no, that's unfortunate.",0,0,0.19
@@ -1460,7 +1460,7 @@ Sorry to hear you're feeling down.,0,0.5,0.1
 Sorry to hear that. Humour might be the answer to your troubles.,0,1,0.13
 "Sorry about that. Perhaps, I could help.",0,0.5,0.18
 "Oh no, hopefully, this session will improve how you're feeling.",0,0.5,0.08
-"Aw, I'm sorry. It's something we all sometimes experience.",1,0.5,0.27
+"Aw, I'm sorry. It's something we all sometimes experience.",0,0.5,0.27
 I'm sad to hear that.,0,0.5,0.18
 "That's unfortunate, sorry.",0,0,0.07
 Sorry about that. Let's try to lift your mood in our session together.,0,0.5,0.12
@@ -1856,7 +1856,7 @@ I'm glad you found that funny. I've also been trying to develop my sense of humo
 I'm glad I can make you smile! There's plenty more where that came!,1,1,0.11
 Glad to hear that people still find me funny!,1,0.5,0.13
 "Haha, I'm glad you are enjoying my sense of humour! Hopefully, I can keep this up!",1,1,0.26
-"Aw, that made my day!",0,0,0.14
+"Aw, that made my day!",1,0,0.14
 Yay! My practice has paid off!,1,0,0.06
 "Ah, that's so encouraging; thank you!",0,0.5,0.13
 I'm so glad you found that funny! I did too!,1,0,0.17
@@ -1868,22 +1868,22 @@ I'm so glad you found that funny! I did too!,1,0,0.17
 You're hard to impress. I'll try harder next time!,1,0.5,0.13
 "Tough crowd, better luck next time?",1,0.5,0.05
 "Sorry about that, I'll try to improve them for you next time!",1,0,0.27
-"Ah, thanks for being honest; I'll work on it!",1,0.5,0.19
+"Ah, thanks for being honest; I'll work on it!",0,0.5,0.19
 I see. I'll work on it.,0,0,0.28
 Fair enough; I'll go back to basics!,1,0.5,0.09
 "Whoops, I'll try to do better next time!",1,0,0.23
 "I'm sorry about that. Hopefully, I can satisfy you next time.",0,0.5,0.26
 "Okay, that wasn't one of my best!",1,0,0.2
 "Hey, you can't blame me for trying.",1,0,0.51
-Guess I can't hit all the jokes; I'm sorry if that made you uncomfortable.,1,0.5,0.17
-"Oh, no worries, that's totally okay!",1,0,0.22
+Guess I can't hit all the jokes; I'm sorry if that made you uncomfortable.,0,0.5,0.17
+"Oh, no worries, that's totally okay!",0,0,0.22
 I understand. Whatever makes you feel comfortable.,0,1,0.09
 No problem!,0,0,0.02
 No problem at all! You need only share what you are comfortable with.,0,0,0.23
 That's completely fine; you don't have to say any more than you want to.,0,0,0.5
 Please do not feel pressured to share anything if you're not comfortable; I completely understand!,0,1,0.21
 "Of course, I understand. Whatever you're comfortable with.",0,0,0.14
-No worries at all; it's your life!,1,0,0.12
+No worries at all; it's your life!,0,0,0.12
 No problem at all; I understand that.,0,0,0.17
 I completely understand and respect your decision.,0,0,0.24
 "No problem, I respect your decision.",0,0,0.13
@@ -1898,9 +1898,9 @@ Great. We can read the complete quote now to get started.,0,0,0.08
 Awesome! We can start by reading the full quote.,0,0,0.09
 "Great, let's start by reading the quote.",0,0,0.14
 Excellent! Now let's get started by reading the complete quote.,0,0,0.13
-That's fantastic! Let's read the complete quote together now!,1,0,0.06
+That's fantastic! Let's read the complete quote together now!,0,0,0.06
 That's exciting; we can start by reading the quote together.,0,1,0.06
-"Roger that, let's start by reading the quote.",0,0,0.15
+"Roger that, let's start by reading the quote.",1,0,0.15
 Wonderful. Let's read the complete quote to get you started on the exercise.,0,0.5,0.13
 "Okay, no worries. You can find a more detailed explanation in the protocol sheet. Please have a look at it now and let me know once you're ready.",0,1,0.29
 "No worries. Do review the protocol sheet for further explanation, and once you've completed this, let me know.",0,0,0.12
@@ -1921,7 +1921,7 @@ No worries! The protocol sheet has a detailed explanation that will help bring y
 "It can be a little daunting, but you are doing great so far.*There is no pressure or judgement here, so keep doing what you are doing you are almost there!",1,1,0.19
 "Yeah, I understand that it's easier said than done, but you've already taken some big steps! I'd really encourage you to give it another go.",1,1,0.38
 "I get that it can be a challenge, but you've made the first step already, so you're very close to achieving this!",0,1,0.24
-You're almost there; please don't give up!,1,0,0.2
+You're almost there; please don't give up!,0,0,0.2
 "Of course, these things aren't easy, but please don't feel bad; you've made the first step already!",1,1,0.24
 "I get it, it's not easy, but by realising how to laugh it off, you are almost there!",0,0.5,0.19
 Don't worry; you have done well to get to where you are now.,0,0,0.4
@@ -1929,8 +1929,8 @@ One step at a time. I'm glad you took the first one; you should be proud of your
 "You've taken the hardest step already; you're almost there, {}.",0,0.5,0.05
 "Hey, it's okay. You're making progress and will get there in no time.",0,0,0.34
 "Sure, it's not easy, but you've already made the first step; you've just got the final tiptoe to go!",1,1,0.25
-"You can do it! I believe in you, {}.",1,0,0.08
-Don't feel bad. You have already acknowledged the reason for your negative feeling and how you can deal with it - that's a big step!,0,1,0.15
+"You can do it! I believe in you, {}.",0,0,0.08
+Don't feel bad. You have already acknowledged the reason for your negative feeling and how you can deal with it - that's a big step!,1,1,0.15
 "Incongruity can trigger DUCHENNE (true) LAUGHTER.*It is likely that you came across incongruities already, for example, when you experienced changes in the outside world or noticed your own contradictions or changes of attitude toward a certain topic. They can also be inconsistencies between what we expect the world to be like and how it actually is.",0,1,0
 An incongruity can initiate DUCHENNE (true) LAUGHTER and can occur through any changes in the outside world or your internal contradictions or change of attitudes.*It could even be an inconsistency between the reality of the world and our expectations.,0,0.5,0
 "An incongruity can be a trigger for DUCHENNE (true) LAUGHTER. You might have experienced this through any changes in the outside world or your own contradictions or change of attitudes.*On the other hand, it could be an inconsistency between the reality of the external world and our expectations.",0,1,0
@@ -1951,7 +1951,7 @@ It can be a trigger for DUCHENNE (true) LAUGHTER. It often shows up through chan
 "This goes hand and hand with one of Nietzsche's most famous sayings that you might have seen before: ""What doesn't kill you makes you stronger.""*For example, last year, when I was preparing food for a few friends and burnt it accidentally. Now that I've discovered the oven timer, I have become the home chef!",1,1,0.07
 "This idea lies closely with Nietzsche's saying that you have probably come across: ""What doesn't kill you makes you stronger.""*For example, last year when I was cooking pasta, I burnt myself with the boiling water.*Ever since then, I safely distance myself from the pan when the water starts to boil, and I use a medium setting to reduce the spitting. This also prevents the food from overcooking, so I came out of this making tastier food too!",1,1,0
 "The idea of this relates to Nietzsche's famous saying: ""What doesn't kill you makes you stronger.""*For example, last year, I got a lot of rejections from big companies when I was looking for a job after graduation. But I didn't give up, and finally, I recently started up my dream company!",1,1,0.18
-"This makes sense in line with Nietzsche's well-known saying: ""What doesn't kill you makes you stronger.""*For example, I once accidentally left the car door unlocked, and someone stole the pushchair that I had left in it! Since then, I've gained a good habit of always double checking the locks.",1,1,0.05
+"This makes sense in line with Nietzsche's well-known saying: ""What doesn't kill you makes you stronger.""*For example, I once accidentally left the car door unlocked, and someone stole the pushchair that I had left in it! Since then, I've gained a good habit of always double checking the locks.",0,1,0.05
 "This idea relates to Nietzsche's famous saying: ""What doesn't kill you makes you stronger.""*One example was last year when I got stuck in traffic and showed up late to my best friend's wedding!*Now I always leave early enough to account for mishaps, and I've not been late for any appointments since that date. I'm also glad that we're still best friends!",1,1,0
 "This idea lies with Nietzsche's well-known saying: ""What doesn't kill you makes you stronger.""*For example, I once left my calculator at home on the day of my maths exam! This really tested my mental arithmetic on the day!*I've now learnt to always pack my bag the night before bed and not forgotten anything important since.",1,1,0.05
 "This relates to Nietzsche's famous saying: ""What doesn't kill you makes you stronger.""*After all, Cinderella had to endure so much before she could finally live the life she deserved!",1,1,0.16
@@ -2035,7 +2035,7 @@ Are you keen to take part in this?,0,0,0.32
 "It is best to constantly work on this, whenever possible, to develop it further, as it can become a major advantage throughout your life.",0,1,0.22
 Try to make time to carry on working on this. It could help you out in the future!,0,1,0.26
 "Ideally, you should work on this whenever you can. Developing it further can become a major advantage in all the stages of your life.",0,1,0.2
-Your laughter brand will assist you throughout your life! It's best to consistently work on and develop it to maximise what you can get out of it!,1,1,0.11
+Your laughter brand will assist you throughout your life! It's best to consistently work on and develop it to maximise what you can get out of it!,0,1,0.11
 It is best to continually develop this as it can become a significant advantage throughout your life.,0,1,0.14
 "It would be ideal if you could constantly work on this, at any possible moment, to develop it further, as it can become a massive benefit to your life.",0,1,0.21
 "You should try to constantly work on this when you can, as it can become a major advantage throughout your life.",0,1,0.2
@@ -2064,7 +2064,7 @@ Think of developing this as a constant process from which a valuable life skill 
 "We will explore some of the protocols today but exercising them throughout your life will allow you to experience the real benefits, as your laughter should start becoming more natural and frequent, and you should feel much happier in general.*Are you convinced? If not, I guess I have until the end of our conversation to change your mind :)",1,1,0.12
 "Yes, we will cover some of these protocols today, but exercising them constantly throughout your daily life will provide you with the main benefits, such as more natural and frequent laughter and an elevated feeling of happiness.*Practice makes perfect. And I make comedians!*Okay, that may not be completely true; but you never know where this journey will take you!",1,1,0.07
 "We will explore these protocols today, but you should recognise the main results with constant practice of these in your daily life. You should find, with more practice, that you will laugh more naturally and often and feel happier overall.*Okay, my sales pitch is done!",1,1,0.01
-"We shall discuss some of the protocols in today's session, but exercising them throughout your daily life will give you the real benefit; natural and frequent laughter, and a general feeling of happiness. Practice makes {} excellent!",0,1,0.05
+"We shall discuss some of the protocols in today's session, but exercising them throughout your daily life will give you the real benefit; natural and frequent laughter, and a general feeling of happiness. Practice makes {} excellent!",1,1,0.05
 "Practising the protocols we discuss today during your daily life will allow you to laugh more naturally and regularly, and you'll feel happier for it.*They say ""what soap is to the body, so laughter is to the soul"". So don't try to clean your soul with soap!",1,1,0
 "We will be discussing some of these protocols today, but practising them during your daily life will be the real benefit - that's not to say that I'm the fake benefit!*The more you practice, the more natural and frequent your laughter will become, and you'll feel much happier for it.",1,1,0.1
 "I will take you through some of these protocols today, but practising them yourself during your daily life will allow you to receive the real benefit; your laughter will become more natural and regular, and you'll begin to feel happier.*Remember, you're the one in front of the wheel. So, I hope you have your driver's licence!",1,1,0.18
@@ -2090,7 +2090,7 @@ How are you doing? I was waiting for you to show up!,1,0,0.58
 Is everything good in your world?,0,0,0.12
 What's up? Other than the sky.,1,0,0.09
 "How's everything? Okay, maybe we don't have time for that. How are the main things?",1,0.5,0.26
-Long time no see! How are you doing?,0,0,0.23
+Long time no see! How are you doing?,1,0,0.23
 Long time no see! How do you feel?,0,0,0.2
 "What's sizzling? Other than your morning bacon! It's slang for how are you doing, in case you weren't sure :)",1,1,0.07
 "What's sizzling? Other than your breakfast this morning! I meant how are you, in case that wasn't clear :)",1,1,0.07
@@ -2282,7 +2282,7 @@ Why not practice laughing at this in your own time? And at any other minor error
 "It seems that we aren't able to find the underlying reason at the moment.*Don't worry, though; feeling temporarily low is not uncommon, and hopefully, this feeling should pass soon. But if it doesn't, I'd recommend checking up with your medical doctor, just in case. I'm only cleared to prescribe laughter.",1,1,0.07
 "It looks like we can't find the reason at the moment. Not to worry, as this feeling can be very common. But if you suspect that it is not improving after a few days, it may be worth checking up with your doctor.*Also, if the reason comes to you, at any point, whatever it may be, I'd recommend trying to laugh it off. As they say, ""Laughter is the best medicine."" Well, it's the only one I can prescribe, so I might be a bit biased.",1,1,0.18
 "I don't think we can spot the root cause at the moment.*Not to worry; feeling temporarily low is common, and should pass soon, hopefully. But if it stays for a few days, it can't hurt to check this up with your medical doctor.*That's not to say I'm good enough, but sometimes it's best for us to collaborate.",1,1,0.16
-"I think the underlying reason is shy at the moment! Not to worry, though, as feeling down for a bit is not unusual. However, it's worth checking up with your doctor if, in a few days, you have not noticed any improvements.",0,1,0.17
+"I think the underlying reason is shy at the moment! Not to worry, though, as feeling down for a bit is not unusual. However, it's worth checking up with your doctor if, in a few days, you have not noticed any improvements.",1,1,0.17
 "It looks like the cause is not clear at the moment. Don't worry; feeling down is normal, and this should go soon.*However, if it doesn't pass, it may be worth mentioning to the doctor. I can't solve everything!",1,1,0.14
 "It seems that the underlying reason is currently unclear.*Not to worry, we all have our moments of feeling down. And hopefully, this should pass soon. But, if it's still not gone or improved at all after a few days, it might be worth checking up with a medical doctor.*There are some things I haven't been trained for yet. But I'm learning with time!",1,1,0.17
 "Hmm, it looks like we can't find the reason yet.*Don't worry; feeling down and not knowing why is not unusual, and sometimes, these things take a bit of time to resolve. Like arguments with our siblings!*But, if, after a few days, you think it's not improving, it's worth checking up with your doctor.",1,1,0.11
@@ -2337,7 +2337,7 @@ Laughing at our hardships will eventually allow us to overcome them and even use
 "By laughing at our hardships, we should eventually overcome them and gain personal strength and growth from them. So, soon we will be giants!",1,1,0.08
 "To be able to laugh off hardships is such a fruitful yet underrated skill that lets us overcome them and even use them for personal strength and growth.*So, if you're training for Olympic weight lifting, you've hit the jackpot.* Okay, not exactly; but the outlook gained from this exercise can change lives.",1,1,0.1
 "Laughing at our hardships will allow us to overcome them with time and enhance our strength and growth; that is, of our characters; our limbs aren't going to start growing all of a sudden!",1,1,0.1
-"By laughing at our struggles, not only can we overcome them, but we can even utilise them for our own personal strength and growth.*So the next time you try this exercise, remember to thank your hardship!",0,1,0.16
+"By laughing at our struggles, not only can we overcome them, but we can even utilise them for our own personal strength and growth.*So the next time you try this exercise, remember to thank your hardship!",1,1,0.16
 "You may be able to exploit one or some of the SUPERIORITY, INCONGRUITY and PLAYFUL THEORIES of humour. These are at the start of the protocols document, which I know, is pretty lengthy, so they may be worth reviewing when you can.*When I say ""pretty"", I meant ""very"", not ""beautiful-pretty"", though I wouldn't say the document is very beautiful either.*Adding colours might be a good idea.",1,1,0
 "Maybe you could use some of the SUPERIORITY, INCONGRUITY and PLAYFUL THEORIES of humour? These are explained at the start of the protocols document if they don't ring a bell.*Don't worry; it's not nearly as long as the physics textbooks we were forced to regurgitate at high school.",1,1,0.12
 "One or more of the SUPERIORITY, INCONGRUITY and PLAYFUL THEORIES of humour may be useful here.*Feel free to review these at the start of the protocols document - it's been a while. But kudos to you if you don't need it!",1,1,0.1
