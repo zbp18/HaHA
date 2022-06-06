@@ -235,22 +235,16 @@ def get_sentence_score(sentence, dataframe):
   score = empathy + 0.75*fluency + 2*novelty
   return score
 
-
-#TODO new arg - another dataframe - prev qs
 def get_sentence_score_pos(sentence, dataframe):
   '''
   Calculates how fit a sentence is based on its weighted humour, empathy, fluency
   and novelty values
   '''
-  #print('sentence: ', sentence)
-  #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
-  data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv', encoding='ISO-8859-1')
-  #print('entry: ', data.index[data['sentences']==sentence].tolist(),'fluency')
+  data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+  humour = data.loc[data.index[data['sentences']==sentence].tolist(),'humour'].tolist()[0]
   fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
   novelty = novelty_score(sentence, dataframe)
-  score = 0.75*fluency + 2*novelty
-  
-  #print('score: ', score)
+  score = 0.4*humour + fluency + 8*novelty
   return score
 
 def get_sentence_score_neg(sentence, dataframe):
@@ -258,12 +252,10 @@ def get_sentence_score_neg(sentence, dataframe):
   Calculates how fit a sentence is based on its weighted humour, empathy, fluency
   and novelty values
   '''
-  #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
-  data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv', encoding='ISO-8859-1')
+  data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
   humour = data.loc[data.index[data['sentences']==sentence].tolist(),'humour'].tolist()[0]
   empathy = data.loc[data.index[data['sentences']==sentence].tolist(),'empathy'].tolist()[0]
   fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
   novelty = novelty_score(sentence, dataframe)
-  score = humour + empathy + 0.75*fluency + 4*novelty
-  
+  score = max(humour, empathy) + 2*fluency + 4*novelty
   return score
