@@ -659,7 +659,7 @@ def get_model_prompt_guess_emotion(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[emotion_guess].dropna()
-    my_string = decision_maker.get_best_sentence(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
@@ -674,7 +674,7 @@ def get_model_prompt_check_emotion(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column = data[wrong_emotion_ask].dropna()
-    my_string = decision_maker.get_best_sentence(column, prev_qs)
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)
     else:
