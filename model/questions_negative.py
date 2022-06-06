@@ -229,7 +229,7 @@ def get_negative_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_reason_hardship_ask(decision_maker, user_id),
             "choices": {
                 "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_accept_hardship_haha", "ask_accept_hardship_no_haha"), 
-                "no": "trigger_not_hardship_haha",
+                "no": "trigger_not_hardship_no_haha",
             },
             "protocols": {
                 "yes": [],
@@ -419,7 +419,7 @@ def get_model_prompt_reason_incongruity_ask(decision_maker, user_id):
 def get_model_prompt_reason_error_ask(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
-    column = data[reason_incongruity_ask].dropna()
+    column = data[reason_error_ask].dropna()
     my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)

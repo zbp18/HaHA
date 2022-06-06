@@ -517,7 +517,7 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_incongruity_ask(decision_maker, user_id),
             "choices": {
                 "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("ask_laughter_incongruity_haha", "ask_laughter_incongruity_no_haha"),
-                "no": "continue_curr_can't_do",
+                "no": "no_incongruity",
             },
             "protocols": {
                 "yes": [],
@@ -797,12 +797,23 @@ def get_mini_sessions_questions(decision_maker):
         "continue_explaining_lb": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_make_sense_ask(decision_maker, user_id),
             "choices": {
-                "yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_lb_haha", "try_pre_lb_no_haha"),
+                #"yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_lb_haha", "try_pre_lb_no_haha"),
+                "yes": "try_pre_lb",
                 "no": "further_clarify_lb"
             },
             "protocols": {
                 "yes": [],
                 "no": []
+            },
+        },
+        
+         "try_pre_lb": {
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_pos_encourage_build_laughter_brand(decision_maker, user_id),#[pos_respond, build_laughter_brand_encourage],
+            "choices": {
+                "continue": "ask_explore_related",
+            },
+            "protocols": {
+                "continue": [],
             },
         },
 
@@ -991,7 +1002,7 @@ def get_mini_sessions_questions(decision_maker):
 
         "further_clarify_post_error_no_haha": {
             # TODO
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_error_clarify_eg_protocols_remind(decision_maker, user_id),#[self_error_clarify, self_laughter_inform_eg, protocols_remind], 
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_laughter_inform_eg_protocols_remind(decision_maker, user_id),#[self_error_clarify, self_laughter_inform_eg, protocols_remind], 
             "choices": {
                 "continue": "try_post_protocol_neg",
             },
@@ -1172,7 +1183,7 @@ def get_mini_sessions_questions(decision_maker):
         },
 
         "further_clarify_pre_error_no_haha": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_error_clarify_eg_protocols_remind(decision_maker, user_id), 
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_self_laughter_inform_eg_protocols_remind(decision_maker, user_id), 
             "choices": {
                 "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_protocol_neg_haha", "try_pre_protocol_neg_no_haha"),
             },
@@ -1992,7 +2003,8 @@ def get_model_prompt_funny_respond_cont_playful_ask(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_not_funny_respond_cont_playful_ask(decision_maker, user_id):
@@ -2009,7 +2021,8 @@ def get_model_prompt_not_funny_respond_cont_playful_ask(decision_maker, user_id)
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_playful_mind_inform(decision_maker, user_id):
@@ -2079,7 +2092,8 @@ def get_model_prompt_playful_face_ask_feeling_pre(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_no_song_respond(decision_maker, user_id):
@@ -2110,7 +2124,8 @@ def get_model_prompt_protocols_remind_encourage_try(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_playful_mind_eg_encourage_try(decision_maker, user_id):
@@ -2127,7 +2142,8 @@ def get_model_prompt_playful_mind_eg_encourage_try(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_acknowledge_achievements_ask(decision_maker, user_id):
@@ -2170,7 +2186,8 @@ def get_model_prompt_funny_self_glory_ask_cont(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_not_funny_self_glory_ask_cont(decision_maker, user_id):
@@ -2187,7 +2204,8 @@ def get_model_prompt_not_funny_self_glory_ask_cont(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_self_glory_encourage(decision_maker, user_id):
@@ -2231,7 +2249,7 @@ def get_model_prompt_try_self_glory_ask(decision_maker, user_id):
     return question
 
 def get_model_prompt_neg_respond_further_clarification_ask(decision_maker, user_id):
-    name = decision_maker.users_names[user_id]
+    #name = decision_maker.users_names[user_id]
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
     column1 = data[neg_respond].dropna()
@@ -2245,7 +2263,9 @@ def get_model_prompt_neg_respond_further_clarification_ask(decision_maker, user_
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    #question = combined_string.format(name).split("*")
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_theories_inform_protocols_remind(decision_maker, user_id):
@@ -2262,7 +2282,8 @@ def get_model_prompt_theories_inform_protocols_remind(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_incongruity_ask(decision_maker, user_id):
@@ -2305,7 +2326,8 @@ def get_model_prompt_funny_ask_cont_laugh_off(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_not_funny_ask_cont_laugh_off(decision_maker, user_id):
@@ -2322,7 +2344,8 @@ def get_model_prompt_not_funny_ask_cont_laugh_off(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_incongruity_remind_protocols(decision_maker, user_id):
@@ -2339,7 +2362,8 @@ def get_model_prompt_incongruity_remind_protocols(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_laugh_incongruity_inform(decision_maker, user_id): # TODO how does that sound? + -> great - come back tell me
@@ -2383,7 +2407,8 @@ def get_model_prompt_no_incongruity_more_exercises(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(name).split("*")
     return question
 
 def get_model_prompt_try_contrasting_views_ask(decision_maker, user_id):
@@ -2413,7 +2438,8 @@ def get_model_prompt_pos_respond_further_clarification_ask(decision_maker, user_
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.split("*")
     return question
 
 #def get_model_prompt_contrasting_views_inform(decision_maker, user_id): # extension - wiki search if user would like to know more
@@ -2482,7 +2508,8 @@ def get_model_prompt_pos_encourage_build_laughter_brand(decision_maker, user_id)
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_explore_related_ask(decision_maker, user_id):
@@ -2512,7 +2539,8 @@ def get_model_prompt_feigning_laughter_intro_ask_feeling_pre(decision_maker, use
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_feigning_laughter_inform(decision_maker, user_id):
@@ -2543,7 +2571,8 @@ def get_model_prompt_protocols_remind_more_exercises(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(name).split("*")
     return question
 
 def get_model_prompt_funny_protocols_remind(decision_maker, user_id):
@@ -2560,7 +2589,8 @@ def get_model_prompt_funny_protocols_remind(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_not_funny_protocols_remind(decision_maker, user_id):
@@ -2577,7 +2607,8 @@ def get_model_prompt_not_funny_protocols_remind(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_neg_inform_use_laughter_brand(decision_maker, user_id):
@@ -2594,7 +2625,8 @@ def get_model_prompt_neg_inform_use_laughter_brand(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_laughter_brand_inform(decision_maker, user_id):
@@ -2704,7 +2736,8 @@ def get_model_prompt_self_laughter_inform_eg_protocols_remind(decision_maker, us
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_self_error_clarify_eg_protocols_remind(decision_maker, user_id):#[self_error_clarify, self_laughter_inform_eg, protocols_remind], 
@@ -2715,7 +2748,7 @@ def get_model_prompt_self_error_clarify_eg_protocols_remind(decision_maker, user
     column3 = data[protocols_remind].dropna()
     my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
     my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
-    my_string3 = decision_maker.get_best_sentence_new(column3, prev_qs)
+    my_string3 = decision_maker.get_best_sentence_new(column3, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -2725,7 +2758,8 @@ def get_model_prompt_self_error_clarify_eg_protocols_remind(decision_maker, user
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
         decision_maker.recent_questions[user_id].append(my_string3)
-    question = "*".join([my_string1, my_string2, my_string3]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2, my_string3])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_no_contempt_inform_further_clarification_ask(decision_maker, user_id):
@@ -2742,7 +2776,8 @@ def get_model_prompt_no_contempt_inform_further_clarification_ask(decision_maker
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_self_error_encourage_joke(decision_maker, user_id):
@@ -2786,7 +2821,8 @@ def get_model_prompt_self_error_inform_ask_feeling_pre(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_no_errors_respond(decision_maker, user_id):
@@ -2831,7 +2867,8 @@ def get_model_prompt_no_errors_ask_more_relev_exercises(decision_maker, user_id)
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(name).split("*")
     return question
 
 def get_model_prompt_self_error_encourage_ask_feeling_pre(decision_maker, user_id):
@@ -2849,7 +2886,8 @@ def get_model_prompt_self_error_encourage_ask_feeling_pre(decision_maker, user_i
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(strike_through_text).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(strike_through_text).split("*")
     return question
 
 def get_model_prompt_setback_ask(decision_maker, user_id):
@@ -2887,7 +2925,7 @@ def get_model_prompt_laugh_setback_inform_protocols_remind_try_again(decision_ma
     column3 = data[try_exercise_again_encourage].dropna()
     my_string1 = decision_maker.get_best_sentence_new(column1, prev_qs, user_id)
     my_string2 = decision_maker.get_best_sentence_new(column2, prev_qs, user_id)
-    my_string3 = decision_maker.get_best_sentence_new(column3, prev_qs)
+    my_string3 = decision_maker.get_best_sentence_new(column3, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
@@ -2897,7 +2935,8 @@ def get_model_prompt_laugh_setback_inform_protocols_remind_try_again(decision_ma
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
         decision_maker.recent_questions[user_id].append(my_string3)
-    question = "*".join([my_string1, my_string2, my_string3]).format(strike_through_text).split("*")
+    combined_string = "*".join([my_string1, my_string2, my_string3])
+    question = combined_string.format(strike_through_text).split("*")
     return question
 
 def get_model_prompt_try_exercise_ask(decision_maker, user_id):
@@ -2927,7 +2966,7 @@ def get_model_prompt_setback_distant_ask(decision_maker, user_id):
     return question
 
 def get_model_prompt_setback_laugh_inform_ask_make_sense(decision_maker, user_id):
-    sentence = ""
+    sentence = "\"To those human beings who are of any concern to me I wish suffering…\""
     name = decision_maker.users_names[user_id]
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
@@ -2943,7 +2982,8 @@ def get_model_prompt_setback_laugh_inform_ask_make_sense(decision_maker, user_id
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
         #TODO check this
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(sentence, name).split("*")
     return question
 
 def get_model_prompt_read_quote(decision_maker, user_id):
@@ -3013,7 +3053,8 @@ def get_model_prompt_laugh_setback_inform_eg_protocols(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_reflect_setback_encourage(decision_maker, user_id):
@@ -3043,7 +3084,8 @@ def get_model_prompt_laugh_setback_clarify_ask_try(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_hardship_ask(decision_maker, user_id):
@@ -3086,7 +3128,8 @@ def get_model_prompt_funny_cont_hardship_ask(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_not_funny_cont_hardship_ask(decision_maker, user_id):
@@ -3103,7 +3146,8 @@ def get_model_prompt_not_funny_cont_hardship_ask(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_neg_respond_not_contempt(decision_maker, user_id):
@@ -3120,7 +3164,8 @@ def get_model_prompt_neg_respond_not_contempt(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_laugh_hardship_inform_protocols(decision_maker, user_id):
@@ -3137,7 +3182,8 @@ def get_model_prompt_laugh_hardship_inform_protocols(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_hardship_past_ask(decision_maker, user_id):
@@ -3168,7 +3214,8 @@ def get_model_prompt_hardship_laugh_inform_ask_make_sense(decision_maker, user_i
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(name).split("*")
     return question
     
 def get_model_prompt_laugh_hardship_encourage(decision_maker, user_id):
@@ -3198,7 +3245,8 @@ def get_model_prompt_funny_ask_feeling_pre(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_not_funny_ask_feeling_pre(decision_maker, user_id):
@@ -3215,7 +3263,8 @@ def get_model_prompt_not_funny_ask_feeling_pre(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_hardship_reflect_hardship_encourage(decision_maker, user_id):
@@ -3245,7 +3294,8 @@ def get_model_prompt_laugh_hardship_clarify_ask_try(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format().split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format().split("*")
     return question
 
 def get_model_prompt_complete_quote_show_hardships(decision_maker, user_id):
@@ -3277,5 +3327,6 @@ def get_model_prompt_not_share_more_exercises(decision_maker, user_id):
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string1)
         decision_maker.recent_questions[user_id].append(my_string2)
-    question = "*".join([my_string1, my_string2]).format(name).split("*")
+    combined_string = "*".join([my_string1, my_string2])
+    question = combined_string.format(name).split("*")
     return question
