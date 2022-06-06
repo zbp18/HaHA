@@ -28,4 +28,5 @@ argparse
 pandas
 torch
 typing
+sentencepiece
 webbrowser

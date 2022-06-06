@@ -616,6 +616,7 @@ class ModelDecisionMaker:
         #print("current_protocols: ", current_protocols)
         if input_type != "open_text":
             if (current_choice != "pre_laughter_pos" 
+                and current_choice != "check_emotion"
                 and current_choice != "explore_trigger_yes"
                 and current_choice != "ask_feel_post_sg"
                 and current_choice != "ask_incongruity"
