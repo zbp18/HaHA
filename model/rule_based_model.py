@@ -24,8 +24,6 @@ from nltk.corpus import wordnet  # noqa
 class ModelDecisionMaker:
     def __init__(self):
 
-        # removed personas
-        self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1')
         self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1')
         self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
 
@@ -450,6 +448,18 @@ class ModelDecisionMaker:
             if chosen != '':
                 return chosen
         return random.choice(column.dropna().to_list())#before was column.dropna().sample(n=5).to_list()) #was 25       
+
+    def split_sentence(self, sentence):
+        temp_list = re.split('(?<=[.?!]) +', sentence)
+        if '' in temp_list:
+            temp_list.remove('')
+        temp_list = [i + " " if i[-1] in [".", "?", "!"] else i for i in temp_list]
+        if len(temp_list) == 2:
+            return temp_list[0], temp_list[1]
+        elif len(temp_list) == 3:
+            return temp_list[0], temp_list[1], temp_list[2]
+        else:
+            return sentence   
 
     def update_conversation(self, user_id, new_dialogue, db_session, app):
         try:
