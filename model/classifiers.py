@@ -109,8 +109,6 @@ def get_humour_scores(data):
   # Get predictions from the probabilities
   threshold = 0.5
   preds = np.where(probs[:, 1] > threshold, 1, 0)
-
-  print("Number of statements predicted humorous: ", preds.sum())
   return preds
 
 

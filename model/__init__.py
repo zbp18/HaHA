@@ -131,8 +131,8 @@ def create_app():
             #decision_maker.test_retrieval_function()
             decision_maker.clear_suggestions(user.id)
             decision_maker.clear_choices(user.id)
-            decision_maker.clear_persona(user.id)
-            decision_maker.clear_datasets(user.id)
+            #decision_maker.clear_persona(user.id)
+            #decision_maker.clear_datasets(user.id)
             decision_maker.user_choices[user.id]["current_session_id"] = new_session.id
 
             return {
