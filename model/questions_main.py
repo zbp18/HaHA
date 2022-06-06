@@ -1,6 +1,7 @@
 import string
 import pandas as pd
 import numpy as np
+import webbrowser
 from model.utterances import *
 from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_neg, get_sentence_score_pos, empathy_score, get_humour_scores
 
@@ -33,7 +34,7 @@ def get_main_questions(decision_maker):
         "remind_review": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_review_protocols(decision_maker, user_id),
             "choices": {
-                "Continue": decision_maker.determine_next_prompt_haha("constant_practice_haha", "constant_practice_no_haha"),
+                "Continue": "sleep_reload",
                 "I'm on my phone": "recommend_review_more_details",
                 "I'd like to know more":"recommend_review_more_details",
             },
@@ -43,6 +44,16 @@ def get_main_questions(decision_maker):
                 "I'd like to know more": [],
             },
         }, 
+
+        "sleep_reload": {
+            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_fall_asleep_reload(decision_maker, user_id),
+            "choices": {
+                "continue": decision_maker.determine_next_prompt_haha("constant_practice_haha", "constant_practice_no_haha"),
+            },
+            "protocols": {
+                "continue": [],
+            },
+        },
 
         "constant_practice_haha": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_practice_protocols(decision_maker, user_id),
@@ -85,7 +96,20 @@ def get_main_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_detailed_protocols_note(decision_maker, user_id),
             "choices": {
                 # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
-                "continue": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("constant_practice_haha", "constant_practice_no_haha"),
+                "Open this in a new tab": lambda user_id, db_session, curr_session, app: open_link_in_new_tab(),
+                "Continue": "sleep_reload",
+            },
+            "protocols": {
+                "Open this in a new tab": [],
+                "Continue": [],
+            },
+        },
+
+        "link_opened_continue": {
+            "model_prompt": "This link has opened in a new tab.",
+            "choices": {
+                # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
+                "continue": "sleep_reload",
             },
             "protocols": {
                 "continue": []
@@ -434,6 +458,19 @@ def get_model_prompt_review_protocols(decision_maker, user_id):
     question = my_string.format("").split("*")
     return question
 
+def get_model_prompt_fall_asleep_reload(decision_maker, user_id):
+    prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
+    data = decision_maker.dataset
+    column = data[fall_asleep_reload].dropna()
+    my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
+    if len(decision_maker.recent_questions[user_id]) < 50:
+        decision_maker.recent_questions[user_id].append(my_string)
+    else:
+        decision_maker.recent_questions[user_id] = []
+        decision_maker.recent_questions[user_id].append(my_string)
+    question = my_string.format("").split("*")
+    return question
+
 def get_model_prompt_practice_protocols(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
@@ -475,8 +512,12 @@ def get_model_prompt_detailed_protocols_note(decision_maker, user_id):
     else:
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format("http://humandevelopment.doc.ic.ac.uk/papers/Self-initiated_humorous_protocols-f.pdf").split("*")
+    question = my_string.format('http://humandevelopment.doc.ic.ac.uk/papers/Self-initiated_humorous_protocols-f.pdf').split("*")
     return question
+
+def open_link_in_new_tab():
+    webbrowser.open_new_tab('http://humandevelopment.doc.ic.ac.uk/papers/Self-initiated_humorous_protocols-f.pdf')
+    return "link_opened_continue"
 
 def get_model_prompt_funny_respond(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
