@@ -25,9 +25,9 @@ class ModelDecisionMaker:
     def __init__(self):
 
         # removed personas
-        self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
-        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1') # changed path
-        self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv', encoding='ISO-8859-1')
+        self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1')
+        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1')
+        self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
 
         self.PROTOCOL_TITLES = [
             "0: None",
@@ -161,10 +161,6 @@ class ModelDecisionMaker:
 
         self.QUESTIONS = {**self.QUESTIONS_MAIN , **self.QUESTIONS_REUSED, **self.QUESTIONS_MINI_SESSIONS, **self.QUESTIONS_POSITIVE, **self.QUESTIONS_NEGATIVE}
         self.QUESTION_KEYS = list(self.QUESTIONS.keys())
-
-    #TODO initialise user state to positive or negative
-    def initialise_user_states_initial(self, user_id):
-        self.user_states_initial[user_id] = "Positive"
     
     def initialise_prev_questions(self, user_id):
         self.recent_questions[user_id] = []
@@ -179,6 +175,11 @@ class ModelDecisionMaker:
     def clear_datasets(self, user_id):
         self.datasets[user_id] = pd.DataFrame(columns=['sentences'])
     
+    def pre_compute_scores(self):
+        self.pre_compute_fluency_scores()
+        self.pre_compute_humour_scores()
+        self.pre_compute_empathy_scores()
+    
     def pre_compute_empathy_scores(self):
         #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
         data = self.scored_statements
@@ -189,11 +190,9 @@ class ModelDecisionMaker:
                 print('score is: ', score)
                 empathy_scores.append(score)
             data['empathy'] = empathy_scores
-            #data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv')
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
 
     def pre_compute_fluency_scores(self):
-        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
         data = self.scored_statements
         fluency_scores = []
         if 'fluency' not in data.columns:
@@ -202,20 +201,16 @@ class ModelDecisionMaker:
                 print('score is: ', score)
                 fluency_scores.append(score)
             data['fluency'] = fluency_scores
-            #data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv')
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
 
     def pre_compute_humour_scores(self):
-        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
         data = self.scored_statements
         if 'humour' not in data.columns:
             humour_scores = get_humour_scores(data)
             data['humour'] = pd.Series(humour_scores)
-            #data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements_COPYYYYY.csv')
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
         else:
             print('humour scores calculated!')
-
 
     def initialise_remaining_choices(self, user_id):
         self.remaining_choices[user_id] = ["displaying_antisocial_behaviour", "internal_persecutor_saviour", "personal_crisis", "rigid_thought"]
@@ -223,6 +218,7 @@ class ModelDecisionMaker:
     def initialise_user_session_vars(self, user_id):
         # TODO: FOR NOW!!!!!!!
         # drop negative once done (from list!)
+        self.user_states_initial[user_id] = "Positive"
         self.user_mini_sessions[user_id] = ("1: Playful mind", "2: Playful face")
         self.user_covered_sessions[user_id] = []
         self.contempt_message[user_id] = False
@@ -290,48 +286,31 @@ class ModelDecisionMaker:
             return "remind_contempt_pre_hardship"
         else: return "pre_hardship_neg"
 
-    def get_suggestions(self, user_id, app): #from all the lists of protocols collected at each step of the dialogue it puts together some and returns these as suggestions
-        suggestions = []
-        for curr_suggestions in list(self.suggestions[user_id]):
-            if len(curr_suggestions) > 2:
-                i, j = random.choices(range(0,len(curr_suggestions)), k=2)
-                if curr_suggestions[i] and curr_suggestions[j] in self.PROTOCOL_TITLES: #weeds out some gibberish that im not sure why it's there
-                    suggestions.extend([curr_suggestions[i], curr_suggestions[j]])
-            else:
-                suggestions.extend(curr_suggestions)
-            suggestions = set(suggestions)
-            suggestions = list(suggestions)
-        while len(suggestions) < 4: #augment the suggestions if less than 4, we add random ones avoiding repetitions
-            p = random.choice([i for i in range(1,12) if i not in [6,11]]) #we dont want to suggest protocol 6 or 11 at random here
-            if (any(self.PROTOCOL_TITLES[p] not in curr_suggestions for curr_suggestions in list(self.suggestions[user_id]))
-                and self.PROTOCOL_TITLES[p] not in self.recent_protocols and self.PROTOCOL_TITLES[p] not in suggestions):
-                        suggestions.append(self.PROTOCOL_TITLES[p])
-                        self.suggestions[user_id].extend([self.PROTOCOL_TITLES[p]])
-        return suggestions
-
-    # testing the retrieval function
+    # used to determine an optimal fitness score (for positive and negative scenarios)
     def test_retrieval_function(self):
-        df = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1') # changed path
-        previous_questions = pd.DataFrame(columns=['sentences']) # start with an empty dataframe which is gradually filled with the retrieved utterances
-        print('testing retrieval function...')
-        for i in range(30): # we retrieve 20 utterances here
-
-            maxscore = 0
-            chosen = ''
-            #for row in df['Do you think that exploring the possible cause of your current feeling could benefit you?'].dropna(): # select a column/base utterance we want to retrieve the variations of
-            for row in df['Do you think that exploring the possible cause of your current feeling could benefit you?'].dropna(): # select a column/base utterance we want to retrieve the variations of
-
-                if pd.notna(row):
-                
-                    fitscore = get_sentence_score_neg(row, previous_questions)
-                
-                    if fitscore > maxscore:
-                        maxscore = fitscore
-                        chosen = row
-            print(chosen)
-            previous_questions = previous_questions.append({'sentences':chosen}, ignore_index=True)
-            #wrong previous_questions = pd.concat(previous_questions, {'sentences':chosen}, ignore_index=True )
-        print('done with testing retrieval function!')
+        df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv', encoding='ISO-8859-1')
+        #df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv', encoding='ISO-8859-1')
+        #print('started testing retrieval function...')
+        column_statements = []
+        for column in self.dataset:
+            previous_questions = pd.DataFrame(columns=['sentences']) # start with an empty dataframe which is gradually filled with the retrieved utterances
+            for _ in range(30): # we retrieve 20 utterances here
+                maxscore = 0
+                chosen = ''
+                for row in self.dataset[column].dropna():  # select a column/base utterance we want to retrieve the variations of
+                    if pd.notna(row):
+                        fitscore = get_sentence_score_pos(row, previous_questions)
+                        #fitscore = get_sentence_score_neg(row, previous_questions)
+                        if fitscore > maxscore:
+                            maxscore = fitscore
+                            chosen = row
+                column_statements.append(chosen)
+                previous_questions = previous_questions.append({'sentences':chosen}, ignore_index=True)
+            df[column] = column_statements
+            df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv')
+            #df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv')
+            column_statements = []
+        #print('finished testing retrieval function!')
 
     def clear_suggestions(self, user_id):
         self.suggestions[user_id] = []
@@ -1034,7 +1013,7 @@ class ModelDecisionMaker:
                 and current_choice != "remind_contempt_post_hardship"
                 #and current_choice != "encourage_laughter_hardship" #smileysss
                 #and current_choice != "ask_feigning_laughter" #smileysss
-                and current_choice != "try_pre_lb_haha"
+                #and current_choice != "try_pre_lb_haha"
                 and current_choice != "encourage_try_lb"
                 and current_choice != "ask_try_pre_setback"
                 and current_choice != "ask_hardship"
@@ -1092,7 +1071,7 @@ class ModelDecisionMaker:
                 and current_choice != "propose_reflect_setback_haha"
                 and current_choice != "ask_accept_hardship_haha"
                 and current_choice != "propose_reflect_hardship_haha"
-                and current_choice != "trigger_not_hardship_haha"
+                #and current_choice != "trigger_not_hardship_haha"
                 and current_choice != "continue_pos_pre_protocol_haha"
                 and current_choice != "try_pre_protocol_pos_haha"
                 and current_choice != "try_pre_protocol_neg_haha"
@@ -1105,6 +1084,7 @@ class ModelDecisionMaker:
                 and current_choice != "ask_playful_mode_haha"
                 and current_choice != "recommend_review"
                 and current_choice != "remind_review"
+                and current_choice != "recommend_review_more_details"
             ):
                 user_choice = user_choice.lower()
                 # TODO: remove this annd all print statements
@@ -1211,10 +1191,6 @@ class ModelDecisionMaker:
             self.clear_emotion_scores(user_id)
             self.create_new_run(user_id, db_session, user_session)
 
-        if next_choice == "suggestions":
-            next_choices = self.get_suggestions(user_id, app)
-
-        else:
-            next_choices = list(self.QUESTIONS[next_choice]["choices"].keys())
+        next_choices = list(self.QUESTIONS[next_choice]["choices"].keys())
         self.user_choices[user_id]["choices_made"]["current_choice"] = next_choice
         return {"model_prompt": next_prompt, "choices": next_choices}
