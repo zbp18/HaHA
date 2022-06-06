@@ -1,7 +1,7 @@
 #################### BASE UTTERANCES ####################
 
 # SURVEY 1
-introduction = "Hello, my name is Humbert, and I work as a laughter assistant. Can you tell me your name?"
+introduction = "Hello, my name is HaHA, that's short for Happy Humour Assitant. Can you tell me your name?"
 greeting = "It's good to talk to you, {}. I will help to teach you to laugh.*Are you aware of the SELF-INITIATED HUMOUR PROTOCOLS?"
 protocols_note_pos = "Good. They are also being shown on the right of the screen in my browser view. You can look at them at any time during our chat."
 protocols_recommend = "I would suggest you look at them before we chat so you can build on your understanding of them in the session. You won't need a hammer for this!"
@@ -136,3 +136,4 @@ cont_laugh_off_ask = "So do you think you could try laughing this off?"
 cont_make_sense_ask = "So does that make sense?"
 cont_reason_incongruity_ask = "So do you think the root of this negative feeling be an incongruity or an inconsistency?"
 cont_try_exercise_ask = "So would you like to give it a go?"
+fall_asleep_reload = "Before I go on, If I don't respond for a while during the session, please feel free to reload the page to wake me up!"
