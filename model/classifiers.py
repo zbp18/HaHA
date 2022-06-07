@@ -64,9 +64,9 @@ with torch.no_grad():
     emo_model.load_state_dict(torch.load('T5_small_emotion.pt', map_location=torch.device('cpu')))
 
 #load empathy classifier (T5 small)
-with torch.no_grad():
-    emp_model = T5FineTuner(args)
-    emp_model.load_state_dict(torch.load('T5_small_empathy.pt', map_location=torch.device('cpu'))) #change path
+#with torch.no_grad():
+#    emp_model = T5FineTuner(args)
+#    emp_model.load_state_dict(torch.load('T5_small_empathy.pt', map_location=torch.device('cpu'))) #change path
 
 #Load pre-trained GPT2 language model weights
 with torch.no_grad():
@@ -111,8 +111,8 @@ def get_humour_scores(data):
   preds = np.where(probs[:, 1] > threshold, 1, 0)
   return preds
 
-
-def empathy_score(text):
+# scores have been precomputed so the emp_model code is commented and the model is omitted but this can be downloaded from https://drive.google.com/drive/folders/19uh2aIyxqzS-4LiagBouu6YuPYiOvaDz?usp=sharing 
+#def empathy_score(text):
   '''
   Computes a discrete numerical empathy score for an utterance (scale 0 to 2)
   '''
@@ -222,7 +222,7 @@ def novelty_score(sentence, dataframe):
   return round(score, 2)
 
 
-def get_sentence_score(sentence, dataframe):
+#def get_sentence_score(sentence, dataframe):
   '''
   Calculates how fit a sentence is based on its weighted empathy, fluency
   and novelty values

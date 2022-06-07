@@ -10,7 +10,8 @@ import datetime
 import time
 
 from model.models import UserModelSession, Choice, UserModelRun, Protocol
-from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_pos, get_sentence_score_neg, empathy_score, get_humour_scores
+#from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_pos, get_sentence_score_neg, empathy_score, get_humour_scores
+from model.classifiers import get_emotion, fluency_score, get_sentence_score_pos, get_sentence_score_neg, get_humour_scores
 from model.utterances import *
 from model.questions_main import get_main_questions
 from model.questions_reused import get_reused_questions
@@ -184,7 +185,9 @@ class ModelDecisionMaker:
         empathy_scores = []
         if 'empathy' not in data.columns:
             for row in data['sentences'].dropna():
-                score = empathy_score(row)
+                #score = empathy_score(row)
+                #added dummy score for now as we have precomputed the empathy scores so this code is not actually run
+                score = 0.5
                 empathy_scores.append(score)
             data['empathy'] = empathy_scores
             data.to_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv')
