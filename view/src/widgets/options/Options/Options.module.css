@@ -17,6 +17,17 @@
   background: transparent;
 }
 
+.emoji {
+  border-radius: 25px;
+  padding: 8px;
+  border: 1px solid #4A4A4A;
+  color: #4A4A4A;
+  font-family: arial;
+  font-size: 1.5rem;
+  margin: 4px 4px;
+  background: transparent;
+}
+
 /* .option::selection {
   color: #173e3f;
 } */

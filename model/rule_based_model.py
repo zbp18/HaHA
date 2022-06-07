@@ -1,8 +1,6 @@
 import string
 import nltk
 
-from model.models import UserModelSession, Choice, UserModelRun, Protocol
-from model.classifiers import get_emotion, get_sentence_score
 import pandas as pd
 import numpy as np
 import random
@@ -11,17 +9,24 @@ import re
 import datetime
 import time
 
+from model.models import UserModelSession, Choice, UserModelRun, Protocol
+from model.classifiers import get_emotion, fluency_score, get_sentence_score, get_sentence_score_pos, get_sentence_score_neg, empathy_score, get_humour_scores
+from model.utterances import *
+from model.questions_main import get_main_questions
+from model.questions_reused import get_reused_questions
+from model.questions_negative import get_negative_questions
+from model.questions_positive import get_positive_questions
+from model.questions_mini_session import get_mini_sessions_questions
+
 nltk.download("wordnet")
 from nltk.corpus import wordnet  # noqa
-
 
 class ModelDecisionMaker:
     def __init__(self):
 
-        # removed personas
-        self.kai = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/kai.csv', encoding='ISO-8859-1') # changed path
-        
-        # Titles from workshops (Title 7 adapted to give more information)
+        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1')
+        self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+
         self.PROTOCOL_TITLES = [
             "0: None",
             "1: Playful mind",
@@ -34,33 +39,63 @@ class ModelDecisionMaker:
             "8: Our own laughter brand",
             "9: Feigning laughter",
             "10: Self-laughter",
-            "11: Laughing at misfortunes and distrurbing circumstances",
+            "11: Laughing at misfortunes and disturbing circumstances",
             "12: Laughing at long-term suffering",
         ]
 
         self.TITLE_TO_PROTOCOL = {
+            # "Playful mind" (protocol 1) maps to 1
             self.PROTOCOL_TITLES[i]: i for i in range(len(self.PROTOCOL_TITLES))
         }
 
         # map each protocol to a 'difficulty level' to help determine which protocol the chatbot should recommend
-        self.PROTOCOL_TO_LEVEL = dict(zip(self.PROTOCOL_TITLES, [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3]))
+        self.PROTOCOL_TO_LEVEL = dict(zip(self.PROTOCOL_TITLES, [0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3]))
 
-        # each tiny session consists of a single or group of similar themes protocols
-        self.PROTOCOL_TINY_SESSIONS = [{"1: Playful mind", "2: Playful face"}, {"3: Self-glory"}, {"4: Incongruous world",
-            "5: Incongruous self",
-            "6: Self/world incongruity"}, {"7: Contrasting views"}, {"8: Our own laughter brand",
-            "9: Feigning laughter"}, {"10: Self-laughter"}, {"11: Laughing at misfortunes and distrurbing circumstances"}, {"12: Laughing at long-term suffering"}]
+        self.MINI_SESSION_TITLES = [
+            ("1: Playful mind", "2: Playful face"), 
+            ("1: Playful mind", "2: Playful face"),
+            ("3: Self-glory",),
+            ("3: Self-glory",),  
+            ("4: Incongruous world", "5: Incongruous self", "6: Self/world incongruity"), 
+            ("7: Contrasting views",), 
+            ("8: Our own laughter brand", "9: Feigning laughter"), 
+            ("10: Self-laughter",), 
+            ("11: Laughing at misfortunes and disturbing circumstances",), 
+            ("12: Laughing at long-term suffering",)
+        ]
 
-        self.LEVEL_TO_PROTOCOL_TINY_SESSION = dict(zip([0, 0, 1, 1, 1, 2, 3, 3], self.PROTOCOL_TINY_SESSIONS))
-        
-        # each mini session consists of a group of similar themed protocols (low difficulty level for use at the start of a conversation)
-        self.PROTOCOL_MINI_SESSIONS = [{"1: Playful mind", "2: Playful face", "3: Self-glory"}, {"4: Incongruous world",
-            "5: Incongruous self",
-            "6: Self/world incongruity",
-            "7: Contrasting views"}, {"8: Our own laughter brand",
-            "9: Feigning laughter"}]
+        self.MINI_SESSION_TITLE_TO_LEVEL = dict(zip(self.MINI_SESSION_TITLES, [0, 0, 0, 0, 1, 1, 1, 2, 3, 3]))
 
-        self.LEVEL_TO_PROTOCOL_MINI_SESSION = dict(zip([0, 1, 1], self.PROTOCOL_MINI_SESSIONS))
+        #TODO add not_haha? - change random choice to 1/16 - not haha and 1/16 - haha
+        #self.MINI_SESSION_QUESTIONS = ["ask_playful_mode_no_haha", "ask_self_glory_not_haha", "ask_incongruity", "ask_feel_pre_cv", "ask_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
+        self.MINI_SESSION_QUESTIONS = ["ask_playful_mode_no_haha", "ask_playful_mode_haha", "ask_self_glory_not_haha", "ask_self_glory_haha", "ask_incongruity", "ask_feel_pre_cv", "ask_laughter_brand", "ask_recent_error", "ask_setback", "ask_hardship"]
+        self.MINI_SESSION_TO_QUESTION = dict(zip(self.MINI_SESSION_TITLES, self.MINI_SESSION_QUESTIONS))
+        self.QUESTION_TO_MINI_SESSION = dict(zip(self.MINI_SESSION_QUESTIONS, self.MINI_SESSION_TITLES))
+
+        #TODO: check if we need self.NEGATIVE_MINI_SESSION_TITLES, QUESTIONS, self.PROTOCOL_MINI_SESSIONS,etc.
+
+        self.NEGATIVE_MINI_SESSION_TITLES = [
+            ("4: Incongruous world", "5: Incongruous self", "6: Self/world incongruity"), 
+            ("10: Self-laughter",), 
+            ("11: Laughing at misfortunes and disturbing circumstances",), 
+            ("12: Laughing at long-term suffering",)
+        ]
+        self.NEGATIVE_MINI_SESSION_TITLE_TO_LEVEL = dict(zip(self.NEGATIVE_MINI_SESSION_TITLES, [1, 2, 3, 3]))
+        self.NEGATIVE_MINI_SESSION_QUESTIONS = ["ask_laughter_incongruity", "ask_feel_pre_error", "ask_laughter_setback", "ask_accept_hardship_no_haha"]
+        self.NEGATIVE_MINI_SESSION_TO_QUESTION = dict(zip(self.NEGATIVE_MINI_SESSION_TITLES, self.NEGATIVE_MINI_SESSION_QUESTIONS))
+        self.QUESTION_TO_NEGATIVE_MINI_SESSION = dict(zip(self.NEGATIVE_MINI_SESSION_QUESTIONS, self.NEGATIVE_MINI_SESSION_TITLES))
+
+        # Stores the initial emotional state of each user after they classify it (positive or negative)
+        self.user_states_initial = {}
+        # Tracks the current emotional state of each user (positive or negative)
+        self.user_states = {}
+        # Tracks the feeling of each user before or aftter attempting the current protocol (positive & negative or better, worse & same)
+        # keys: user ids, values: string tuples: (pre/post, feeling)
+        self.user_protocol_feelings = {}
+        # Tracks each user's current mini session (including None)
+        self.user_mini_sessions = {}
+        # Tracks the mini sessions covered by each user so far 
+        self.user_covered_sessions = {}
 
         self.recent_protocols = deque(maxlen=12)
         self.reordered_protocol_questions = {}
@@ -73,13 +108,6 @@ class ModelDecisionMaker:
         self.current_protocols = {}
 
         self.positive_protocols = [i for i in range(1, 13)]
-
-        self.INTERNAL_PERSECUTOR_PROTOCOLS = [
-            self.PROTOCOL_TITLES[5],
-            self.PROTOCOL_TITLES[6],
-            self.PROTOCOL_TITLES[8],
-            self.PROTOCOL_TITLES[9],
-        ]
 
         # Keys: user ids, values: dictionaries describing each choice (in list)
         # and current choice
@@ -94,7 +122,26 @@ class ModelDecisionMaker:
         # Tracks current emotion of each user after they classify it
         self.user_emotions = {}
 
+        # Tracks whether each user has received the contempt message 
+        self.contempt_message = {}
+        
+        # Tracks whether each user has received the covered-all-sessions message 
+        self.covered_all_message = {}
+
+        # Tracks the number of times each user has responded to the chatbot's joke 
+        self.haha_count = {}
+        
         self.guess_emotion_predictions = {}
+
+        self.users_names = {}
+        self.remaining_choices = {}
+
+        self.recent_questions = {}
+        self.recent_statements = {}
+
+        #self.chosen_personas = {}
+        #self.datasets = {}
+
         # Structure of dictionary: {question: {
         #                           model_prompt: str or list[str],
         #                           choices: {maps user response to next protocol},
@@ -104,729 +151,18 @@ class ModelDecisionMaker:
         # This could be adapted to be part of a JSON file (would need to address
         # mapping callable functions over for parsing).
 
-        self.users_names = {}
-        self.remaining_choices = {}
-
-        self.recent_questions = {}
-
-        self.chosen_personas = {}
-        self.datasets = {}
-
-        # repeated statements
-        tried_before = "Have you tried this before?"
-        laughed_off = "Have you tried laughing this off?"
-        want_to_try = "Would you like to try this?"
-        
-        not_contempt = "If you experience any (self- or external-) contempt during your laughter, try to reflect on, neutralise, and convert this into non-hostile humour (by surprise and amusement – refer to the incongruity protocols)."
-        contempt_reminder = "Remember not to laugh with contempt though, both self and external; this might also be why you're feeling down."
-
-        feeling_post_protocol = "How did this make you feel?"
-        feeling_pre_protocol = "How do you feel about this?"
-        new_feeling = "How are you now feeling?" # If previously negative
-        empathetic_response_pos = "Good, I’m glad to hear that."
-        empathetic_response_neg = "Sorry to hear that. I hope you feel better soon."
-
-        try_this = "Try practicing this on your own, whenever you’re feeling up to it."
-        try_this_again = "Feel free to practise this again whenever you think it’s applicable."
-        make_sense = "Does that make sense?"
-        further_clarification = "Would you like some further clarification on this exercise?"
-        look_at_sheet = "This is detailed in the introductory document, feel free to review this if you need to."
-        continue_other = "Would you like to continue exploring other contexts for humour?"
-
-        self.QUESTIONS = {
-
-            "ask_name": {
-               "model_prompt": "Hi! I’m Humbert, a self-employed laughter assistant. May I know your name?",
-               "choices": {
-                   "open_text": lambda user_id, db_session, curr_session, app: self.save_name(user_id)
-               },
-               "protocols": {"open_text": []},
-           },
-
-            # check if user's familiar with protocols
-            "opening_prompt": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_opening_prompt(user_id),
-
-                "choices": {
-                    "yes": "after_know_protocols",
-                    "no": "after_not_know_protocols"
-
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                    },
-            },
-
-            # ask user how they're feeling
-            "ask_emotion": {
-               "model_prompt": "How are you feeling today? Try to be honest; I will not judge you!", 
-               "choices": {
-                    "open_text": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_get_started(user_id, app, db_session)
-                },
-                "protocols": {"open_text": []},
-           },
-
-            "guess_emotion": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_guess_emotion(
-                    user_id, app, db_session
-                ),
-                "choices": {
-                    "yes": {
-                        "Sad": "after_classification_minus", # changed all from negative for initial rule-based implementation
-                        "Angry": "after_classification_minus",
-                        "Anxious/Scared": "after_classification_minus",
-                        "Happy/Content": "after_classification_plus", # changed from positive for initial rule-based implementation
-                    },
-                    "no": "check_emotion",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                    },
-            },
-
-            "check_emotion": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_check_emotion(user_id, app, db_session),
-
-                "choices": {
-                    "Sad": lambda user_id, db_session, curr_session, app: self.get_sad_emotion(user_id),
-                    "Angry": lambda user_id, db_session, curr_session, app: self.get_angry_emotion(user_id),
-                    "Anxious/Scared": lambda user_id, db_session, curr_session, app: self.get_anxious_emotion(user_id),
-                    "Happy/Content": lambda user_id, db_session, curr_session, app: self.get_happy_emotion(user_id),
-                },
-                "protocols": {
-                    "Sad": [],
-                    "Angry": [],
-                    "Anxious/Scared" : [],
-                    "Happy/Content": []
-                },
-            },
-
-            # user is familiar with the protocols
-            "after_know_protocols": {
-                "model_prompt": "Great. Just to let you know, they are also being displayed on the right if you wish to review them at any point in our conversation.",
-                "choices": {
-                    "continue": "after_protocols",
-                },
-                "protocols": {
-                    "continue": []
-                },
-            }, 
-
-            # user is not familiar with the protocols
-            "after_not_know_protocols": {
-                "model_prompt": ["I would recommend reviewing these briefly before our session as you can use this session to consolidate your understanding of them.", 
-                "They are being displayed on the right if you wish to review them now or at any point in our conversation."],
-                "choices": {
-                    "continue": "after_protocols",
-                },
-                "protocols": {
-                    "continue": []
-                },
-            }, 
-
-            # end of introduction
-            "after_protocols": {
-                "model_prompt": ["We will be discussing some of these today but practising these during your daily life is where you will receive the real benefit.", 
-                "The more you do, the more natural and frequent your laughter will become and the happier you will feel. Practice makes perfect!", 
-                "Anyway, enough with the intros - let’s get started!"],
-                "choices": {
-                    "continue": "ask_emotion",
-                },
-                "protocols": {
-                    "continue": []
-                },
-            }, 
-
-            ############################# REPEATED PARTS OF CONVERSATION
-            
-            "ask_continue_exploring": {
-                "model_prompt": continue_other,
-                "choices": {
-                    "yes": "", # function that returns next prompt (random based on user's choice, emotion and current level)
-                    "no": "ask_recent_error",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            # added for end of session placeholder
-            "ending_session": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.end_session(user_id),
-                "choices": {},
-                "protocols": {},
-            },
-
-            ############################# TINY SESSIONS
-
-            ########## self-laughter ##########
-
-            "ask_recent_error": {
-                "model_prompt": "Have you experienced a recent error or shortcoming?",
-                "choices": {
-                    "yes": "ask_if_laughed_this", 
-                    "no": "no_recent_errors",
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "ask_if_laughed_this": { #TODO: may be able to reuse: 
-                "model_prompt": laughed_off,
-                "choices": {
-                    "yes": "ask_how_felt", 
-                    "no": "after_not_laughed_error",
-                    "not sure": "explain_and_propose_try"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": [], 
-                    "not sure": []
-                },
-            },
-
-            "ask_how_felt": { #TODO: may be able to reuse: 
-                "model_prompt": feeling_post_protocol,
-                "choices": {
-                    "positive": "after_positive_error", 
-                    "negative": "after_negative_error"
-                },
-                "protocols": {
-                    "positive": [],
-                    "negative": []
-                },
-            },
-
-            "after_positive_error": { #TODO: may be able to reuse: 
-                "model_prompt": [empathetic_response_pos, try_this_again, continue_other],
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-            
-            "after_negative_error": { #TODO: may be able to reuse: 
-                "model_prompt": [empathetic_response_neg, further_clarification],
-                "choices": {
-                    "yes": "give_clarification", 
-                    "no": "remind_contempt"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "give_clarification": { #TODO: may be able to reuse: 
-                "model_prompt": ["This exercise is in line with the evolutionary theory of humour as we are learning to become playful with our everyday errors. We can laugh them off by the Incongruity and Playful Theories.",
-                "An example could be burning a piece of toast, as long as it didn’t set the house on fire!",
-                look_at_sheet, try_this_again, continue_other], 
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "remind_contempt":{
-                "model_prompt": [contempt_reminder, try_this_again, continue_other], 
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "after_not_laughed_error": {
-                "model_prompt": ["Feel free to practice laughing at this in your own time, along with any other minor errors you find yourself making (if any!)",
-                "And don’t be embarrassed, I’m sure mine are much worse!", feeling_pre_protocol],
-                "choices": {
-                    "positive": "positive_pre_error_protocol",
-                    "negative": "negative_pre_error_protocol"
-                },
-                "protocols": {
-                    "positive": [],
-                    "negative": []
-                },
-            },
-
-            "positive_pre_error_protocol": {
-                "model_prompt": [empathetic_response_pos, continue_other], 
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "negative_pre_error_protocol": {
-                "model_prompt": [empathetic_response_neg, further_clarification], 
-                "choices": {
-                    "yes": "give_clarification_first_time",
-                    "no": "remind_contempt_first_time"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "give_clarification_first_time": {
-                "model_prompt": ["This exercise is in line with the evolutionary theory of humour as we are learning to become playful with our everyday errors. We can laugh them off by the Incongruity and Playful Theories.",
-                "An example could be burning a piece of toast, as long as it didn’t set the house on fire!",
-                look_at_sheet, continue_other], 
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "remind_contempt_first_time":{
-                "model_prompt": [contempt_reminder, continue_other], 
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "ending_session"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "explain_and_propose_try": {
-                "model_prompt": ["An example could be wearing two different colour socks to work by mistake. A good ice breaker for everyone to laugh at when the conversation gets boring!", 
-                "Try laughing at any of your errors on your own in the same way.", feeling_pre_protocol],
-                "choices": {
-                    "positive": "positive_pre_error_protocol",
-                    "negative": "negative_pre_error_protocol"
-                },
-                "protocols": {
-                    "positive": [],
-                    "negative": []
-                },
-            },
-
-            "no_recent_errors": {
-                "model_prompt": ["Wow, I am jealous! I make mistakes all the time!", "Would you like to explore another more relevant context for laughter?"],
-                "choices": {
-                    "yes": "ending_session",
-                    "no": "continue_exploring_errors"
-                },
-                "protocols": {
-                    "yes": [],
-                    "no": []
-                },
-            },
-
-            "continue_exploring_errors": {
-                "model_prompt": ["If you do recognise making any errors, try to become playful and laugh at them on your own.", 
-                feeling_pre_protocol],
-                "choices": {
-                    "positive": "positive_pre_error_protocol",
-                    "negative": "negative_pre_error_protocol"
-                },
-                "protocols": {
-                    "positive": [],
-                    "negative": []
-                },
-            },
-
-            ############################# MINI SESSIONS
-
-
-            ############# NEGATIVE EMOTIONS (SADNESS, ANGER, FEAR/ANXIETY)
-            
-            # changed from "after_classification_negative" for initial rule-based implementation
-            "after_classification_minus": {
-                "model_prompt": "Sorry to hear that. Is there an underlying reason behind this feeling? You don’t need to share the reason.",
-
-                "choices": {
-                    "Yes": "ask_continue_exploring", 
-                    "No (or not sure)": "ask_continue_exploring", 
-                },
-                "protocols": {
-                    "Yes": [],
-                    "No (or not sure)": []
-                },
-            },
-
-            # user can identify an underlying reason
-            "continue_reason_yes": {
-                "model_prompt": "Placeholder.",
-
-                "choices": {
-                    "no": "ask_continue_exploring",
-                },
-                "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "no": []
-                },
-            },
-
-            # user cannot identify an underlying reason
-            "continue_reason_no": {
-                "model_prompt": "Placeholder.",
-
-                "choices": {
-                    "no": "ask_continue_exploring",
-                },
-                "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "no": []
-                },
-            },
-
-            "event_is_recent": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_event_is_recent(user_id, app, db_session),
-
-                "choices": {
-                    "It was recent": "revisiting_recent_events",
-                    "It was distant": "revisiting_distant_events",
-                },
-                "protocols": {
-                    "It was recent": [],
-                    "It was distant": []
-                    },
-            },
-
-            "revisiting_recent_events": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_revisit_recent(user_id, app, db_session),
-
-                "choices": {
-                    "yes": "more_questions",
-                    "no": "more_questions",
-                },
-                "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[7], self.PROTOCOL_TITLES[8]],
-                    "no": [self.PROTOCOL_TITLES[11]],
-                },
-            },
-
-            "revisiting_distant_events": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_revisit_distant(user_id, app, db_session),
-
-                "choices": {
-                    "yes": "more_questions",
-                    "no": "more_questions",
-                },
-                "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[7]],
-                    "no": [self.PROTOCOL_TITLES[6]]
-                },
-            },
-
-            "more_questions": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_more_questions(user_id, app, db_session),
-
-                "choices": {
-                    "Okay": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
-                    "I'd rather not": "project_emotion",
-                },
-                "protocols": {
-                    "Okay": [],
-                    "I'd rather not": [self.PROTOCOL_TITLES[3]],
-                },
-            },
-
-            "displaying_antisocial_behaviour": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_antisocial(user_id, app, db_session),
-
-                "choices": {
-                    "yes": "project_emotion",
-                    "no": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
-                },
-                "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[4]],
-                    "no": [self.PROTOCOL_TITLES[3]],
-                },
-            },
-
-            "internal_persecutor_saviour": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_saviour(user_id, app, db_session),
-
-                "choices": {
-                    "yes": "project_emotion",
-                    "no": "internal_persecutor_victim",
-                },
-                "protocols": {
-                    "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
-                    "no": []
-                },
-            },
-
-            "internal_persecutor_victim": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_victim(user_id, app, db_session),
-
-                "choices": {
-                    "yes": "project_emotion",
-                    "no": "internal_persecutor_controlling",
-                },
-                "protocols": {
-                    "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
-                    "no": []
-                },
-            },
-
-            "internal_persecutor_controlling": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_controlling(user_id, app, db_session),
-
-                "choices": {
-                "yes": "project_emotion",
-                "no": "internal_persecutor_accusing"
-                },
-                "protocols": {
-                "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
-                "no": []
-                },
-            },
-
-            "internal_persecutor_accusing": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_accusing(user_id, app, db_session),
-
-                "choices": {
-                "yes": "project_emotion",
-                "no": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
-                },
-                "protocols": {
-                "yes": self.INTERNAL_PERSECUTOR_PROTOCOLS,
-                "no": [self.PROTOCOL_TITLES[3]],
-                },
-            },
-
-            "rigid_thought": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_rigid_thought(user_id, app, db_session),
-
-                "choices": {
-                    "yes": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
-                    "no": "project_emotion",
-                },
-                "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[3]],
-                    "no": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[9]],
-                },
-            },
-
-            "personal_crisis": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_personal_crisis(user_id, app, db_session),
-
-                "choices": {
-                    "yes": "project_emotion",
-                    "no": lambda user_id, db_session, curr_session, app: self.get_next_question(user_id),
-                },
-                "protocols": {
-                    "yes": [self.PROTOCOL_TITLES[3], self.PROTOCOL_TITLES[7]],
-                    "no": [self.PROTOCOL_TITLES[3]],
-                },
-            },
-
-            ################# POSITIVE EMOTION (HAPPINESS/CONTENT) #################
-
-            # changed from "after_classification_positive"
-            "after_classification_plus": {
-                "model_prompt": ["Great! Let’s start exploring how to develop your sense of humour.", 
-                "Do you feel that your body is in a playful mode?", 
-                "As adults, we often tend to get stuck in a serious mode!"
-                ],
-
-                "choices": {
-                    "yes": "ask_continue_exploring",
-                    "no": "ask_continue_exploring",
-                },
-                "protocols": {
-                    "yes": [], 
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "no": []
-                },
-            },
-
-            # user is in a playful mode
-            "continue_playful_yes": {
-                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
-
-                "choices": {
-                    #"yes": "continue_explore_no",
-                    "no": "continue_explore_no",
-                },
-                "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "no": []
-                },
-            },
-
-            # user is not in a playful mode
-            "continue_playful_no": {
-                "model_prompt": "Placeholder: Would you like to continue exploring other contexts for humour?",
-
-                "choices": {
-                    #"yes": "continue_explore_no",
-                    "no": "continue_explore_no",
-                },
-                "protocols": {
-                    #"yes": [self.PROTOCOL_TITLES[9], self.PROTOCOL_TITLES[10], self.PROTOCOL_TITLES[11]], #change here?
-                    #[self.PROTOCOL_TITLES[k] for k in self.positive_protocols],
-                    "no": []
-                },
-            },
-
-
-            ############################# ALL EMOTIONS #############################
-
-            # added as a placeholder for initial rule-based implementation 
-            "continue_explore_no": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.end_session(user_id),
-                
-                "choices": {},
-                "protocols": {},
-            }, 
-
-
-            "project_emotion": {
-               "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_project_emotion(user_id, app, db_session),
-
-               "choices": {
-                   "Continue": "suggestions",
-               },
-               "protocols": {
-                   "Continue": [],
-               },
-            },
-
-
-            "suggestions": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_suggestions(user_id, app, db_session),
-
-                "choices": {
-                     self.PROTOCOL_TITLES[k]: "trying_protocol" #self.current_protocol_ids[user_id]
-                     for k in self.positive_protocols
-                },
-                "protocols": {
-                     self.PROTOCOL_TITLES[k]: [self.PROTOCOL_TITLES[k]]
-                     for k in self.positive_protocols
-                },
-            },
-
-            "trying_protocol": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_trying_protocol(user_id, app, db_session),
-
-                "choices": {"continue": "user_found_useful"},
-                "protocols": {"continue": []},
-            },
-
-            "user_found_useful": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_found_useful(user_id, app, db_session),
-
-                "choices": {
-                    "I feel better": "new_protocol_better",
-                    "I feel worse": "new_protocol_worse",
-                    "I feel no change": "new_protocol_same",
-                },
-                "protocols": {
-                    "I feel better": [],
-                    "I feel worse": [],
-                    "I feel no change": []
-                },
-            },
-
-            "new_protocol_better": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_new_better(user_id, app, db_session),
-
-                "choices": {
-                    "Yes (show follow-up suggestions)": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_new_protocol(
-                        user_id, app
-                    ),
-                    "Yes (restart questions)": "restart_prompt",
-                    "No (end session)": "ending_prompt",
-                },
-                "protocols": {
-                    "Yes (show follow-up suggestions)": [],
-                    "Yes (restart questions)": [],
-                    "No (end session)": []
-                },
-            },
-
-            "new_protocol_worse": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_new_worse(user_id, app, db_session),
-
-                "choices": {
-                    "Yes (show follow-up suggestions)": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_new_protocol(
-                        user_id, app
-                    ),
-                    "Yes (restart questions)": "restart_prompt",
-                    "No (end session)": "ending_prompt",
-                },
-                "protocols": {
-                    "Yes (show follow-up suggestions)": [],
-                    "Yes (restart questions)": [],
-                    "No (end session)": []
-                },
-            },
-
-            "new_protocol_same": {
-                "model_prompt": [
-                                "I am sorry to hear you have not detected any change in your mood.",
-                                "That can sometimes happen but if you agree we could try another protocol and see if that is more helpful to you.",
-                                "Would you like me to suggest a different protocol?"
-                                ],
-
-                "choices": {
-                    "Yes (show follow-up suggestions)": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_new_protocol(
-                        user_id, app
-                    ),
-                    "Yes (restart questions)": "restart_prompt",
-                    "No (end session)": "ending_prompt",
-                },
-                "protocols": {
-                    "Yes (show follow-up suggestions)": [],
-                    "Yes (restart questions)": [],
-                    "No (end session)": []
-                },
-            },
-
-            "ending_prompt": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_model_prompt_ending(user_id, app, db_session),
-
-                "choices": {"any": "opening_prompt"},
-                "protocols": {"any": []}
-            },
-
-            "restart_prompt": {
-                "model_prompt": lambda user_id, db_session, curr_session, app: self.get_restart_prompt(user_id),
-
-                "choices": {
-                    "open_text": lambda user_id, db_session, curr_session, app: self.determine_next_prompt_opening(user_id, app, db_session)
-                },
-                "protocols": {"open_text": []},
-            },
-        }
+        self.QUESTIONS_MAIN = get_main_questions(self)
+        self.QUESTIONS_REUSED = get_reused_questions(self)
+        self.QUESTIONS_MINI_SESSIONS = get_mini_sessions_questions(self)
+        self.QUESTIONS_POSITIVE = get_positive_questions(self)
+        self.QUESTIONS_NEGATIVE = get_negative_questions(self)
+
+        self.QUESTIONS = {**self.QUESTIONS_MAIN , **self.QUESTIONS_REUSED, **self.QUESTIONS_MINI_SESSIONS, **self.QUESTIONS_POSITIVE, **self.QUESTIONS_NEGATIVE}
         self.QUESTION_KEYS = list(self.QUESTIONS.keys())
-
+    
     def initialise_prev_questions(self, user_id):
         self.recent_questions[user_id] = []
+        self.recent_statements[user_id] = []
 
     def clear_persona(self, user_id):
         self.chosen_personas[user_id] = ""
@@ -836,46 +172,138 @@ class ModelDecisionMaker:
 
     def clear_datasets(self, user_id):
         self.datasets[user_id] = pd.DataFrame(columns=['sentences'])
+    
+    def pre_compute_scores(self):
+        self.pre_compute_fluency_scores()
+        self.pre_compute_humour_scores()
+        self.pre_compute_empathy_scores()
+    
+    def pre_compute_empathy_scores(self):
+        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        data = self.scored_statements
+        empathy_scores = []
+        if 'empathy' not in data.columns:
+            for row in data['sentences'].dropna():
+                score = empathy_score(row)
+                empathy_scores.append(score)
+            data['empathy'] = empathy_scores
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+
+    def pre_compute_fluency_scores(self):
+        data = self.scored_statements
+        fluency_scores = []
+        if 'fluency' not in data.columns:
+            for row in data['sentences'].dropna():
+                score = fluency_score(row)
+                fluency_scores.append(score)
+            data['fluency'] = fluency_scores
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+
+    def pre_compute_humour_scores(self):
+        data = self.scored_statements
+        if 'humour' not in data.columns:
+            humour_scores = get_humour_scores(data)
+            data['humour'] = pd.Series(humour_scores)
+            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
 
     def initialise_remaining_choices(self, user_id):
         self.remaining_choices[user_id] = ["displaying_antisocial_behaviour", "internal_persecutor_saviour", "personal_crisis", "rigid_thought"]
+    
+    def initialise_user_session_vars(self, user_id):
+        # TODO: FOR NOW!!!!!!!
+        # drop negative once done (from list!)
+        self.user_states_initial[user_id] = "Positive"
+        self.user_mini_sessions[user_id] = ("1: Playful mind", "2: Playful face")
+        self.user_covered_sessions[user_id] = []
+        self.contempt_message[user_id] = False
+        self.covered_all_message[user_id] = False
+        self.haha_count[user_id] = 0
+    
+    def check_acknowledge_achievements(self, user_id):
+        if ('3: Self-glory',) in self.user_covered_sessions[user_id]: 
+            return "continue_curr_can't_do" 
+        # TODO
+        return self.determine_next_prompt_haha("ask_self_glory_haha", "ask_self_glory_not_haha")
 
-    def save_name(self, user_id):
-        try:
-            user_response = self.user_choices[user_id]["choices_made"]["ask_name"]
-        except:  # noqa
-            user_response = ""
-        self.users_names[user_id] = user_response
-        #return "choose_persona"
-        self.chosen_personas[user_id] = "Kai"
-        self.datasets[user_id] = self.kai
-        return "opening_prompt"
+    def check_contempt(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_laughter" 
+        return "encourage_laughter"
 
-    # added ending dialogue for initial rule-based implementation
-    def end_session(self, user_id):
-        return ["That ends our session then!", 
-                "It would be most beneficial if you could recognise the discussed contexts for laughter (i.e. self and or world incongruity, error/fault, daily routine-accomplishment, etc.) as often as possible throughout your life. There is no endpoint to developing a sense of humour, it is a journey, and the most important thing is to enjoy it! And I am always here if you need me – I have nowhere else to go!", 
-                "Thanks " + self.users_names[user_id] + ", I hope you enjoyed our conversation and that we speak again soon."]
+    def check_contempt_pre(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_protocol_haha" 
+        else: return "continue_curr_not_willing"
+    
+    def check_contempt_post(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_protocol"
+        else: return "try_post_protocol_neg"
+    
+    def check_contempt_post_error(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_error"
+        else: return "post_error_neg"
 
-    def get_suggestions(self, user_id, app): #from all the lists of protocols collected at each step of the dialogue it puts together some and returns these as suggestions
-        suggestions = []
-        for curr_suggestions in list(self.suggestions[user_id]):
-            if len(curr_suggestions) > 2:
-                i, j = random.choices(range(0,len(curr_suggestions)), k=2)
-                if curr_suggestions[i] and curr_suggestions[j] in self.PROTOCOL_TITLES: #weeds out some gibberish that im not sure why it's there
-                    suggestions.extend([curr_suggestions[i], curr_suggestions[j]])
-            else:
-                suggestions.extend(curr_suggestions)
-            suggestions = set(suggestions)
-            suggestions = list(suggestions)
-        while len(suggestions) < 4: #augment the suggestions if less than 4, we add random ones avoiding repetitions
-            p = random.choice([i for i in range(1,12) if i not in [6,11]]) #we dont want to suggest protocol 6 or 11 at random here
-            if (any(self.PROTOCOL_TITLES[p] not in curr_suggestions for curr_suggestions in list(self.suggestions[user_id]))
-                and self.PROTOCOL_TITLES[p] not in self.recent_protocols and self.PROTOCOL_TITLES[p] not in suggestions):
-                        suggestions.append(self.PROTOCOL_TITLES[p])
-                        self.suggestions[user_id].extend([self.PROTOCOL_TITLES[p]])
-        return suggestions
+    def check_contempt_post_setback(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_setback"
+        else: return "post_setback_neg"
 
+    def check_contempt_post_hardship(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_post_hardship"
+        else: return "post_hardship_neg"
+    
+    def check_contempt_pre_error(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_error"
+        else: return "pre_error_neg"
+    
+    def check_contempt_pre_setback(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_setback"
+        else: return "pre_setback_neg"
+
+    def check_contempt_pre_hardship(self, user_id):
+        if self.contempt_message[user_id] == False: 
+            self.contempt_message[user_id] = True
+            return "remind_contempt_pre_hardship"
+        else: return "pre_hardship_neg"
+
+    # used to determine an optimal fitness score (for positive and negative scenarios)
+    def test_retrieval_function(self):
+        df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv', encoding='ISO-8859-1')
+        #df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv', encoding='ISO-8859-1')
+        #print('started testing retrieval function...')
+        column_statements = []
+        for column in self.dataset:
+            previous_questions = pd.DataFrame(columns=['sentences']) # start with an empty dataframe which is gradually filled with the retrieved utterances
+            for _ in range(30): # we retrieve 20 utterances here
+                maxscore = 0
+                chosen = ''
+                for row in self.dataset[column].dropna():  # select a column/base utterance we want to retrieve the variations of
+                    if pd.notna(row):
+                        fitscore = get_sentence_score_pos(row, previous_questions)
+                        #fitscore = get_sentence_score_neg(row, previous_questions)
+                        if fitscore > maxscore:
+                            maxscore = fitscore
+                            chosen = row
+                column_statements.append(chosen)
+                previous_questions = previous_questions.append({'sentences':chosen}, ignore_index=True)
+            df[column] = column_statements
+            df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv')
+            #df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv')
+            column_statements = []
+        #print('finished testing retrieval function!')
 
     def clear_suggestions(self, user_id):
         self.suggestions[user_id] = []
@@ -894,6 +322,7 @@ class ModelDecisionMaker:
     def clear_choices(self, user_id):
         self.user_choices[user_id] = {}
 
+    # TODO change this and remove print statements
     def update_suggestions(self, user_id, protocols, app):
 
         # Check if user_id already has suggestions
@@ -907,30 +336,86 @@ class ModelDecisionMaker:
         else:
             self.suggestions[user_id].append(deque(protocols))
 
+        #print("self.suggestions[user_id]: ", self.suggestions[user_id])
+
     # Takes next item in queue, or moves on to suggestions
     # if all have been checked
-
-
-    # add check for whether user is familiar with the humorous protocols
-    def get_opening_prompt(self, user_id):
-        # time.sleep(7)
-        if self.users_names[user_id] == "":
-            opening_prompt = ["Nice to speak to you. I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
-            "Are you familiar with the self-initiated humorous protocols?"]
-        else:
-            opening_prompt = ["Nice to speak to you " + self.users_names[user_id] + ". I will do my best to help you learn to laugh \N{grinning face with smiling eyes}", 
-            "Are you familiar with the self-initiated humorous protocols?"]
-        return opening_prompt
-
-
+    
     def get_restart_prompt(self, user_id):
+        #TODO: why time.sleep()
         time.sleep(7)
         if self.users_names[user_id] == "":
             restart_prompt = ["Please tell me again, how are you feeling today?"]
         else:
             restart_prompt = ["Please tell me again, " + self.users_names[user_id] + ", how are you feeling today?"]
         return restart_prompt
+    
+    def determine_next_prompt_haha(self, question1, question2):
+        return np.random.choice([question1, question2], 1, p=[0.35, 0.65])[0]
+    
+    # TODO added (right place)
+    #def choose_mini_session(self, user_id): 
+    #from user_id: current emotional state, current protocol/level, previous protocols 
+    # state can be "Positive" (Better), "Negative" (Worse) or "Neutral" (Same) 
+    def determine_next_mini_session(self, user_id, state):
+        sessions_left = list(set(self.MINI_SESSION_TITLES) - set(self.user_covered_sessions[user_id]))
+        #print("covered sessions: ", self.user_covered_sessions)
+        #print("sessions_left: ", sessions_left)
+        next_session_options = set() #random non recent if no options or if user's finnished all - suggest they chooose
 
+        current_state = self.user_states[user_id]
+        current_session = self.user_mini_sessions[user_id]
+        #print("current_session: ", current_session)
+        current_level = self.MINI_SESSION_TITLE_TO_LEVEL[current_session]
+
+        if len(sessions_left) > 0:
+            sorted_sessions = sorted(sessions_left,key=self.MINI_SESSION_TITLES.index)
+            min_session_level = self.MINI_SESSION_TITLE_TO_LEVEL[sorted_sessions[0]]
+
+            #print("sorted sessions: ", sorted_sessions)
+            #print("min_session_level: ", min_session_level)
+            for session in sessions_left:
+                session_level = self.MINI_SESSION_TITLE_TO_LEVEL[session]
+                #print("session_level: ", session_level)
+                if current_state == "Positive":
+                    if state == "willing":
+                        if session_level >= current_level:
+                            next_session_options.add(session)
+                    elif state == "not_willing":
+                        if session_level <= current_level:
+                            next_session_options.add(session)
+                    elif state == "can't_do":
+                        if current_level < 3 and session_level == current_level + 1:
+                            next_session_options.add(session)
+                elif current_state == "Negative":
+                    # User can’t do current protocol due to circumstance: Random protocol from session pool with level <= current protocol level
+                    # User doesn’t want to do a protocol: Random protocol from session pool with lowest level protocol
+                    # User would like to continue: Random protocol from session pool with level <= current protocol level
+                    if state == "Positive":
+                        if session_level <= current_level:
+                            next_session_options.add(session)
+                    elif state == "Negative":
+                        if session_level == min_session_level:
+                            next_session_options.add(session)
+                    elif state == "Neutral":
+                        if session_level <= current_level:
+                            next_session_options.add(session)
+        else:
+            # covered all mini sessions
+            if self.covered_all_message == True:
+                return "review_any_session"
+            else:
+                self.covered_all_message = True
+                return "covered_all_sessions"
+        if next_session_options == set():
+            #print("no next_session_options!")
+            random_choice = random.sample(sessions_left, 1)
+            next_session_options.add(tuple(random_choice)[0])
+
+        random_choice = random.sample(next_session_options, 1)
+        return self.MINI_SESSION_TO_QUESTION[tuple(random_choice)[0]]
+
+    # TODO 
     def get_next_question(self, user_id):
         if self.remaining_choices[user_id] == []:
             return "project_emotion"
@@ -948,59 +433,21 @@ class ModelDecisionMaker:
     def clear_suggested_protocols(self):
         self.protocols_to_suggest = []
 
-    # NOTE: this is not currently used, but can be integrated to support
-    # positive protocol suggestions (to avoid recent protocols).
-    # You would need to add it in when a user's emotion is positive
-    # and they have chosen a protocol.
-
-    def add_to_recent_protocols(self, recent_protocol):
-        if len(self.recent_protocols) == self.recent_protocols.maxlen:
-            # Removes oldest protocol
-            self.recent_protocols.popleft()
-        self.recent_protocols.append(recent_protocol)
-
-    # previously determine_next_prompt_opening - get emotion at start of session
-    def determine_next_prompt_get_started(self, user_id, app, db_session):
-        user_response = self.user_choices[user_id]["choices_made"]["ask_emotion"]
-        if user_response.lower() == 'sad' or user_response.lower() == 'angry' or user_response.lower() == 'anxious' or user_response.lower() == 'happy':
-            self.user_emotions[user_id] = string.capwords(user_response)
-            if user_response.lower() == 'happy':
-                return "after_classification_plus"
-            else:
-                return "after_classification_minus"
-        
-        emotion = get_emotion(user_response)
-        #emotion = np.random.choice(["Happy", "Sad", "Angry", "Anxious"]) #random choice to be replaced with emotion classifier
-        if emotion == 'fear':
-            self.guess_emotion_predictions[user_id] = 'Anxious/Scared'
-            self.user_emotions[user_id] = 'Anxious'
-        elif emotion == 'sadness':
-            self.guess_emotion_predictions[user_id] = 'Sad'
-            self.user_emotions[user_id] = 'Sad'
-        elif emotion == 'anger':
-            self.guess_emotion_predictions[user_id] = 'Angry'
-            self.user_emotions[user_id] = 'Angry'
-        else:
-            self.guess_emotion_predictions[user_id] = 'Happy/Content'
-            self.user_emotions[user_id] = 'Happy'
-        #self.guess_emotion_predictions[user_id] = emotion
-        #self.user_emotions[user_id] = emotion
-        return "guess_emotion"
-
-    def get_best_sentence(self, column, prev_qs):
-        #return random.choice(column.dropna().sample(n=15).to_list()) #using random choice instead of machine learning
+    def get_best_sentence_new(self, column, prev_qs, user_id):
         maxscore = 0
         chosen = ''
-        for row in column.dropna().sample(n=5): #was 25
-             fitscore = get_sentence_score(row, prev_qs)
-             if fitscore > maxscore:
-                 maxscore = fitscore
-                 chosen = row
-        if chosen != '':
-            return chosen
-        else:
-            return random.choice(column.dropna().sample(n=5).to_list()) #was 25
-
+        if not greeting in column.unique():
+            for row in column.dropna().sample(n=10): #was 25 #TODO CHANGE - 12?
+                if self.user_states_initial[user_id] == "Positive":
+                    fitscore = get_sentence_score_pos(row, prev_qs)
+                else:
+                    fitscore = get_sentence_score_neg(row, prev_qs)
+                if fitscore > maxscore:
+                    maxscore = fitscore
+                    chosen = row
+            if chosen != '':
+                return chosen
+        return random.choice(column.dropna().to_list())#before was column.dropna().sample(n=5).to_list()) #was 25       
 
     def split_sentence(self, sentence):
         temp_list = re.split('(?<=[.?!]) +', sentence)
@@ -1012,375 +459,7 @@ class ModelDecisionMaker:
         elif len(temp_list) == 3:
             return temp_list[0], temp_list[1], temp_list[2]
         else:
-            return sentence
-
-
-    def get_model_prompt_guess_emotion(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - From what you have said I believe you are feeling {}. Is this correct?"].dropna()
-        my_string = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(my_string)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(my_string)
-        question = my_string.format(self.guess_emotion_predictions[user_id].lower())
-        return self.split_sentence(question)
-
-    def get_model_prompt_check_emotion(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - I am sorry. Please select from the emotions below the one that best reflects what you are feeling:"].dropna()
-        my_string = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(my_string)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(my_string)
-        return self.split_sentence(my_string)
-
-    def get_sad_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Sad"
-        self.user_emotions[user_id] = "Sad"
-        return "after_classification_minus" # for initial rule-based implementation
-    def get_angry_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Angry"
-        self.user_emotions[user_id] = "Angry"
-        return "after_classification_minus" # for initial rule-based implementation
-    def get_anxious_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Anxious/Scared"
-        self.user_emotions[user_id] = "Anxious"
-        return "after_classification_minus" # for initial rule-based implementation
-    def get_happy_emotion(self, user_id):
-        self.guess_emotion_predictions[user_id] = "Happy/Content"
-        self.user_emotions[user_id] = "Happy"
-        return "after_classification_plus"
-
-    def get_model_prompt_project_emotion(self, user_id, app, db_session):
-        #time.sleep(7) # TODO: should we removed the sleeps
-        if self.chosen_personas[user_id] == "Robert":
-            prompt = "Ok, thank you. Now, one last important thing: since you've told me you're feeling " + self.user_emotions[user_id].lower() + ", I would like you to try to project this emotion onto your childhood self. You can press 'continue' when you are ready and I'll suggest some protocols I think may be appropriate for you."
-        elif self.chosen_personas[user_id] == "Gabrielle":
-            prompt = "Thank you, I will recommend some protocols for you in a moment. Before I do that, could you please try to project your " + self.user_emotions[user_id].lower() + " feeling onto your childhood self? Take your time to try this, and press 'continue' when you feel ready."
-        elif self.chosen_personas[user_id] == "Arman":
-            prompt = "Ok, thank you for letting me know that. Before I give you some protocol suggestions, please take some time to project your current " + self.user_emotions[user_id].lower() + " feeling onto your childhood self. Press 'continue' when you feel able to do it."
-        elif self.chosen_personas[user_id] == "Arman":
-            prompt = "Ok, thank you, I'm going to draw up a list of protocols which I think would be suitable for you today. In the meantime, going back to this " + self.user_emotions[user_id].lower() + " feeling of yours, would you like to try to project it onto your childhood self? You can try now and press 'continue' when you feel ready."
-        else:
-            prompt = "Thank you. While I have a think about which protocols would be best for you, please take your time now and try to project your current " + self.user_emotions[user_id].lower() + " emotion onto your childhood self. When you are able to do this, please press 'continue' to receive your suggestions."
-        return self.split_sentence(prompt)
-
-
-    def get_model_prompt_saviour(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Do you believe that you should be the saviour of someone else?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_victim(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Do you see yourself as the victim, blaming someone else for how negative you feel?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_controlling(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Do you feel that you are trying to control someone?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_accusing(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Are you always blaming and accusing yourself for when something goes wrong?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_specific_event(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Was this caused by a specific event/s?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_event_is_recent(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Was this caused by a recent or distant event (or events)?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_revisit_recent(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Have you recently attempted protocol 11 and found this reignited unmanageable emotions as a result of old events?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_revisit_distant(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Have you recently attempted protocol 6 and found this reignited unmanageable emotions as a result of old events?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_more_questions(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Thank you. Now I will ask some questions to understand your situation."
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_antisocial(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Have you strongly felt or expressed any of the following emotions towards someone:"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return [self.split_sentence(question), "Envy, jealousy, greed, hatred, mistrust, malevolence, or revengefulness?"]
-
-    def get_model_prompt_rigid_thought(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - In previous conversations, have you considered other viewpoints presented?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_personal_crisis(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        base_prompt = self.user_emotions[user_id] + " - Are you undergoing a personal crisis (experiencing difficulties with loved ones e.g. falling out with friends)?"
-        column = data[base_prompt].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_happy(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["Happy - That's Good! Let me recommend a protocol you can attempt."].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_suggestions(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - Here are my recommendations, please select the protocol that you would like to attempt"].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_trying_protocol(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - Please try to go through this protocol now. When you finish, press 'continue'"].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return ["You have selected Protocol " + str(self.current_protocol_ids[user_id][0]) + ". ", self.split_sentence(question)]
-
-    def get_model_prompt_found_useful(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - Do you feel better or worse after having taken this protocol?"].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_new_better(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - Would you like to attempt another protocol? (Patient feels better)"].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_new_worse(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - Would you like to attempt another protocol? (Patient feels worse)"].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return self.split_sentence(question)
-
-    def get_model_prompt_ending(self, user_id, app, db_session):
-        prev_qs = pd.DataFrame(self.recent_questions[user_id],columns=['sentences'])
-        data = self.datasets[user_id]
-        column = data["All emotions - Thank you for taking part. See you soon"].dropna()
-        question = self.get_best_sentence(column, prev_qs)
-        if len(self.recent_questions[user_id]) < 50:
-            self.recent_questions[user_id].append(question)
-        else:
-            self.recent_questions[user_id] = []
-            self.recent_questions[user_id].append(question)
-        return [self.split_sentence(question), "You have been disconnected. Refresh the page if you would like to start over."]
-
-
-    def determine_next_prompt_new_protocol(self, user_id, app):
-        try:
-            self.suggestions[user_id]
-        except KeyError:
-            self.suggestions[user_id] = []
-        if len(self.suggestions[user_id]) > 0:
-            return "suggestions"
-        return "more_questions"
-
-
-    def determine_positive_protocols(self, user_id, app):
-        protocol_counts = {}
-        total_count = 0
-
-        for protocol in self.positive_protocols:
-            count = Protocol.query.filter_by(protocol_chosen=protocol).count()
-            protocol_counts[protocol] = count
-            total_count += count
-
-        # for protocol in counts:
-        if total_count > 10:
-            first_item = min(zip(protocol_counts.values(), protocol_counts.keys()))[1]
-            del protocol_counts[first_item]
-
-            second_item = min(zip(protocol_counts.values(), protocol_counts.keys()))[1]
-            del protocol_counts[second_item]
-
-            third_item = min(zip(protocol_counts.values(), protocol_counts.keys()))[1]
-            del protocol_counts[third_item]
-        else:
-            # CASE: < 10 protocols undertaken in total, so randomness introduced
-            # to avoid lowest 3 being recommended repeatedly.
-            # Gives number of next protocol to be suggested
-            first_item = np.random.choice(
-                list(set(self.positive_protocols) - set(self.recent_protocols))
-            )
-            second_item = np.random.choice(
-                list(
-                    set(self.positive_protocols)
-                    - set(self.recent_protocols)
-                    - set([first_item])
-                )
-            )
-            third_item = np.random.choice(
-                list(
-                    set(self.positive_protocols)
-                    - set(self.recent_protocols)
-                    - set([first_item, second_item])
-                )
-            )
-
-        return [
-            self.PROTOCOL_TITLES[first_item],
-            self.PROTOCOL_TITLES[second_item],
-            self.PROTOCOL_TITLES[third_item],
-        ]
-
-    def determine_protocols_keyword_classifiers(
-        self, user_id, db_session, curr_session, app
-    ):
-
-        # We add "suggestions" first, and in the event there are any left over we use those, otherwise we divert past it.
-        self.add_to_reordered_protocols(user_id, "suggestions")
-
-        # Default case: user should review protocols 13 and 14.
-        #self.add_to_next_protocols([self.PROTOCOL_TITLES[13], self.PROTOCOL_TITLES[14]])
-        return self.get_next_protocol_question(user_id, app)
-
+            return sentence   
 
     def update_conversation(self, user_id, new_dialogue, db_session, app):
         try:
@@ -1482,8 +561,11 @@ class ModelDecisionMaker:
                     if len(curr_protocols) == 0:
                         self.suggestions[user_id].pop(i)
                     break
-
+        
+        # TODO: use protocols for this from QUESTIONS
         # PRE: User choice is string in ["Better", "Worse"]
+        # TODO: change here for recording insights on protocols
+        # 'protocol' table changed to 'protocol_use'
         elif current_choice == "user_found_useful":
             current_protocol = Protocol.query.filter_by(
                 id=self.current_protocol_ids[user_id][1]
@@ -1529,26 +611,115 @@ class ModelDecisionMaker:
 
         current_choice = self.user_choices[user_id]["choices_made"]["current_choice"]
         current_choice_for_question = self.QUESTIONS[current_choice]["choices"]
+        # list of protocols for all choices
         current_protocols = self.QUESTIONS[current_choice]["protocols"]
+        #print("current_protocols: ", current_protocols)
         if input_type != "open_text":
-            if (
-                current_choice != "suggestions"
-                and current_choice != "event_is_recent"
-                and current_choice != "more_questions"
-                and current_choice != "after_classification_positive"
-
-                and current_choice != "user_found_useful"
+            if (current_choice != "pre_laughter_pos" 
                 and current_choice != "check_emotion"
-                and current_choice != "new_protocol_better"
-                and current_choice != "new_protocol_worse"
-                and current_choice != "new_protocol_same"
-                and current_choice != "choose_persona"
-                and current_choice != "project_emotion"
-                and current_choice != "after_classification_negative"
-                and current_choice != "after_classification_minus" # added this
+                and current_choice != "explore_trigger_yes"
+                and current_choice != "ask_feel_post_sg"
+                and current_choice != "ask_incongruity"
+                and current_choice != "ask_feel_post_lb"
+                and current_choice != "ask_feel_post_error"
+                and current_choice != "ask_feel_post_setback"
+                and current_choice != "ask_feel_post_hardship"
+                and current_choice != "remind_contempt_post_hardship"
+                and current_choice != "encourage_try_lb"
+                and current_choice != "ask_try_pre_setback"
+                and current_choice != "ask_hardship"
+                and current_choice != "ask_try_pre_hardship"
+                and current_choice != "remind_contempt_post_protocol"
+                and current_choice != "remind_contempt_pre_protocol_no_haha"
+                and current_choice != "ask_incongruity_and_cv"
+                and current_choice != "covered_all_sessions"
+                and current_choice != "choose_any"
+                and current_choice != "final_feeling_check"
+                and current_choice != "ending_neg_haha"
+                and current_choice != "ending_neg_no_haha"
+                and current_choice != "ending_better_no_haha"
+                and current_choice != "ending_better_haha"
+                and current_choice != "remind_contempt_pre_laughter"
+                and current_choice != "continue_cv_haha"
+                and current_choice != "continue_cv_no_haha"
+                and current_choice != "remind_contempt_post_error"
+                and current_choice != "remind_contempt_pre_error"
+                and current_choice != "remind_contempt_post_setback"
+                and current_choice != "give_quote_setback"
+                and current_choice != "give_quote_hardship"
+                and current_choice != "remind_contempt_pre_setback"
+                and current_choice != "remind_contempt_pre_hardship"
+                and current_choice != "no_error_no_haha"
+                and current_choice != "no_error_haha"
+                and current_choice != "ask_relevant_context"
+                and current_choice != "no_incongruity_cv_haha"
+                and current_choice != "constant_practice_haha"
+                and current_choice != "get_started"
+                and current_choice != "review_any_session"
+                and current_choice != "inform_playful"
+                and current_choice != "ending_session_initial_pos"
+                and current_choice != "guess_emotion"
+                and current_choice != "ask_emotion_haha"
+                and current_choice != "funny_ending"
+                and current_choice != "not_funny_ending"
+                and current_choice != "response_to_song_haha"
+                and current_choice != "recommend_song_haha"
+                and current_choice != "ask_self_glory_haha"
+                and current_choice != "propose_congratulate_with_smile_haha"
+                and current_choice != "clarify_laughter_haha"
+                and current_choice != "further_clarify_fl_haha"
+                and current_choice != "encourage_laughter_error_haha"
+                and current_choice != "propose_reflect_setback_haha"
+                and current_choice != "ask_accept_hardship_haha"
+                and current_choice != "propose_reflect_hardship_haha"
+                and current_choice != "continue_pos_pre_protocol_haha"
+                and current_choice != "try_pre_protocol_pos_haha"
+                and current_choice != "try_pre_protocol_neg_haha"
+                and current_choice != "remind_contempt_pre_protocol_haha"
+                and current_choice != "ask_laughter_incongruity_haha"
+                and current_choice != "further_clarify_pre_error_haha"
+                and current_choice != "further_clarify_post_error_haha"
+                and current_choice != "encourage_laughter_setback_haha"
+                and current_choice != "encourage_laughter_hardship_haha"
+                and current_choice != "ask_playful_mode_haha"
+                and current_choice != "recommend_review"
+                and current_choice != "remind_review"
+                and current_choice != "recommend_review_more_details"
             ):
                 user_choice = user_choice.lower()
+                # TODO: remove this annd all print statements
+                # yes or no (positive or negative, etc.)
+                #print("user_choice: ", user_choice)
 
+             # update emotional state
+            if current_choice == "ask_present_feeling":
+                self.user_states[user_id] = user_choice
+
+            # update user's mini session info
+            if current_choice in self.MINI_SESSION_QUESTIONS:
+                #print("current_choice is in self.MINI_SESSION_QUESTIONS")
+                current_mini_session_title = self.QUESTION_TO_MINI_SESSION[current_choice]
+                self.user_mini_sessions[user_id] = current_mini_session_title
+                #TODO
+                #next_choice = 
+                if len(self.user_covered_sessions[user_id]) == 0:
+                    self.user_covered_sessions[user_id] = [current_mini_session_title]
+                else:
+                    self.user_covered_sessions[user_id].append(current_mini_session_title) 
+                #print("self.user_covered_sessions: ", self.user_covered_sessions)
+            
+            #ADDED THISE-------------
+            if current_choice in self.NEGATIVE_MINI_SESSION_QUESTIONS:
+                current_mini_session_title = self.QUESTION_TO_NEGATIVE_MINI_SESSION[current_choice]
+                self.user_mini_sessions[user_id] = current_mini_session_title
+                # TODO:
+                #next_choice = 
+                if len(self.user_covered_sessions[user_id]) == 0:
+                    self.user_covered_sessions[user_id] = [current_mini_session_title]
+                else:
+                    self.user_covered_sessions[user_id].append(current_mini_session_title) 
+            #UP TO HERE-------------
+        
             if (
                 current_choice == "suggestions"
             ):
@@ -1574,8 +745,13 @@ class ModelDecisionMaker:
                     next_choice = current_choice_for_question["Happy/Content"]
                     protocols_chosen = current_protocols["Happy/Content"]
             else:
+                # TODO: remove print:
+                # next_choice is the next question name (in QUESTIONS)
                 next_choice = current_choice_for_question[user_choice]
+                #print("next_choice: ", next_choice)
+                # protocols_chosen is a list of protocols, i.e. ['3: Self-glory', '7: Contrasting views']
                 protocols_chosen = current_protocols[user_choice]
+                #print("protocols_chosen: ", protocols_chosen)
 
         else:
             next_choice = current_choice_for_question["open_text"]
@@ -1584,7 +760,7 @@ class ModelDecisionMaker:
         if callable(next_choice):
             next_choice = next_choice(user_id, db_session, user_session, app)
 
-        if current_choice == "guess_emotion" and user_choice.lower() == "yes":
+        if current_choice == "guess_emotion" and user_choice.lower() == "that's correct": #TODO
             if self.guess_emotion_predictions[user_id] == "Sad":
                 next_choice = next_choice["Sad"]
             elif self.guess_emotion_predictions[user_id] == "Angry":
@@ -1596,6 +772,7 @@ class ModelDecisionMaker:
 
         if callable(protocols_chosen):
             protocols_chosen = protocols_chosen(user_id, db_session, user_session, app)
+            #print("protocols_chosen are callable and = ", protocols_chosen)
         next_prompt = self.QUESTIONS[next_choice]["model_prompt"]
         if callable(next_prompt):
             next_prompt = next_prompt(user_id, db_session, user_session, app)
@@ -1611,10 +788,6 @@ class ModelDecisionMaker:
             self.clear_emotion_scores(user_id)
             self.create_new_run(user_id, db_session, user_session)
 
-        if next_choice == "suggestions":
-            next_choices = self.get_suggestions(user_id, app)
-
-        else:
-            next_choices = list(self.QUESTIONS[next_choice]["choices"].keys())
+        next_choices = list(self.QUESTIONS[next_choice]["choices"].keys())
         self.user_choices[user_id]["choices_made"]["current_choice"] = next_choice
         return {"model_prompt": next_prompt, "choices": next_choices}

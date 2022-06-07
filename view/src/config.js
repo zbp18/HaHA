@@ -9,6 +9,10 @@ import FeedbackOptions from "./widgets/options/GeneralOptions/FeedbackOptions";
 import EmotionOptions from "./widgets/options/GeneralOptions/EmotionOptions";
 import EventOptions from "./widgets/options/GeneralOptions/EventOptions";
 import YesNoProtocolOptions from "./widgets/options/GeneralOptions/YesNoProtocolsOptions";
+import FeelingOptions from "./widgets/options/GeneralOptions/FeelingOptions";
+import FeelingOptions2 from "./widgets/options/GeneralOptions/FeelingOptions2";
+import ImageOptions from "./widgets/options/GeneralOptions/ImageOptions";
+
 const botName = "HumBERT";
 
 const config = {
@@ -33,7 +37,16 @@ const config = {
       height: '16px', fontFamily: 'Arial', borderTopLeftRadius: '5px', borderTopRightRadius: '5px',
       background: '#EBECED', color: '#4A4A4A', padding: '8px', borderBottom: '1px solid #B8BABA'
     }}>Conversation</div>,
-    botAvatar: () => <div class="react-chatbot-kit-chat-bot-avatar-container" style={{ fontFamily: 'Arial' }}><p class="react-chatbot-kit-chat-bot-avatar-letter">S</p></div>
+    botAvatar: () => <div className="react-chatbot-kit-chat-bot-avatar">
+      <div className="react-chatbot-kit-chat-bot-avatar-container">
+        <p className="react-chatbot-kit-chat-bot-avatar-letter">H</p>
+      </div>
+    </div>,
+    userAvatar: () => <div className="react-chatbot-kit-user-avatar">
+      <div className="react-chatbot-kit-user-avatar-container">
+        <p className="react-chatbot-kit-user-avatar-letter">Me</p>
+      </div>
+    </div>
   },
 
   widgets: [
@@ -70,6 +83,21 @@ const config = {
     {
       widgetName: "RecentDistant",
       widgetFunc: (props) => <EventOptions {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Feeling",
+      widgetFunc: (props) => <FeelingOptions {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Feeling2",
+      widgetFunc: (props) => <FeelingOptions2 {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Image",
+      widgetFunc: (props) => <ImageOptions {...props} />,
       mapStateToProps: ["userState", "sessionID"],
     },
   ],

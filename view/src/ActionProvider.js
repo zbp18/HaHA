@@ -50,12 +50,12 @@ class ActionProvider {
     let dataReceived = response.data
     if (!dataReceived.validID) {
       let message = this.createChatBotMessage(
-        "The user ID and password combination is not valid. Please enter user ID again.",
+        "The username and password combination is not valid.",
         {
           withAvatar: true,
         });
       this.addMessageToBotState(message);
-      let user_id_message = this.createChatBotMessage("What is your user ID?",
+      let user_id_message = this.createChatBotMessage("Please re-enter your username:",
         { withAvatar: true }
       );
       this.addMessageToBotState(user_id_message)
@@ -119,8 +119,14 @@ class ActionProvider {
       optionsToShow = "RecentDistant"
     } else if (userOptions.length === 3 && userOptions[0] === "positive" && userOptions[1] === "neutral" && userOptions[2] === "negative") {
       optionsToShow = "Emotion"
+    } else if (userOptions.length === 1 && userOptions[0] === "staring...") {
+      optionsToShow = "Image"
     } else if (userOptions.length === 3 && userOptions[0] === "better" && userOptions[1] === "worse" && userOptions[2] === "no change") {
       optionsToShow = "Feedback"
+    } else if (userOptions.length === 3 && userOptions[0] === "\uD83D\uDE00" && userOptions[1] === "\uD83D\uDE10" && userOptions[2] === "\uD83D\uDE41") {
+      optionsToShow = "Feeling"
+    } else if (userOptions.length === 2 && userOptions[0] === "\uD83D\uDE00" && userOptions[1] === "\uD83D\uDE41") {
+      optionsToShow = "Feeling2"
     } else {
       // Protocol case
       optionsToShow = "Protocol"
