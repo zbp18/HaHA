@@ -13,7 +13,7 @@ import FeelingOptions from "./widgets/options/GeneralOptions/FeelingOptions";
 import FeelingOptions2 from "./widgets/options/GeneralOptions/FeelingOptions2";
 import ImageOptions from "./widgets/options/GeneralOptions/ImageOptions";
 
-const botName = "HumBERT";
+const botName = "HaHA";
 
 const config = {
   botName: botName,

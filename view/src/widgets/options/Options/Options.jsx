@@ -1,7 +1,7 @@
 import React from "react";
 
 import styles from "./Options.module.css";
-import vase from "/Users/zeenapatel/dev/HumBERT/view/src/images/gestalt vase.png";
+import vase from "/Users/zeenapatel/dev/HaHA/view/src/images/gestalt vase.png";
 
 const Options = ({ options }) => {
   const runHandler = (handler, userID, sessionID, userInput, userInputType) => {

@@ -24,8 +24,8 @@ from nltk.corpus import wordnet  # noqa
 class ModelDecisionMaker:
     def __init__(self):
 
-        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/humbert_statements.csv', encoding='ISO-8859-1')
-        self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        self.dataset = pd.read_csv('/Users/zeenapatel/dev/HaHA/model/all_statements.csv', encoding='ISO-8859-1')
+        self.scored_statements = pd.read_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv', encoding='ISO-8859-1')
 
         self.PROTOCOL_TITLES = [
             "0: None",
@@ -179,7 +179,7 @@ class ModelDecisionMaker:
         self.pre_compute_empathy_scores()
     
     def pre_compute_empathy_scores(self):
-        #data = pd.read_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv', encoding='ISO-8859-1')
+        #data = pd.read_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv', encoding='ISO-8859-1')
         data = self.scored_statements
         empathy_scores = []
         if 'empathy' not in data.columns:
@@ -187,7 +187,7 @@ class ModelDecisionMaker:
                 score = empathy_score(row)
                 empathy_scores.append(score)
             data['empathy'] = empathy_scores
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            data.to_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv')
 
     def pre_compute_fluency_scores(self):
         data = self.scored_statements
@@ -197,14 +197,14 @@ class ModelDecisionMaker:
                 score = fluency_score(row)
                 fluency_scores.append(score)
             data['fluency'] = fluency_scores
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            data.to_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv')
 
     def pre_compute_humour_scores(self):
         data = self.scored_statements
         if 'humour' not in data.columns:
             humour_scores = get_humour_scores(data)
             data['humour'] = pd.Series(humour_scores)
-            data.to_csv('/Users/zeenapatel/dev/HumBERT/model/scored_statements.csv')
+            data.to_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv')
 
     def initialise_remaining_choices(self, user_id):
         self.remaining_choices[user_id] = ["displaying_antisocial_behaviour", "internal_persecutor_saviour", "personal_crisis", "rigid_thought"]
