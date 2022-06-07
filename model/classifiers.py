@@ -9,14 +9,7 @@ import torch.nn.functional as F
 import re
 import nltk
 nltk.download("stopwords")
-from nltk.corpus import stopwords
-
-from transformers import (
-    T5ForConditionalGeneration,
-    T5Tokenizer,
-    GPT2Tokenizer,
-    GPT2LMHeadModel
-)
+#from nltk.corpus import stopwords
 
 from transformers import (
     T5ForConditionalGeneration,
