@@ -21,8 +21,7 @@ SQLAlchemy==1.4.15
 tqdm==4.60.0
 Werkzeug==2.0.1
 PyMySQL==1.0.2
-#transformers==2.9.0
-transformers==4.19.2
+transformers==2.9.0
 pytorch_lightning==0.7.5
 textdistance
 argparse
@@ -30,4 +29,3 @@ pandas
 torch
 typing
 sentencepiece
-webbrowser
