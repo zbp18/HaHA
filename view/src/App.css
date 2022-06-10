@@ -29,7 +29,8 @@
   height: 40px;
   border-radius: 50%;
   font-size: 1.2rem;
-  margin-left: 0px;
+  margin-left: 12.5px;
+  /*when deployed - change margin-left to 0px;*/
   margin-right: 12.5px;
   background-color: #60A2EA !important;
   display: flex;
