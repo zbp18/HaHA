@@ -56,7 +56,7 @@ def create_app():
         user_info = json.loads(request.data)["user_info"]
         username = user_info["username"]
         password = user_info["password"]
-        usernames = ["user" + str(i) for i in range(1, 31)]
+        usernames = ["user" + str(i) for i in range(1, 41)]
         passwords = [
             "ph6n76gec9",
             "l98zjxj6vc",
@@ -88,6 +88,16 @@ def create_app():
             "2owdt20zas",
             "29uhzahhol",
             "mfhs4cyc4x",
+            "msbvp9mr3h",
+            "6tze6zw573",
+            "7t2jv3vuhd",
+            "tb2gmm8trw",
+            "9njf95bmdx",
+            "h9rfgk288w",
+            "222j2ax9hk",
+            "vetmk5bvmx",
+            "dgdcq6x46n",
+            "pjmth2wzx2"
         ]
         for i in range(len(usernames)):
             try:
