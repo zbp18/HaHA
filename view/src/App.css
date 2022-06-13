@@ -201,8 +201,73 @@
 
 .react-chatbot-kit-chat-message-container {
   padding: 0 0px 6px 0px;
-  overflow: scroll;
-  height: 88vh;
+  overflow: scroll !important;
+  height: 85vh !important;
+}
+
+/* For Desktop View */
+@media screen and (min-width: 1024px) {
+  .react-chatbot-kit-chat-message-container {
+    height: 88vh !important;
+  }
+}
+
+/* For Tablet View */
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .react-chatbot-kit-chat-message-container {
+    height: 88vh !important;
+  }
+}
+
+/* For Mobile Portrait View */
+@media screen and (max-device-width: 480px) and (orientation: portrait) {
+  .react-chatbot-kit-chat-message-container {
+    height: 85vh !important;
+  }
+}
+
+/* For Mobile Landscape View */
+@media screen and (max-device-width: 640px) and (orientation: landscape) {
+  .react-chatbot-kit-chat-message-container {
+    height: 30vh !important;
+  }
+}
+
+
+/* For iPhone 4 Portrait or Landscape View */
+@media (device-height: 480px) and (min-device-width: 320px) and (-webkit-min-device-pixel-ratio: 2) {
+  .react-chatbot-kit-chat-message-container {
+    padding: 0 0px 6px 0px;
+    overflow: scroll !important;
+    height: 60vh !important;
+  }
+}
+
+/* For iPhone 5 Portrait or Landscape View */
+@media (device-height: 568px) and (device-width: 320px) and (-webkit-min-device-pixel-ratio: 2) {
+  .react-chatbot-kit-chat-message-container {
+    height: 68vh !important;
+  }
+}
+
+/* For iPhone 6 and 6 plus Portrait or Landscape View */
+@media (min-device-height: 667px) and (min-device-width: 375px) and (-webkit-min-device-pixel-ratio: 3) {
+  .react-chatbot-kit-chat-message-container {
+    height: 78vh !important;
+  }
+}
+
+/*change to min?*/
+@media only screen and (device-width: 375px) and (device-height: 812px) {
+  .react-chatbot-kit-chat-message-container {
+    height: 80vh !important;
+  }
+}
+
+@media only screen and (device-width: 414px) and (device-height: 896px) {
+  .react-chatbot-kit-chat-message-container {
+    height: 85vh !important;
+  }
 }
 
 .react-chatbot-kit-chat-input {
