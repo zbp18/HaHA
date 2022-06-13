@@ -124,7 +124,7 @@ feeling_pos_respond = "Great to hear that!"
 neg_respond = "Sorry to hear that."
 feeling_neg_respond = "Ah, that's unfortunate to hear. I can try to help you if you are able to tell me a bit more."
 # TODO url
-detailed_protocols_note = "A more detailed version of these can also be found here: {}"
+detailed_protocols_note = "A more detailed version of these can also be found online."
 more_relev_exercises_ask = "Would you like to explore another more relevant laughter exercise, {}?"
 cont_feeling_ask = "But really, how do you feel?"
 cont_playful_ask = "So is your body in a playful mode?"

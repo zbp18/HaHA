@@ -354,7 +354,7 @@ class ModelDecisionMaker:
         return restart_prompt
     
     def determine_next_prompt_haha(self, question1, question2):
-        return np.random.choice([question1, question2], 1, p=[0.35, 0.65])[0]
+        return np.random.choice([question1, question2], 1, p=[0.2, 0.8])[0]
     
     # TODO added (right place)
     #def choose_mini_session(self, user_id): 
@@ -628,7 +628,7 @@ class ModelDecisionMaker:
                 and current_choice != "ask_feel_post_setback"
                 and current_choice != "ask_feel_post_hardship"
                 and current_choice != "remind_contempt_post_hardship"
-                and current_choice != "encourage_try_lb"
+                #and current_choice != "encourage_try_lb"
                 and current_choice != "ask_try_pre_setback"
                 and current_choice != "ask_hardship"
                 and current_choice != "ask_try_pre_hardship"
@@ -687,7 +687,7 @@ class ModelDecisionMaker:
                 and current_choice != "ask_playful_mode_haha"
                 and current_choice != "recommend_review"
                 and current_choice != "remind_review"
-                and current_choice != "recommend_review_more_details"
+                #and current_choice != "recommend_review_more_details"
             ):
                 user_choice = user_choice.lower()
                 # TODO: remove this annd all print statements
