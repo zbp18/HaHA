@@ -12,6 +12,7 @@ import YesNoProtocolOptions from "./widgets/options/GeneralOptions/YesNoProtocol
 import FeelingOptions from "./widgets/options/GeneralOptions/FeelingOptions";
 import FeelingOptions2 from "./widgets/options/GeneralOptions/FeelingOptions2";
 import ImageOptions from "./widgets/options/GeneralOptions/ImageOptions";
+import UrlOptions from "./widgets/options/GeneralOptions/UrlOptions";
 
 const botName = "HaHA";
 
@@ -98,6 +99,11 @@ const config = {
     {
       widgetName: "Image",
       widgetFunc: (props) => <ImageOptions {...props} />,
+      mapStateToProps: ["userState", "sessionID"],
+    },
+    {
+      widgetName: "Url",
+      widgetFunc: (props) => <UrlOptions {...props} />,
       mapStateToProps: ["userState", "sessionID"],
     },
   ],

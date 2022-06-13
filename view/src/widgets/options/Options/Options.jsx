@@ -21,13 +21,16 @@ const Options = ({ options }) => {
         )
       }
     >
-      {option.userInputType === "Image" ? <figure>
-        <img src={vase} width={128} alt="Gestalt Vase" />
-        <figcaption>Click to continue</figcaption>
-      </figure> : option.name}
+      {option.userInputType === "Image" ?
+        <figure>
+          <img src={vase} width={128} alt="Gestalt Vase" />
+          <figcaption>Click to continue</figcaption>
+        </figure> :
+        (option.name === "opening..." ?
+          <a href="https://www.doc.ic.ac.uk/~ae/papers/SIHP.pdf" target="_blank">Open the protocols pdf</a>
+          : option.name)}
     </button>
   ));
-
   return <div className={styles.options}>{markup}</div>;
 };
 

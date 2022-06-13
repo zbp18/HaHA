@@ -121,6 +121,8 @@ class ActionProvider {
       optionsToShow = "Emotion"
     } else if (userOptions.length === 1 && userOptions[0] === "staring...") {
       optionsToShow = "Image"
+    } else if (userOptions.length === 2 && userOptions[0] === "opening..." && userOptions[1] === "continue") {
+      optionsToShow = "Url"
     } else if (userOptions.length === 3 && userOptions[0] === "better" && userOptions[1] === "worse" && userOptions[2] === "no change") {
       optionsToShow = "Feedback"
     } else if (userOptions.length === 3 && userOptions[0] === "\uD83D\uDE00" && userOptions[1] === "\uD83D\uDE10" && userOptions[2] === "\uD83D\uDE41") {
