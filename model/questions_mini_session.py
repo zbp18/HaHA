@@ -797,7 +797,6 @@ def get_mini_sessions_questions(decision_maker):
         "continue_explaining_lb": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_make_sense_ask(decision_maker, user_id),
             "choices": {
-                #"yes": lambda user_id, db_session, curr_session, app: decision_maker.determine_next_prompt_haha("try_pre_lb_haha", "try_pre_lb_no_haha"),
                 "yes": "try_pre_lb",
                 "no": "further_clarify_lb"
             },
@@ -811,28 +810,6 @@ def get_mini_sessions_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_pos_encourage_build_laughter_brand(decision_maker, user_id),#[pos_respond, build_laughter_brand_encourage],
             "choices": {
                 "continue": "ask_explore_related",
-            },
-            "protocols": {
-                "continue": [],
-            },
-        },
-
-        "try_pre_lb_haha": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_pos_encourage_build_laughter_brand(decision_maker, user_id),#[pos_respond, build_laughter_brand_encourage],
-            "choices": {
-                "Haha": "funny_lb",
-                "That wasn't funny": "not_funny_lb"
-            },
-            "protocols": {
-                "Haha": [],
-                "That wasn't funny": []
-            },
-        },
-
-        "try_pre_lb_no_haha": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_pos_encourage_build_laughter_brand(decision_maker, user_id),#[pos_respond, build_laughter_brand_encourage],
-            "choices": {
-                "continue": "explore_related_lb",
             },
             "protocols": {
                 "continue": [],
@@ -864,18 +841,6 @@ def get_mini_sessions_questions(decision_maker):
         "encourage_try_lb": {
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_build_laughter_brand_encourage(decision_maker, user_id),
             "choices": {
-                "Haha": "funny_lb",
-                "That wasn't funny": "not_funny_lb"
-            },
-            "protocols": {
-                "Haha": [],
-                "That wasn't funny": []
-            },
-        },
-
-        "funny_lb": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_respond(decision_maker, user_id),
-            "choices": {
                 "continue": "explore_related_lb",
             },
             "protocols": {
@@ -883,15 +848,25 @@ def get_mini_sessions_questions(decision_maker):
             },
         },
 
-        "not_funny_lb": {
-            "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_respond(decision_maker, user_id),
-            "choices": {
-                "continue": "explore_related_lb",
-            },
-            "protocols": {
-                "continue": [],
-            },
-        },
+        #"funny_lb": {
+        #    "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_funny_respond(decision_maker, user_id),
+        #    "choices": {
+        #        "continue": "explore_related_lb",
+        #    },
+        #    "protocols": {
+        #        "continue": [],
+        #    },
+        #},
+
+        #"not_funny_lb": {
+        #    "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_not_funny_respond(decision_maker, user_id),
+        #    "choices": {
+        #        "continue": "explore_related_lb",
+        #    },
+        #    "protocols": {
+        #        "continue": [],
+        #    },
+        #},
 
         # self-laughter
 
@@ -2673,7 +2648,7 @@ def get_model_prompt_protocols_remind(decision_maker, user_id):
 def get_model_prompt_build_laughter_brand_encourage(decision_maker, user_id):
     prev_qs = pd.DataFrame(decision_maker.recent_questions[user_id],columns=['sentences'])
     data = decision_maker.dataset
-    column = data[playful_mind_inform_eg].dropna()
+    column = data[build_laughter_brand_encourage].dropna()
     my_string = decision_maker.get_best_sentence_new(column, prev_qs, user_id)
     if len(decision_maker.recent_questions[user_id]) < 50:
         decision_maker.recent_questions[user_id].append(my_string)

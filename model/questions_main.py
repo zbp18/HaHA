@@ -97,12 +97,12 @@ def get_main_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_detailed_protocols_note(decision_maker, user_id),
             "choices": {
                 # check haha_count and return either constant_practice_no_haha or constant_practice_haha based on how hi count is
-                "Open this in a new tab": lambda user_id, db_session, curr_session, app: open_link_in_new_tab(),
-                "Continue": "sleep_reload",
+                "opening...": "link_opened_continue", #lambda user_id, db_session, curr_session, app: open_link_in_new_tab(),
+                "continue": "sleep_reload",
             },
             "protocols": {
-                "Open this in a new tab": [],
-                "Continue": [],
+                "opening...": [],
+                "continue": [],
             },
         },
 
@@ -513,7 +513,7 @@ def get_model_prompt_detailed_protocols_note(decision_maker, user_id):
     else:
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string)
-    question = my_string.format('http://humandevelopment.doc.ic.ac.uk/papers/Self-initiated_humorous_protocols-f.pdf').split("*")
+    question = my_string.format().split("*")
     return question
 
 def open_link_in_new_tab():
