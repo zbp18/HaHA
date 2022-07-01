@@ -405,10 +405,10 @@ class ModelDecisionMaker:
                             next_session_options.add(session)
         else:
             # covered all mini sessions
-            if self.covered_all_message == True:
+            if self.covered_all_message[user_id] == True:
                 return "review_any_session"
             else:
-                self.covered_all_message = True
+                self.covered_all_message[user_id] = True
                 return "covered_all_sessions"
         if next_session_options == set():
             #print("no next_session_options!")

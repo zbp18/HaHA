@@ -13,7 +13,7 @@ def get_negative_questions(decision_maker):
             "model_prompt": lambda user_id, db_session, curr_session, app: get_model_prompt_try_laugh_ask(decision_maker, user_id),
             "choices": {
                 "yes": "pre_laughter_pos",
-                "no": "pre_laughter_neg", 
+                "no": "empathetic_response_hardship", 
             },
             "protocols": {
                 #"yes": [decision_maker.PROTOCOL_TITLES[9], decision_maker.PROTOCOL_TITLES[10], decision_maker.PROTOCOL_TITLES[11]], #change here?
