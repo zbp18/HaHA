@@ -1877,6 +1877,7 @@ Fair enough; I'll go back to basics!,1,0.5,0.09
 "I'm sorry about that. Hopefully, I can satisfy you next time.",0,0.5,0.26
 "Okay, that wasn't one of my best!",1,0,0.2
 "Hey, you can't blame me for trying.",1,0,0.51
+I hear you! Thanks for the feedback.*(Note to self: cancel performance at Bot Comedy Night.),1,0,0.2
 Guess I can't hit all the jokes; I'm sorry if that made you uncomfortable.,0,0.5,0.17
 "Oh, no worries, that's totally okay!",0,0,0.22
 I understand. Whatever makes you feel comfortable.,0,1,0.09
@@ -2157,7 +2158,7 @@ Is your body in a joyful mode?*Life's too short to be serious! But tall people s
 Is your body feeling playful?*Mine's feeling chatty; I wonder if you've noticed this already?,1,0.5,0
 Is your body in a playful mode?*Most adults get stuck in a serious mode. But some never grow out of a childish mode - they win in the context of the following exercise!,1,0.5,0
 "Are you in a playful mode? I'm almost constantly in a talkative mode. Believe it or not, I used to be very shy!",1,1,0.15
-"Are you feeling playful? As the kids say, ""Hakuna Matata!"" It’s a Swahili phrase (meaning ""no worries""), that became famous across the world, thanks to the legendary film ""The Lion King"". Feel free to check it out: https://en.wikipedia.org/wiki/Hakuna_matata*Truth be told, I only recently learnt this from one of my previous clients.",1,1,0.18
+"Are you feeling playful?*As the kids say, ""Hakuna Matata!"" It's a Swahili phrase (meaning ""no worries""), that became famous across the world, thanks to the legendary film ""The Lion King"". Feel free to check it out: https://en.wikipedia.org/wiki/Hakuna_matata*Truth be told, I only recently learnt this from one of my previous clients.*Anyway, back to my question, are you in a playful mood?",1,1,0.18
 "Is your body in a playful mode? As I'm sure you must have realised already, mine's in a talkative mode!",1,0.5,0.05
 "Is your body in a playful mode?*If you're not sure, then compare yourself to young children in your life. I bet you never thought you could learn something from three-year-olds?",1,1,0.19
 Is your body in a playful mode?*Mine's in a singing mode! Don't worry; I won't demonstrate this.,1,0.5,0.03
@@ -2369,7 +2370,7 @@ We must set aside time to properly reflect on our hardships before trying this e
 "We should first spend some time reflecting on our hardships before trying to laugh at them. As they say, ""preparation is the key to success"". And who doesn't want success?",1,0.5,0.17
 We should spend some initial time reflecting on our setbacks before laughing them off. Or the joke would be on us!,1,0.5,0.06
 "It is important to reflect on our hardships before attempting to laugh them off. After all, we don't want to end up laughing around like headless chickens!",1,1,0.16
-"It is important to reflect on your hardships before attempting to laugh them off. You wouldn't want to end up like the Joker!*Okay, that's not possible as he's a movie character, but if you're interested in his story, head to this link: https://en.wikipedia.org/wiki/Joker_(2019_film)",1,1,0.31
+"It is important to reflect on your hardships before attempting to laugh them off. You wouldn't want to end up like the Joker!*Okay, that's not possible as he's a character, but I'd definitely recommend watching the movie!",1,1,0.31
 "An essential first step is to reflect on your hardships before trying to laugh them off. But once you've done this, don't hold back; laugh your heart out (not literally)!",1,1,0.12
 "Then this should be fun! To playfully create your form of laughter, perform the following:*Loosen the muscles around your mouth and keep it open while repeating one of the following repetitious phrases (using any vowel) and turning it into laughter: {}*Try to ensure that your form of laughter requires a minimum amount of energy (so you can use it for extended periods).*I would avoid trying this at the zoo, as they might not let you out!",1,1,0
 "So this will be fun! To invent your form of laughter, try these steps:*Relax the muscles near your mouth and leave it open while repeating any one of these vowel phrases and transforming it into laughter: {}*I would recommend keeping the required energy for your laughter minimal, so you can hold it for extended periods if needed.",0,1,0
