@@ -442,6 +442,7 @@ def get_opening_prompt(decision_maker, user_id):
     else:
         decision_maker.recent_questions[user_id] = []
         decision_maker.recent_questions[user_id].append(my_string)
+    #print("STATEMENT IS: ", my_string)
     question = my_string.format(name).split("*")
     return question
 

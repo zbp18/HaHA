@@ -5,7 +5,7 @@ import MessageParser from "./MessageParser";
 import ActionProvider from "./ActionProvider";
 import config from "./config";
 // import MoreInfoDocs from "./widgets/docs/MoreInfoDocs";
-import { BrowserView, MobileView, isMobile } from 'react-device-detect';
+import { BrowserView, MobileView, isMobile, TabletView, isTablet } from 'react-device-detect';
 
 function App() {
   const ProtocolViewer = () => {
@@ -24,13 +24,15 @@ function App() {
         </BrowserView >
         <MobileView>
         </MobileView>
+        <TabletView>
+        </TabletView>
       </div >
     );
   };
 
   return (
     <div className="App">
-      <header className={isMobile ? "app-chatbot-container-mobile" : "app-chatbot-container"}>
+      <header className={isMobile || isTablet ? "app-chatbot-container-mobile" : "app-chatbot-container"}>
         <Chatbot
           config={config}
           messageParser={MessageParser}

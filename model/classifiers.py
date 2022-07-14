@@ -233,9 +233,10 @@ def get_sentence_score_pos(sentence, dataframe):
   '''
   data = pd.read_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv', encoding='ISO-8859-1')
   humour = data.loc[data.index[data['sentences']==sentence].tolist(),'humour'].tolist()[0]
+  empathy = data.loc[data.index[data['sentences']==sentence].tolist(),'empathy'].tolist()[0]
   fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
   novelty = novelty_score(sentence, dataframe)
-  score = 0.4*humour + fluency + 8*novelty
+  score = 0.1*empathy + 0.4*(humour + fluency) + 4*novelty
   return score
 
 def get_sentence_score_neg(sentence, dataframe):
@@ -248,5 +249,5 @@ def get_sentence_score_neg(sentence, dataframe):
   empathy = data.loc[data.index[data['sentences']==sentence].tolist(),'empathy'].tolist()[0]
   fluency = data.loc[data.index[data['sentences']==sentence].tolist(),'fluency'].tolist()[0]
   novelty = novelty_score(sentence, dataframe)
-  score = max(humour, empathy) + 2*fluency + 4*novelty
+  score = 0.1*humour + 0.4*(empathy + fluency) + 4*novelty
   return score

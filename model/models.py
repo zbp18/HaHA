@@ -4,6 +4,7 @@
 # # Creates sql tables for use by flask
 # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+from email.policy import default
 from model import db
 import datetime
 from sqlalchemy import DateTime
@@ -44,11 +45,12 @@ class Choice(db.Model):  # noqa
     id = db.Column(db.Integer(), primary_key=True)
     choice_desc = db.Column(db.String(120))
     option_chosen = db.Column(db.String(60))
+    statement = db.Column(db.String(132))
     user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
     session_id = db.Column(db.Integer(), db.ForeignKey('model_session.id'))
     run_id = db.Column(db.Integer(), db.ForeignKey('model_run.id'))
     date_created = db.Column(DateTime, default=datetime.datetime.utcnow)
-
+    
 
 class UserModelRun(db.Model):  # noqa
     __tablename__ = 'model_run'  # noqa

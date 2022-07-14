@@ -140,9 +140,6 @@ class ModelDecisionMaker:
         self.recent_questions = {}
         self.recent_statements = {}
 
-        #self.chosen_personas = {}
-        #self.datasets = {}
-
         # Structure of dictionary: {question: {
         #                           model_prompt: str or list[str],
         #                           choices: {maps user response to next protocol},
@@ -165,14 +162,8 @@ class ModelDecisionMaker:
         self.recent_questions[user_id] = []
         self.recent_statements[user_id] = []
 
-    def clear_persona(self, user_id):
-        self.chosen_personas[user_id] = ""
-
     def clear_names(self, user_id):
         self.users_names[user_id] = ""
-
-    def clear_datasets(self, user_id):
-        self.datasets[user_id] = pd.DataFrame(columns=['sentences'])
     
     def pre_compute_scores(self):
         self.pre_compute_fluency_scores()
@@ -180,7 +171,6 @@ class ModelDecisionMaker:
         self.pre_compute_empathy_scores()
     
     def pre_compute_empathy_scores(self):
-        #data = pd.read_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv', encoding='ISO-8859-1')
         data = self.scored_statements
         empathy_scores = []
         if 'empathy' not in data.columns:
@@ -208,14 +198,9 @@ class ModelDecisionMaker:
             humour_scores = get_humour_scores(data)
             data['humour'] = pd.Series(humour_scores)
             data.to_csv('/Users/zeenapatel/dev/HaHA/model/scored_statements.csv')
-
-    def initialise_remaining_choices(self, user_id):
-        self.remaining_choices[user_id] = ["displaying_antisocial_behaviour", "internal_persecutor_saviour", "personal_crisis", "rigid_thought"]
-    
+                
     def initialise_user_session_vars(self, user_id):
-        # TODO: FOR NOW!!!!!!!
-        # drop negative once done (from list!)
-        self.user_states_initial[user_id] = "Positive"
+        self.user_states_initial[user_id] = "Positive" 
         self.user_mini_sessions[user_id] = ("1: Playful mind", "2: Playful face")
         self.user_covered_sessions[user_id] = []
         self.contempt_message[user_id] = False
@@ -284,18 +269,18 @@ class ModelDecisionMaker:
 
     # used to determine an optimal fitness score (for positive and negative scenarios)
     def test_retrieval_function(self):
-        df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv', encoding='ISO-8859-1')
-        #df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv', encoding='ISO-8859-1')
-        #print('started testing retrieval function...')
+        #df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv', encoding='ISO-8859-1')
+        df = pd.read_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv', encoding='ISO-8859-1')
+        print('started testing retrieval function...')
         column_statements = []
         for column in self.dataset:
             previous_questions = pd.DataFrame(columns=['sentences']) # start with an empty dataframe which is gradually filled with the retrieved utterances
-            for _ in range(30): # we retrieve 20 utterances here
+            for _ in range(20): # we retrieve 20 utterances here
                 maxscore = 0
                 chosen = ''
                 for row in self.dataset[column].dropna():  # select a column/base utterance we want to retrieve the variations of
                     if pd.notna(row):
-                        fitscore = get_sentence_score_pos(row, previous_questions)
+                        fitscore = get_sentence_score_neg(row, previous_questions)
                         #fitscore = get_sentence_score_neg(row, previous_questions)
                         if fitscore > maxscore:
                             maxscore = fitscore
@@ -303,10 +288,10 @@ class ModelDecisionMaker:
                 column_statements.append(chosen)
                 previous_questions = previous_questions.append({'sentences':chosen}, ignore_index=True)
             df[column] = column_statements
-            df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv')
-            #df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv')
+            #df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_pos_retrieval_function.csv')
+            df.to_csv('/Users/zeenapatel/Desktop/datasets/testing_neg_retrieval_function.csv')
             column_statements = []
-        #print('finished testing retrieval function!')
+        print('finished testing retrieval function!')
 
     def clear_suggestions(self, user_id):
         self.suggestions[user_id] = []
@@ -439,6 +424,7 @@ class ModelDecisionMaker:
     def get_best_sentence_new(self, column, prev_qs, user_id):
         maxscore = 0
         chosen = ''
+        #return random.choice(column.dropna().to_list())
         if not greeting in column.unique():
             for row in column.dropna().sample(n=10): #was 25 #TODO CHANGE - 12?
                 if self.user_states_initial[user_id] == "Positive":
@@ -576,6 +562,12 @@ class ModelDecisionMaker:
             current_protocol.protocol_was_useful = user_choice
             db_session.commit()
 
+        
+        if (self.recent_questions[user_id] == []):
+            statement = ""
+        else:
+            statement = self.recent_questions[user_id][-2]
+        print('recent qs IS', statement)
         if current_choice == "guess_emotion":
             option_chosen = user_choice + " ({})".format(
                 self.guess_emotion_predictions[user_id]
@@ -585,9 +577,12 @@ class ModelDecisionMaker:
         choice_made = Choice(
             choice_desc=current_choice,
             option_chosen=option_chosen,
+            statement = statement,
             user_id=user_id,
             session_id=user_session.id,
             run_id=self.current_run_ids[user_id],
+            #statement=self.recent_statements[user_id]
+            
         )
         db_session.add(choice_made)
         db_session.commit()
