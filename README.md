@@ -1,7 +1,7 @@
 ### HaHA (the Happy Humour Assistant chatbot that helps people learn to laugh) web app
 #### Notes
 
-The humour detection model code be found in , but this is only provided for reference and will not be needed to run the bot as the humour scores have been pre-computed.
+The humour detection model code be found in HaHA/Humour_recogntion_model/, but this is only provided for reference and will not be needed to run the bot as the humour scores have been pre-computed.
 
 1) Before running the code in this folder, please obtain the model for emotion classification from https://drive.google.com/drive/folders/19uh2aIyxqzS-4LiagBouu6YuPYiOvaDz?usp=sharing 
 
