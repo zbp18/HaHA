@@ -46,7 +46,9 @@ $ npm i
 $ npm run start
 
 
-Once set up, you can run the chatbot by simply executing the following commands in seperate tabs from the run_project directory:
+#### Once set up, you can run the chatbot by simply executing the following commands in seperate tabs from the run_project directory:
+
 $ ./run_HaHA_backend.bash
+
 $ ./run_HaHA_frontend.bash
 
