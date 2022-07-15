@@ -310,7 +310,6 @@ class ModelDecisionMaker:
     def clear_choices(self, user_id):
         self.user_choices[user_id] = {}
 
-    # TODO change this and remove print statements
     def update_suggestions(self, user_id, protocols, app):
 
         # Check if user_id already has suggestions
@@ -323,8 +322,6 @@ class ModelDecisionMaker:
             self.suggestions[user_id].append(deque([protocols]))
         else:
             self.suggestions[user_id].append(deque(protocols))
-
-        #print("self.suggestions[user_id]: ", self.suggestions[user_id])
 
     # Takes next item in queue, or moves on to suggestions
     # if all have been checked
@@ -341,30 +338,22 @@ class ModelDecisionMaker:
     def determine_next_prompt_haha(self, question1, question2):
         return np.random.choice([question1, question2], 1, p=[0.2, 0.8])[0]
     
-    # TODO added (right place)
-    #def choose_mini_session(self, user_id): 
-    #from user_id: current emotional state, current protocol/level, previous protocols 
+    # added for the case when user wants to do another exercise
     # state can be "Positive" (Better), "Negative" (Worse) or "Neutral" (Same) 
     def determine_next_mini_session(self, user_id, state):
         sessions_left = list(set(self.MINI_SESSION_TITLES) - set(self.user_covered_sessions[user_id]))
-        #print("covered sessions: ", self.user_covered_sessions)
-        #print("sessions_left: ", sessions_left)
-        next_session_options = set() #random non recent if no options or if user's finnished all - suggest they chooose
+        next_session_options = set() #random non recent if no options or if user's finnished all - suggest they chooose their own
 
         current_state = self.user_states[user_id]
         current_session = self.user_mini_sessions[user_id]
-        #print("current_session: ", current_session)
         current_level = self.MINI_SESSION_TITLE_TO_LEVEL[current_session]
 
         if len(sessions_left) > 0:
             sorted_sessions = sorted(sessions_left,key=self.MINI_SESSION_TITLES.index)
             min_session_level = self.MINI_SESSION_TITLE_TO_LEVEL[sorted_sessions[0]]
 
-            #print("sorted sessions: ", sorted_sessions)
-            #print("min_session_level: ", min_session_level)
             for session in sessions_left:
                 session_level = self.MINI_SESSION_TITLE_TO_LEVEL[session]
-                #print("session_level: ", session_level)
                 if current_state == "Positive":
                     if state == "willing":
                         if session_level >= current_level:
@@ -403,7 +392,6 @@ class ModelDecisionMaker:
         random_choice = random.sample(next_session_options, 1)
         return self.MINI_SESSION_TO_QUESTION[tuple(random_choice)[0]]
 
-    # TODO 
     def get_next_question(self, user_id):
         if self.remaining_choices[user_id] == []:
             return "project_emotion"
@@ -426,7 +414,7 @@ class ModelDecisionMaker:
         chosen = ''
         #return random.choice(column.dropna().to_list())
         if not greeting in column.unique():
-            for row in column.dropna().sample(n=10): #was 25 #TODO CHANGE - 12?
+            for row in column.dropna().sample(n=10): 
                 if self.user_states_initial[user_id] == "Positive":
                     fitscore = get_sentence_score_pos(row, prev_qs)
                 else:
@@ -436,8 +424,9 @@ class ModelDecisionMaker:
                     chosen = row
             if chosen != '':
                 return chosen
-        return random.choice(column.dropna().to_list())#before was column.dropna().sample(n=5).to_list()) #was 25       
+        return random.choice(column.dropna().sample(n=8).to_list())       
 
+    # used when checking emotionn
     def split_sentence(self, sentence):
         temp_list = re.split('(?<=[.?!]) +', sentence)
         if '' in temp_list:
@@ -510,7 +499,7 @@ class ModelDecisionMaker:
         if callable(curr_prompt):
             curr_prompt = curr_prompt(user_id, db_session, user_session, app)
 
-        #removed stuff here
+        #removed code here
 
         else:
             self.update_conversation(
@@ -567,7 +556,7 @@ class ModelDecisionMaker:
             statement = ""
         else:
             statement = self.recent_questions[user_id][-2]
-        print('recent qs IS', statement)
+
         if current_choice == "guess_emotion":
             option_chosen = user_choice + " ({})".format(
                 self.guess_emotion_predictions[user_id]
@@ -611,7 +600,6 @@ class ModelDecisionMaker:
         current_choice_for_question = self.QUESTIONS[current_choice]["choices"]
         # list of protocols for all choices
         current_protocols = self.QUESTIONS[current_choice]["protocols"]
-        #print("current_protocols: ", current_protocols)
         if input_type != "open_text":
             if (current_choice != "pre_laughter_pos" 
                 and current_choice != "check_emotion"
@@ -623,7 +611,6 @@ class ModelDecisionMaker:
                 and current_choice != "ask_feel_post_setback"
                 and current_choice != "ask_feel_post_hardship"
                 and current_choice != "remind_contempt_post_hardship"
-                #and current_choice != "encourage_try_lb"
                 and current_choice != "ask_try_pre_setback"
                 and current_choice != "ask_hardship"
                 and current_choice != "ask_try_pre_hardship"
@@ -682,12 +669,8 @@ class ModelDecisionMaker:
                 and current_choice != "ask_playful_mode_haha"
                 and current_choice != "recommend_review"
                 and current_choice != "remind_review"
-                #and current_choice != "recommend_review_more_details"
             ):
                 user_choice = user_choice.lower()
-                # TODO: remove this annd all print statements
-                # yes or no (positive or negative, etc.)
-                #print("user_choice: ", user_choice)
 
              # update emotional state
             if current_choice == "ask_present_feeling":
@@ -695,28 +678,24 @@ class ModelDecisionMaker:
 
             # update user's mini session info
             if current_choice in self.MINI_SESSION_QUESTIONS:
-                #print("current_choice is in self.MINI_SESSION_QUESTIONS")
                 current_mini_session_title = self.QUESTION_TO_MINI_SESSION[current_choice]
                 self.user_mini_sessions[user_id] = current_mini_session_title
-                #TODO
-                #next_choice = 
+
                 if len(self.user_covered_sessions[user_id]) == 0:
                     self.user_covered_sessions[user_id] = [current_mini_session_title]
                 else:
                     self.user_covered_sessions[user_id].append(current_mini_session_title) 
-                #print("self.user_covered_sessions: ", self.user_covered_sessions)
             
-            #ADDED THISE-------------
+            #ADDED -------------
             if current_choice in self.NEGATIVE_MINI_SESSION_QUESTIONS:
                 current_mini_session_title = self.QUESTION_TO_NEGATIVE_MINI_SESSION[current_choice]
                 self.user_mini_sessions[user_id] = current_mini_session_title
                 # TODO:
-                #next_choice = 
                 if len(self.user_covered_sessions[user_id]) == 0:
                     self.user_covered_sessions[user_id] = [current_mini_session_title]
                 else:
                     self.user_covered_sessions[user_id].append(current_mini_session_title) 
-            #UP TO HERE-------------
+            #UP TO -------------
         
             if (
                 current_choice == "suggestions"
@@ -743,14 +722,10 @@ class ModelDecisionMaker:
                     next_choice = current_choice_for_question["Happy/Content"]
                     protocols_chosen = current_protocols["Happy/Content"]
             else:
-                # TODO: remove print:
                 # next_choice is the next question name (in QUESTIONS)
                 next_choice = current_choice_for_question[user_choice]
-                #print("next_choice: ", next_choice)
                 # protocols_chosen is a list of protocols, i.e. ['3: Self-glory', '7: Contrasting views']
                 protocols_chosen = current_protocols[user_choice]
-                #print("protocols_chosen: ", protocols_chosen)
-
         else:
             next_choice = current_choice_for_question["open_text"]
             protocols_chosen = current_protocols["open_text"]
@@ -770,7 +745,6 @@ class ModelDecisionMaker:
 
         if callable(protocols_chosen):
             protocols_chosen = protocols_chosen(user_id, db_session, user_session, app)
-            #print("protocols_chosen are callable and = ", protocols_chosen)
         next_prompt = self.QUESTIONS[next_choice]["model_prompt"]
         if callable(next_prompt):
             next_prompt = next_prompt(user_id, db_session, user_session, app)
