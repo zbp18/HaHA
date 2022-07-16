@@ -10,11 +10,11 @@ The humour detection model code be found in HaHA/humour_detection_model/, but th
 3) This chatbot uses the react-chatbot-kit library: https://fredrikoseberg.github.io/react-chatbot-kit-docs/
 
 
-#### To run the code in this folder locally, after cloning open a terminal window and do:
+#### To run the code in this folder locally, after cloning open a terminal window and do (from the directory where you cloned this project):
 
 $ pip3 install virtualenv
 
-$ virtualenv ./HaHA
+$ virtualenv ./HaHA (if this doesn't work, try python3 -m virtualenv)
 
 $ cd ./HaHA
 
